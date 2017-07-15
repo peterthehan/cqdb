@@ -52,7 +52,6 @@ export default class Frame extends Component {
         );
       }
 
-
       return (
         <LinkContainer key={index} to={'/' + pathArray.slice(0, index + 1).join('/')}>
           <Breadcrumb.Item key={index}>
