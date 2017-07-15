@@ -1,0 +1,19 @@
+* {
+  //outline: 1px solid red;
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+  padding-left: 20%;
+  padding-right: 20%;
+  font-family: sans-serif;
+}
+
+@media (max-width: 767px) {
+  body {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
+}
