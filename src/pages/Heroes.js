@@ -73,15 +73,13 @@ export default class Heroes extends Component {
         ) +
         '_HERO'
       );
-      const faction = ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(i.domain)  || !i.domain
+      const faction = ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(i.domain) || !i.domain
         ? 'Unknown' // remove unreleased domains
         : resolve(i.domain === 'NONEGROUP'
             ? 'TEXT_CHAMP_DOMAIN_' + i.domain + '_NAME'
             : 'TEXT_CHAMPION_DOMAIN_' + i.domain
           );
       const gender = resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + i.gender);
-
-//console.log(name, star, clas, rarity, faction, gender);
       this.state.heroes.push([name, star, clas, rarity, faction, gender]);
     })
   )
@@ -98,7 +96,9 @@ export default class Heroes extends Component {
   }
 
   createCheckbox = (key, value) => (
-    <Checkbox inline key={`${key}&${value}`} name={`${key}&${value}`} onChange={this.handleCheckbox}>{value}</Checkbox>
+    <Checkbox inline key={`${key}&${value}`} name={`${key}&${value}`} onChange={this.handleCheckbox}>
+      {value}
+    </Checkbox>
   )
 
   createCheckboxes = () => (
@@ -111,16 +111,11 @@ export default class Heroes extends Component {
   )
 
   filterHeroes = () => {
-    if (Object.keys(this.state.filters).every(i => !this.state.filters[i].length)) {
-      return this.state.heroes;
-    }
-
     let filtered = this.state.heroes;
     for (let i of Object.keys(this.state.filters)) {
       if (!this.state.filters[i].length) {
         continue;
       }
-
       filtered = filtered.filter(j => (
         j.some(k => this.state.filters[i].includes(k))
       ));
@@ -130,10 +125,9 @@ export default class Heroes extends Component {
 
   renderHeroes = () => {
     const filtered = this.filterHeroes();
-
     this.setState({
       render: filtered.map(i => (
-        <LinkContainer visibility='hidden' key={`${i[0]}&${i[1]}&${i[2]}`} to={`/cqdb/heroes/${i[0]}&${i[1]}&${i[2]}`}>
+        <LinkContainer key={`${i[0]}${i[1]}${i[2]}`} to={`/cqdb/heroes/${i[0]}&${i[1]}&${i[2]}`}>
           <ListGroupItem>{`${i[0]} (${i[1]}★)`}</ListGroupItem>
         </LinkContainer>
       )),
