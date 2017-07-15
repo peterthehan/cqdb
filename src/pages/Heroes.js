@@ -10,7 +10,7 @@ import {
   ListGroupItem,
   Panel,
 } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { LinkContainer, } from 'react-router-bootstrap';
 
 import { resolve, } from '../util/resolve';
 const data = require('../Decrypted/get_character_visual.json')['character_visual'].filter(i => i.type === 'HERO');
@@ -20,6 +20,7 @@ const items = {
   Star: [1, 2, 3, 4, 5, 6,],
   Class: ['Warrior', 'Paladin', 'Archer', 'Hunter', 'Wizard', 'Priest',],
   Rarity: [
+    'Legendary Hero',
     'Contract only Hero',
     'Promotion Hero',
     'Secret Hero',
@@ -29,12 +30,12 @@ const items = {
     'Grancia Empire',
     'Eastern Kingdom - Ryu',
     'Neth Empire',
-    'Southwestern Empire',
+    'Southwestern Alliance',
     'Eastern Kingdom - Han',
     'Roman Republic',
     'Heroes of Freedom',
     'Pumpkin City',
-    'Supply all heroes',
+    'Supply all forces',
     'Unknown',
   ],
   Gender: ['Male', 'Female',],
@@ -115,27 +116,24 @@ export default class Heroes extends Component {
     }
 
     let filtered = this.state.heroes;
-    console.log(Object.keys(this.state.filters));
     for (let i of Object.keys(this.state.filters)) {
       if (!this.state.filters[i].length) {
         continue;
       }
 
-      filtered = filtered.filter(j => {
-        return j.some(k => this.state.filters[i].includes(k));
-      });
+      filtered = filtered.filter(j => (
+        j.some(k => this.state.filters[i].includes(k))
+      ));
     }
     return filtered;
   }
 
   renderHeroes = () => {
-console.log(this.state.filters)
     const filtered = this.filterHeroes();
-console.log(filtered);
 
     this.setState({
       render: filtered.map(i => (
-        <LinkContainer key={`${i[0]}&${i[1]}&${i[2]}`} to={`/cqdb/heroes/${i[0]}&${i[1]}&${i[2]}`}>
+        <LinkContainer visibility='hidden' key={`${i[0]}&${i[1]}&${i[2]}`} to={`/cqdb/heroes/${i[0]}&${i[1]}&${i[2]}`}>
           <ListGroupItem>{`${i[0]} (${i[1]}★)`}</ListGroupItem>
         </LinkContainer>
       )),
