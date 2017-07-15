@@ -1,0 +1,2 @@
+# cqdb
+Crusaders Quest Database.
