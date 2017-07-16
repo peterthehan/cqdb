@@ -1,12 +1,8 @@
 import React, { Component, } from 'react';
 import {
+  Accordion,
   Col,
-  Grid,
-  Image,
-  ListGroup,
-  ListGroupItem,
   Media,
-  PageHeader,
   Pager,
   Panel,
   Row,
@@ -14,94 +10,128 @@ import {
 import { LinkContainer, } from 'react-router-bootstrap';
 
 import { resolve, } from '../util/resolve';
-const data = require('../Decrypted/get_character_visual.json')['character_visual'].filter(i => i.type === 'HERO');
+const heroData = require('../Decrypted/get_character_visual.json')['character_visual'].filter(i => i.type === 'HERO');
+const statData = require('../Decrypted/get_character_stat.json')['character_stat'].filter(element => element['hero_type'] !== null);
 
 export default class HeroInformation extends Component {
   state = {
-    display: '',
-    info: {},
+    hero: {},
     pager: [],
+    render: '',
+    stat: {},
     target: [],
   }
 
   componentWillMount = () => {
+    console.log('componentWillMount');
     this.initializeTarget();
-    this.findHeroes();
+  }
+
+  componentDidMount = () => {
+    console.log('componentDidMount');
+  }
+
+  componentWillReceiveProps = () => {
+    console.log('componentWillReceiveProps');
+    this.initializeTarget();
+  }
+
+  componentWillUpdate = () => {
+    console.log('componentWillUpdate');
   }
 
   initializeTarget = () => {
     const target = window.location.pathname.split('/')[3].split('&');
     target[0] = decodeURIComponent(target[0]);
-    target.forEach(i => this.state.target.push(i));
+    this.setState({target}, () => this.findHeroes());
   }
 
-  findHeroes = () => {
-    let info;
-    let pager = [];
-    let flag = false;
-    for (let i of data) {
+  findHero = (target) => {
+    for (let i of heroData) {
       const name = resolve(i.name);
       const star = i.id.match(/_\d/)[0][1];
       const clas = resolve('TEXT_CLASS_' + i.classid.substring(4));
-      const path = [name, star, clas];
 
-      pager.push(path);
-      if (pager.length >= 3) {
-        pager.splice(0, 1);
-      }
-
-      if (flag) {
-        break;
-      }
-
-      if ([name, star, clas].every(j => this.state.target.indexOf(j) > -1)) {
-              const name = resolve(i.name);
-      const star = i.id.match(/_\d/)[0][1];
-      const clas = resolve('TEXT_CLASS_' + i.classid.substring(4));
-      const rarity = resolve(
-        'TEXT_CONFIRM_SELL_' +
-        (i.rarity === 'LEGENDARY' 
-          ? i.isgachagolden ? 'IN_GACHA' : 'LAGENDARY'
-          : i.rarity
-        ) +
-        '_HERO'
-      );
-      const faction = ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(i.domain) || !i.domain
-        ? 'Unknown' // remove unreleased domains
-        : resolve(i.domain === 'NONEGROUP'
-            ? 'TEXT_CHAMP_DOMAIN_' + i.domain + '_NAME'
-            : 'TEXT_CHAMPION_DOMAIN_' + i.domain
-          );
-      const gender = resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + i.gender);
-        info = i;
-        pager.splice(-1, 1);
-        flag = true;
+      if ([name, star, clas].every(j => target.indexOf(j) > -1)) {
+        return i;
       }
     }
+    return null;
+  }
+
+  findPreviousHero = (target) => {
+    for (let i of heroData) {
+      if (i.upgradetargethero === target) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  findNextHero = (target) => {
+    for (let i of heroData) {
+      if (i.id === target) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  findHeroes = () => {
+    const hero = this.findHero(this.state.target);
+    const stat = statData.filter(j => j.id === hero.default_stat_id)[0];
+
+    const prevHero = this.findPreviousHero(hero.id);
+    const nextHero = !hero.upgradetargethero ? null : this.findNextHero(hero.upgradetargethero);
+    
+    const pager = [];
+    if (prevHero) {
+      const name = resolve(prevHero.name);
+      const star = prevHero.id.match(/_\d/)[0][1];
+      const clas = resolve('TEXT_CLASS_' + prevHero.classid.substring(4));
+      const image = prevHero.face_tex;
+
+      pager.push([name, star, clas, image,]);
+    }
+    if (nextHero) {
+      const name = resolve(nextHero.name);
+      const star = nextHero.id.match(/_\d/)[0][1];
+      const clas = resolve('TEXT_CLASS_' + nextHero.classid.substring(4));
+      const image = nextHero.face_tex;
+
+      pager.push([name, star, clas, image,]);
+    }
+
     this.setState({
-      info: info,
+      hero: hero,
       pager: pager,
-    }, () => {
-      console.log('a', this.state.info, this.state.pager);
-      this.renderInformation();
-    });
+      stat: stat,
+    }, () => this.renderInformation());
   }
 
   renderInformation = () => {
-    const display = (
-      <div>
-        <Panel>
+    this.setState({
+      render: (
+        <div>
+          {this.renderGeneral()}
+          {this.renderBlock()}
+          {this.renderPagers()}
+        </div>
+      ),
+    });
+  }
+
+  renderGeneral = () => {
+    return (
+      <Accordion key={`${this.state.target.join('')}`}>
+        <Panel header={`${this.state.target[0]} (${this.state.stat.grade}★) `}>
           <Media>
             <Media.Body>
-              <Media.Heading>{`${this.state.target[0]} (${this.state.target[1]}★) `}</Media.Heading>
-              <p>{resolve(this.state.info.desc)}</p>
+              <p>{resolve(this.state.hero.desc)}</p>
             </Media.Body>
             <Media.Right>
-              <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${this.state.info.face_tex}.png`} alt="Image"/>
+              <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${this.state.hero.face_tex}.png`} alt='' />
             </Media.Right>
-          </Media>
-
-          <Media>
             <Row className="show-grid">
               <Col xs={6} md={3}>
                 <Media.Heading>Class</Media.Heading>
@@ -113,9 +143,9 @@ export default class HeroInformation extends Component {
                   {
                     resolve(
                       'TEXT_CONFIRM_SELL_' +
-                      (this.state.info.rarity === 'LEGENDARY' 
-                        ? this.state.info.isgachagolden ? 'IN_GACHA' : 'LAGENDARY'
-                        : this.state.info.rarity
+                      (this.state.hero.rarity === 'LEGENDARY' 
+                        ? this.state.hero.isgachagolden ? 'IN_GACHA' : 'LAGENDARY'
+                        : this.state.hero.rarity
                       ) +
                       '_HERO'
                     )
@@ -126,52 +156,87 @@ export default class HeroInformation extends Component {
                 <Media.Heading>Faction</Media.Heading>
                 <p>
                   {
-                    ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(this.state.info.domain) || !this.state.info.domain
+                    ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(this.state.hero.domain) || !this.state.hero.domain
                     ? 'Unknown' // remove unreleased domains
-                    : resolve(this.state.info.domain === 'NONEGROUP'
-                        ? 'TEXT_CHAMP_DOMAIN_' + this.state.info.domain + '_NAME'
-                        : 'TEXT_CHAMPION_DOMAIN_' + this.state.info.domain
+                    : resolve(this.state.hero.domain === 'NONEGROUP'
+                        ? 'TEXT_CHAMP_DOMAIN_' + this.state.hero.domain + '_NAME'
+                        : 'TEXT_CHAMPION_DOMAIN_' + this.state.hero.domain
                       )
                   }
                 </p>
               </Col>
               <Col xs={6} md={3}>
                 <Media.Heading>Gender</Media.Heading>
-                <p>{resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + this.state.info.gender)}</p>
+                <p>{resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + this.state.hero.gender)}</p>
               </Col>
             </Row>
           </Media>
         </Panel>
-
-        <Panel>
-
-        </Panel>
-      </div>
+      </Accordion>
     );
-
-    this.setState({display});
   }
 
-  render = (props) => {
+  renderBlock = () => {
+    let passive = '';
+    const skill_subname = resolve(this.state.stat.skill_subname);
+    const skill_subdesc = resolve(this.state.stat.skill_subdesc);
+    if (skill_subname && skill_subdesc) {
+      // key does not resolve as-is, modification necessary
+      passive = (
+        <Row className="show-grid">
+          <Col xs={12} md={12}>
+            <Media.Heading>
+              {
+                skill_subname + ' (' +
+                resolve('TEXT_PASSIVE_SKILL_TOOLTIP_TYPE_' + this.state.stat.hero_type) +
+                ')'
+              }
+            </Media.Heading>
+            <p>{skill_subdesc}</p>
+          </Col>
+        </Row>
+      );
+    }
+
     return (
-      <div>
-        {this.state.display}
-      </div>
+      <Accordion>
+        <Panel header='Block Skill'>
+          <Media>
+            <Media.Body>
+              <Media.Heading>
+                {
+                  resolve(this.state.stat.skill_name) +
+                  ` (Lv. ${[1, 1, 1, 2, 2, 3][this.state.stat.grade - 1]})`
+                }
+              </Media.Heading>
+              <p>{resolve(this.state.stat.skill_desc)}</p>
+
+            </Media.Body>
+            <Media.Right>
+              <img width={66} src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/blocks/${this.state.stat.skill_icon}.png`} alt='' />
+            </Media.Right>
+            {passive}
+          </Media>
+        </Panel>
+      </Accordion>
     );
   }
-}
 
-/*
-  createPager = (pager) => (
-    <LinkContainer key={`${pager[0]}&${pager[1]}&${pager[2]}`} to={`/cqdb/heroes/${pager[0]}&${pager[1]}&${pager[2]}`}>
-      <Pager.Item key={`${pager[0]}${pager[1]}`} onClick={this.forceUpdate}>
-        {`${pager[0]} (${pager[1]}★)`}
-      </Pager.Item>
-    </LinkContainer>
-  )
+  renderPager = (pager) => {
+    return (
+      <LinkContainer key={`${pager.join('')}`} to={`/cqdb/heroes/${pager.join('&')}`}>
+        <Pager.Item>
+          <Media>
+            <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${pager[3]}.png`} alt='' />
+          </Media>
+          {`${pager[0]} (${pager[1]}★)`}
+        </Pager.Item>
+      </LinkContainer>
+    );
+  }
 
-  createPagers = () => {
-    const pagers = this.state.pager.map(this.createPager);
+  renderPagers = () => {
+    const pagers = this.state.pager.map(this.renderPager);
     pagers.splice(1, 0, ' ');
     return (
       <Pager>
@@ -179,4 +244,17 @@ export default class HeroInformation extends Component {
       </Pager>
     );
   }
+
+  render = (props) => {
+    console.log('render');
+    return (
+      <div>
+        {this.state.render}
+      </div>
+    );
+  }
+}
+
+/*
+
 */

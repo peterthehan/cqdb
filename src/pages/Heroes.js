@@ -191,7 +191,7 @@ export default class Heroes extends Component {
           <ListGroupItem>
             <Media>
              <Media.Left>
-                <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${i[6]}.png`} alt="Image"/>
+                <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${i[6]}.png`} alt='' />
               </Media.Left>
               <Media.Body>
                 <Media.Heading>{`${i[0]} (${i[1]}★)`}</Media.Heading>
@@ -205,6 +205,7 @@ export default class Heroes extends Component {
   }
 
   render = () => {
+    console.log('render');
     return (
       <div>
         <Accordion>
