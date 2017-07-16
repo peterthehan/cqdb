@@ -20,7 +20,7 @@ export default class App extends Component {
           <Frame>
             <Switch>
               <Route exact path='/cqdb' component={Home} />
-              <Route exact path='/cqdb/heroes' component={Heroes} />
+              <Route exact path='/cqdb/heroes:filters?' component={Heroes} />
               <Route exact path='/cqdb/heroes/:hero' component={HeroInformation} />
               <Route exact path='/cqdb/about' component={About} />
               <Route component={NoMatch} />

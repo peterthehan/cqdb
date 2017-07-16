@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, } from 'react';
 import {
   Accordion,
   Checkbox,
@@ -8,6 +8,7 @@ import {
   FormGroup,
   ListGroup,
   ListGroupItem,
+  Media,
   Panel,
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
@@ -17,7 +18,7 @@ const data = require('../Decrypted/get_character_visual.json')['character_visual
 
 // for creating checkboxes
 const items = {
-  Star: [1, 2, 3, 4, 5, 6,],
+  Star: ['1', '2', '3', '4', '5', '6',],
   Class: ['Warrior', 'Paladin', 'Archer', 'Hunter', 'Wizard', 'Priest',],
   Rarity: [
     'Legendary Hero',
@@ -49,14 +50,46 @@ export default class Heroes extends Component {
   }
 
   componentWillMount = () => {
+    console.log('componentWillMount');
     this.initializeFilters();
     this.initializeHeroes();
     this.renderHeroes();
   }
 
+  componentDidMount = () => {
+    console.log('componentDidMount');
+  }
+
+  componentWillReceiveProps = () => {
+    console.log('componentWillReceiveProps');
+    this.initializeFilters();
+    this.renderHeroes();
+  }
+
+  componentWillUpdate = () => {
+    console.log('componentWillUpdate');
+  }
+
   initializeFilters = () => {
+    // initialize each filter category key with a filter-false value
     const filters = this.state.filters;
-    Object.keys(items).forEach(i => filters[i] = []);
+    Object.keys(items).forEach(i => {
+      filters[i] = {};
+      items[i].forEach(j => filters[i][j] = false);
+    });
+
+    // if url contains querystring, parse and error-check it
+    if (window.location.search.length) {
+      decodeURIComponent(window.location.search.substr(1)).split('&').forEach(i => {
+        const kv = i.split('=');
+        kv[1].split(',').forEach(j => {
+          if (j in filters[kv[0]]) {
+            filters[kv[0]][j] = true;
+          }
+        });
+      });
+    }
+
     this.setState({filters});
   }
 
@@ -80,46 +113,73 @@ export default class Heroes extends Component {
             : 'TEXT_CHAMPION_DOMAIN_' + i.domain
           );
       const gender = resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + i.gender);
-      this.state.heroes.push([name, star, clas, rarity, faction, gender]);
+      const image = i.face_tex;
+      this.state.heroes.push([name, star, clas, rarity, faction, gender, image,]);
     })
   )
+
+  createFilterURL = () => {
+    const params = [];
+    for (let i of Object.keys(this.state.filters)) {
+      const arr = Object.keys(this.state.filters[i]).filter(j => {
+        return this.state.filters[i][j]
+      })
+
+      if (!arr.length) {
+        continue;
+      }
+
+      params.push(`${i}=${arr.join(',')}`);
+    }
+    return params.join('&');
+  }
 
   handleCheckbox = (e) => {
     const arr = e.target.name.split('&');
     const filters = this.state.filters;
-    if (e.target.checked) {
-      filters[arr[0]].push(arr[1]);
-    } else {
-      filters[arr[0]] = filters[arr[0]].filter(i => i !== arr[1]);
-    }
-    this.setState({filters}, () => this.renderHeroes());
+    filters[arr[0]][arr[1]] = e.target.checked;
+    this.setState({filters}, () => {
+      window.history.pushState('', '', `?${this.createFilterURL()}`);
+      this.renderHeroes();
+    });
   }
 
-  createCheckbox = (key, value) => (
-    <Checkbox inline key={`${key}&${value}`} name={`${key}&${value}`} onChange={this.handleCheckbox}>
-      {value}
-    </Checkbox>
-  )
+  renderCheckbox = (key, value) => {
+    const isChecked = this.state.filters[key][value];
+    return (
+      <Checkbox defaultChecked={isChecked} inline key={`${value}${isChecked}`} name={`${key}&${value}`} onChange={this.handleCheckbox}>
+        {value}
+      </Checkbox>
+    );
+  }
 
-  createCheckboxes = () => (
-    Object.keys(items).map(i => (
-      <FormGroup key={i}>
-        <Col componentClass={ControlLabel} sm={1}>{i}</Col>
-        <Col sm={10}>{items[i].map(j => this.createCheckbox(i, j))}</Col>
-      </FormGroup> 
-    ))
-  )
+  renderCheckboxes = () => {
+    return (
+      Object.keys(items).map(i => (
+        <FormGroup key={i}>
+          <Col componentClass={ControlLabel} md={1} sm={2} xs={12}>{i}</Col>
+          <Col md={11} sm={10} xs={12}>
+            {items[i].map(j => this.renderCheckbox(i, j))}
+          </Col>
+        </FormGroup> 
+      ))
+    );
+  }
 
   filterHeroes = () => {
     let filtered = this.state.heroes;
     for (let i of Object.keys(this.state.filters)) {
-      if (!this.state.filters[i].length) {
+      const currentFilters = Object.keys(this.state.filters[i]).filter(j => {
+        return this.state.filters[i][j];
+      });
+
+      if (!currentFilters.length) {
         continue;
       }
-      filtered = filtered.filter(j => (
-        j.some(k => this.state.filters[i].includes(k))
-      ));
+
+      filtered = filtered.filter(j => j.some(k => currentFilters.includes(k)));
     }
+
     return filtered;
   }
 
@@ -128,7 +188,17 @@ export default class Heroes extends Component {
     this.setState({
       render: filtered.map(i => (
         <LinkContainer key={`${i[0]}${i[1]}${i[2]}`} to={`/cqdb/heroes/${i[0]}&${i[1]}&${i[2]}`}>
-          <ListGroupItem>{`${i[0]} (${i[1]}★)`}</ListGroupItem>
+          <ListGroupItem>
+            <Media>
+             <Media.Left>
+                <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${i[6]}.png`} alt="Image"/>
+              </Media.Left>
+              <Media.Body>
+                <Media.Heading>{`${i[0]} (${i[1]}★)`}</Media.Heading>
+                <p>{`${i[2]} | ${i[3]} | ${i[4]} | ${i[5]}`}</p>
+              </Media.Body>
+            </Media>
+          </ListGroupItem>
         </LinkContainer>
       )),
     }); 
@@ -139,7 +209,7 @@ export default class Heroes extends Component {
       <div>
         <Accordion>
           <Panel header='Filters'>
-            <Form horizontal>{this.createCheckboxes()}</Form>
+            <Form horizontal>{this.renderCheckboxes()}</Form>
           </Panel>
         </Accordion>
         <Accordion>

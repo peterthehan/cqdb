@@ -5,7 +5,7 @@ export default class About extends Component {
   render = () => {
     return (
       <Panel>
-        About
+        {' '}
       </Panel>
     );
   }
