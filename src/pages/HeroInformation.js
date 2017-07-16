@@ -19,12 +19,11 @@ export default class HeroInformation extends Component {
     pager: [],
     render: '',
     stat: {},
-    target: [],
   }
 
   componentWillMount = () => {
     console.log('componentWillMount');
-    this.initializeTarget();
+    this.findHeroes();
   }
 
   componentDidMount = () => {
@@ -33,56 +32,46 @@ export default class HeroInformation extends Component {
 
   componentWillReceiveProps = () => {
     console.log('componentWillReceiveProps');
-    this.initializeTarget();
+    this.findHeroes();
   }
 
   componentWillUpdate = () => {
     console.log('componentWillUpdate');
   }
 
-  initializeTarget = () => {
+  findTarget = () => {
     const target = window.location.pathname.split('/')[3].split('&');
     target[0] = decodeURIComponent(target[0]);
-    this.setState({target}, () => this.findHeroes());
+    return target;
   }
 
-  findHero = (target) => {
-    for (let i of heroData) {
-      const name = resolve(i.name);
-      const star = i.id.match(/_\d/)[0][1];
-      const clas = resolve('TEXT_CLASS_' + i.classid.substring(4));
+  findHero = (target, key) => {
+    if (target.constructor === Array) {
+      for (let i of heroData) {
+        const name = resolve(i.name);
+        const star = i.id.match(/_\d/)[0][1];
+        const clas = resolve('TEXT_CLASS_' + i.classid.substring(4));
 
-      if ([name, star, clas].every(j => target.indexOf(j) > -1)) {
-        return i;
+        if ([name, star, clas].every(j => target.indexOf(j) > -1)) {
+          return i;
+        }
       }
-    }
-    return null;
-  }
-
-  findPreviousHero = (target) => {
-    for (let i of heroData) {
-      if (i.upgradetargethero === target) {
-        return i;
-      }
-    }
-    return null;
-  }
-
-  findNextHero = (target) => {
-    for (let i of heroData) {
-      if (i.id === target) {
-        return i;
+    } else {
+      for (let i of heroData) {
+        if (i[key] === target) {
+          return i;
+        }
       }
     }
     return null;
   }
 
   findHeroes = () => {
-    const hero = this.findHero(this.state.target);
+    const hero = this.findHero(this.findTarget());
     const stat = statData.filter(j => j.id === hero.default_stat_id)[0];
 
-    const prevHero = this.findPreviousHero(hero.id);
-    const nextHero = !hero.upgradetargethero ? null : this.findNextHero(hero.upgradetargethero);
+    const prevHero = this.findHero(hero.id, 'upgradetargethero');
+    const nextHero = !hero.upgradetargethero ? null : this.findHero(hero.upgradetargethero, 'id');
     
     const pager = [];
     if (prevHero) {
@@ -110,21 +99,20 @@ export default class HeroInformation extends Component {
   }
 
   renderInformation = () => {
-    this.setState({
-      render: (
-        <div>
-          {this.renderGeneral()}
-          {this.renderBlock()}
-          {this.renderPagers()}
-        </div>
-      ),
-    });
+    const render = (
+      <div>
+        {this.renderGeneral()}
+        {this.renderBlock()}
+        {this.renderPagers()}
+      </div>
+    );
+    this.setState({render});
   }
 
   renderGeneral = () => {
     return (
-      <Accordion key={`${this.state.target.join('')}`}>
-        <Panel header={`${this.state.target[0]} (${this.state.stat.grade}★) `}>
+      <Accordion>
+        <Panel header={`${resolve(this.state.hero.name)} (${this.state.stat.grade}★) `}>
           <Media>
             <Media.Body>
               <p>{resolve(this.state.hero.desc)}</p>
@@ -135,7 +123,7 @@ export default class HeroInformation extends Component {
             <Row className="show-grid">
               <Col xs={6} md={3}>
                 <Media.Heading>Class</Media.Heading>
-                <p>{this.state.target[2]}</p>
+                <p>{resolve('TEXT_CLASS_' + this.state.hero.classid.substring(4))}</p>
               </Col>
               <Col xs={6} md={3}>
                 <Media.Heading>Rarity</Media.Heading>
@@ -223,11 +211,12 @@ export default class HeroInformation extends Component {
   }
 
   renderPager = (pager) => {
+    const img = pager.pop();
     return (
       <LinkContainer key={`${pager.join('')}`} to={`/cqdb/heroes/${pager.join('&')}`}>
         <Pager.Item>
           <Media>
-            <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${pager[3]}.png`} alt='' />
+            <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${img}.png`} alt='' />
           </Media>
           {`${pager[0]} (${pager[1]}★)`}
         </Pager.Item>
@@ -245,7 +234,7 @@ export default class HeroInformation extends Component {
     );
   }
 
-  render = (props) => {
+  render = () => {
     console.log('render');
     return (
       <div>
