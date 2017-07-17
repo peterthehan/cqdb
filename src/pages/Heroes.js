@@ -30,6 +30,7 @@ const items = {
     'Promotion Hero',
     'Secret Hero',
     'Normal Hero',
+    'Supply Hero',
   ],
   Faction: [
     'Grancia Empire',

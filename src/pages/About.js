@@ -56,7 +56,7 @@ export default class About extends Component {
             {dep.map(this.renderDependencies)}
           </Panel>
         </Col>
-        <Col md={6} sm={12} xs={12}>
+        <Col md={12} sm={12} xs={12}>
           <Panel>
             <Media.Heading>Disclaimer</Media.Heading>
             <p>

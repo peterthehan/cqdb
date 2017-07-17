@@ -89,7 +89,8 @@ export default class HeroInformation extends Component {
       .map(i => {
         return sbwData
           .filter(j => parseInt(j.grade, 10) === i && j.reqhero.includes(hero.id))[0];
-      });
+      })
+      .filter(i => i);
 
     const prevHero = this.findHero(hero.id, 'upgradetargethero');
     const nextHero = !hero.upgradetargethero ? null : this.findHero(hero.upgradetargethero, 'id');
@@ -251,7 +252,6 @@ export default class HeroInformation extends Component {
   }
 
   renderSbw = (i, index) => {
-    console.log(i.name, index);
     return (
       <Tab eventKey={index} key={i.grade} title={`${i.grade}★`}>
         <div style={{paddingTop: 15,}}>

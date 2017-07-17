@@ -53,7 +53,7 @@ export default class Frame extends Component {
     if (pathArray.length - 1 === index) {
       return (
         <Breadcrumb.Item active key={index}>
-          {label}
+          <strong>{label}</strong>
         </Breadcrumb.Item>
       );
     }
@@ -73,7 +73,7 @@ export default class Frame extends Component {
     return (
       <Row>
         <Col md={12} sm={12} xs={12}>
-        <Breadcrumb>
+        <Breadcrumb style={{backgroundColor: '#F5F5F5'}}>
           {pathArray.map((i, j) => this.renderBreadCrumb(i, j, pathArray))}
         </Breadcrumb>
         </Col>
