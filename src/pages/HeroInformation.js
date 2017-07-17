@@ -2,6 +2,7 @@ import React, { Component, } from 'react';
 import {
   Accordion,
   Col,
+  ListGroupItem,
   Media,
   Pager,
   Panel,
@@ -11,6 +12,7 @@ import {
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
+import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
 const heroData = require('../Decrypted/get_character_visual.json')
   .character_visual
@@ -18,6 +20,7 @@ const heroData = require('../Decrypted/get_character_visual.json')
 const sbwData = require('../Decrypted/get_weapon.json')
   .weapon
   .filter(i => i.type === 'HERO' && i.reqhero && i.howtoget);
+const skinData = require('../Decrypted/get_costume.json').costume;
 const statData = require('../Decrypted/get_character_stat.json')
   .character_stat
   .filter(i => i.hero_type);
@@ -27,6 +30,7 @@ export default class HeroInformation extends Component {
     hero: {},
     pager: [],
     render: [],
+    skin: [],
     stat: {},
     weapon: [],
   }
@@ -78,6 +82,7 @@ export default class HeroInformation extends Component {
 
   initializeData = () => {
     const hero = this.findHero(this.findTarget());
+    const skin = skinData.filter(i => i.wearable_charid.includes(hero.id));
     const stat = statData.filter(i => i.id === hero.default_stat_id)[0];
     const weapon = [6, 5, 4]
       .filter(i => i <= stat.grade)
@@ -86,6 +91,7 @@ export default class HeroInformation extends Component {
           .filter(j => parseInt(j.grade, 10) === i && j.reqhero.includes(hero.id))[0];
       });
 
+console.log(skin);
     const prevHero = this.findHero(hero.id, 'upgradetargethero');
     const nextHero = !hero.upgradetargethero ? null : this.findHero(hero.upgradetargethero, 'id');
     
@@ -110,16 +116,30 @@ export default class HeroInformation extends Component {
     this.setState({
       hero: hero,
       pager: pager,
+      skin: skin,
       stat: stat,
       weapon: weapon,
     }, () => this.renderInformation());
   }
 
   renderInformation = () => {
+    const grid = (
+      <Row key='grid'>
+        <Col xs={12} md={6}>
+          {this.renderBlock()}
+        </Col>
+        <Col xs={12} md={6}>
+          {this.renderSbws()}
+        </Col>
+        <Col xs={12} md={6}>
+          {this.renderSkins()}
+        </Col>
+      </Row>
+    );
+
     const render = [
       this.renderGeneral(),
-      this.renderBlock(),
-      this.renderSbws(),
+      grid,
       this.renderPagers(),
     ];
     this.setState({render});
@@ -134,9 +154,9 @@ export default class HeroInformation extends Component {
               <p>{resolve(this.state.hero.desc)}</p>
             </Media.Body>
             <Media.Right>
-              <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${this.state.hero.face_tex}.png`} alt='' />
+              <img alt='' src={imagePath('fergus', `assets/heroes/${this.state.hero.face_tex}.png`)} />
             </Media.Right>
-            <Row className="show-grid">
+            <Row>
               <Col xs={6} md={3}>
                 <Media.Heading>Class</Media.Heading>
                 <p>{resolve('TEXT_CLASS_' + this.state.hero.classid.substring(4))}</p>
@@ -187,7 +207,7 @@ export default class HeroInformation extends Component {
     if (skill_subname && skill_subdesc) {
       // key does not resolve as-is, modification necessary
       passive = (
-        <Row className="show-grid">
+        <Row>
           <Col xs={12} md={12}>
             <Media.Heading>
               {
@@ -214,10 +234,9 @@ export default class HeroInformation extends Component {
                 }
               </Media.Heading>
               <p>{resolve(this.state.stat.skill_desc)}</p>
-
             </Media.Body>
             <Media.Right>
-              <img width={66} src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/blocks/${this.state.stat.skill_icon}.png`} alt='' />
+              <img alt='' src={imagePath('fergus', `assets/blocks/${this.state.stat.skill_icon}.png`)} width={66} />
             </Media.Right>
             {passive}
           </Media>
@@ -238,9 +257,9 @@ export default class HeroInformation extends Component {
               <p>{resolve(i.desc)}</p>
             </Media.Body>
             <Media.Right>
-              <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/sbws/${i.skin_tex}.png`} alt='' />
+              <img alt='' src={imagePath('fergus', `assets/sbws/${i.skin_tex}.png`)} />
             </Media.Right>
-            <Row className="show-grid">
+            <Row>
               <Col xs={6} md={3}>
                 <Media.Heading>Category</Media.Heading>
                 <p>{resolve('TEXT_WEAPON_CATE_' + i.categoryid.substring(4))}</p>
@@ -279,13 +298,62 @@ export default class HeroInformation extends Component {
     )
   }
 
+  renderSkin = (i, index) => {
+    // modify 'Type' value for display
+    const convert = {
+      'AttackPower': 'Atk. Power',
+      'CriticalDamage': 'Crit.Damage',
+      'CriticalChance': 'Crit.Chance',
+      'Dodge': 'Evasion',
+      'All': 'Stats',
+    };
+    const stats = i.addstat_json.map(j => {
+      const label = j.Type in convert ? convert[j.Type] : j.Type;
+      const value = j.Value < 1 ? `${parseInt(j.Value * 100, 10)}%` : j.Value;
+      return label + ': ' + value;
+    });
+
+    return (
+      <ListGroupItem key={index}>
+        <Media>
+          <Media.Body>
+            <Media.Heading>{resolve(i.costume_name)}</Media.Heading>
+            <p>{stats.join(', ')}</p>
+            <Row>
+              <Col xs={6} md={6}>
+                <Media.Heading>Sell</Media.Heading>
+                <p>{i.sell_price}</p>
+              </Col>
+            </Row>
+          </Media.Body>
+          <Media.Right>
+            <img alt='' src={imagePath('fergus', `assets/skins/${i.face_tex}.png`)} />
+          </Media.Right>
+        </Media>
+      </ListGroupItem>
+    );
+  }
+
+  renderSkins = () => {
+    if (!this.state.skin.length) {
+      return;
+    }
+    return (
+      <Accordion key={4}>
+        <Panel header='Skins'>
+          {this.state.skin.map(this.renderSkin)}
+        </Panel>
+      </Accordion>
+    );
+  }
+
   renderPager = (pager) => {
     const img = pager.pop();
     return (
       <LinkContainer key={pager.join('')} to={`/cqdb/heroes/${pager.join('&')}`}>
         <Pager.Item>
           <Media>
-            <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${img}.png`} alt='' />
+            <img alt='' src={imagePath('fergus', `assets/heroes/${img}.png`)} />
           </Media>
           {`${pager[0]} (${pager[1]}★)`}
         </Pager.Item>
@@ -308,6 +376,7 @@ export default class HeroInformation extends Component {
 
   render = () => {
     console.log('render');
+    window.scrollTo(0, 0);
     return (
       <div>
         {this.state.render}
@@ -315,7 +384,3 @@ export default class HeroInformation extends Component {
     );
   }
 }
-
-/*
-
-*/

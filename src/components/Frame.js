@@ -1,5 +1,12 @@
 import React, { Component, } from 'react';
-import { Breadcrumb, Nav, Navbar, NavItem, } from 'react-bootstrap';
+import {
+  Col,
+  Breadcrumb,
+  Nav,
+  Navbar,
+  NavItem,
+  Row,
+} from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
 export default class Frame extends Component {
@@ -68,12 +75,26 @@ export default class Frame extends Component {
     );
   }
 
+  footer = () => {
+    return (
+      <Row>
+        <Col md={12} sm={12} xs={12}>
+          <hr />  
+          <p style={{textAlign: 'center'}}>
+            Made with ❤ by <a href='https://github.com/Johj'>Peter Han</a>.
+          </p>
+        </Col>
+      </Row>
+    );
+  }
+
   render = () => {
     return (
       <div>
         {this.navigationBar()}
         {this.breadCrumb(window.location.pathname)}
         {this.props.children}
+        {this.footer()}
       </div>
     );
   }

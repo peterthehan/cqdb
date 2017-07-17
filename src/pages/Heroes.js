@@ -7,13 +7,13 @@ import {
   ControlLabel,
   Form,
   FormGroup,
-  ListGroup,
   ListGroupItem,
   Media,
   Panel,
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
+import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
 const data = require('../Decrypted/get_character_visual.json')
   .character_visual
@@ -186,7 +186,7 @@ export default class Heroes extends Component {
             <ListGroupItem>
               <Media>
                 <Media.Left>
-                  <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${i[6]}.png`} alt='' />
+                  <img src={imagePath('fergus', `assets/heroes/${i[6]}.png`)} alt='' />
                 </Media.Left>
                 <Media.Body>
                   <Media.Heading>{`${i[0]} (${i[1]}★)`}</Media.Heading>
@@ -215,9 +215,7 @@ export default class Heroes extends Component {
         </Accordion>
         <Accordion>
           <Panel header={`Heroes (${this.state.render.length})`}>
-            <ListGroup>
-              <ReactList itemRenderer={this.renderHero} length={this.state.render.length} minSize={10} />
-            </ListGroup>
+            <ReactList itemRenderer={this.renderHero} length={this.state.render.length} minSize={10} />
           </Panel>
         </Accordion>
       </div>

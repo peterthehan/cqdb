@@ -2,7 +2,6 @@
   "name": "cqdb",
   "version": "0.1.0",
   "homepage": "https://johj.github.io/cqdb",
-  "private": true,
   "dependencies": {
     "bootstrap": "^3.3.7",
     "react": "^15.6.1",
