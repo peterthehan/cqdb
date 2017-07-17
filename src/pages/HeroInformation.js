@@ -147,7 +147,7 @@ console.log(skin);
 
   renderGeneral = () => {
     return (
-      <Accordion key={1}>
+      <Accordion key={`hero${this.findTarget().join('')}`}>
         <Panel header={`${resolve(this.state.hero.name)} (${this.state.stat.grade}★) `}>
           <Media>
             <Media.Body>
@@ -222,15 +222,16 @@ console.log(skin);
       );
     }
 
+    const grade = [1, 1, 1, 2, 2, 3][this.state.stat.grade - 1];
     return (
-      <Accordion key={2}>
+      <Accordion key={`grade${grade}`}>
         <Panel header='Block Skill'>
           <Media>
             <Media.Body>
               <Media.Heading>
                 {
                   resolve(this.state.stat.skill_name) +
-                  ` (Lv. ${[1, 1, 1, 2, 2, 3][this.state.stat.grade - 1]})`
+                  ` (Lv. ${grade})`
                 }
               </Media.Heading>
               <p>{resolve(this.state.stat.skill_desc)}</p>
@@ -246,8 +247,9 @@ console.log(skin);
   }
 
   renderSbw = (i, index) => {
+    console.log(i.name, index);
     return (
-      <Tab eventKey={index} key={index} title={`${i.grade}★`}>
+      <Tab eventKey={index} key={i.grade} title={`${i.grade}★`}>
         <div style={{paddingBottom: 15, paddingTop: 15,}}>
           <Media>
             <Media.Body>
@@ -288,7 +290,7 @@ console.log(skin);
       return;
     }
     return (
-      <Accordion key={3}>
+      <Accordion key={this.state.weapon.length}>
         <Panel header='Soulbound Weapon'>
           <Tabs defaultActiveKey={0} id="soulbound-weapon">
             {this.state.weapon.map(this.renderSbw)}
@@ -339,7 +341,7 @@ console.log(skin);
       return;
     }
     return (
-      <Accordion key={4}>
+      <Accordion key={`skin${this.state.skin.length}`}>
         <Panel header='Skins'>
           {this.state.skin.map(this.renderSkin)}
         </Panel>
@@ -368,7 +370,7 @@ console.log(skin);
     const pagers = this.state.pager.map(this.renderPager);
     pagers.splice(1, 0, ' ');
     return (
-      <Pager key={999}>
+      <Pager key='pager'>
         {pagers}
       </Pager>
     );
