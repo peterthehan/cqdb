@@ -213,11 +213,12 @@ export default class HeroInformation extends Component {
             <Media.Heading>
               {
                 skill_subname + ' (' +
-                resolve('TEXT_PASSIVE_SKILL_TOOLTIP_TYPE_' + this.state.stat.hero_type) +
-                ')'
+                resolve(
+                  `TEXT_PASSIVE_SKILL_TOOLTIP_TYPE_${this.state.stat.hero_type}`
+                ) + ')'
               }
             </Media.Heading>
-            <p>{skill_subdesc}</p>
+            <p>{skill_subdesc.replace(/@|#|\$/g, '')}</p>
           </Col>
         </Row>
       );
@@ -235,7 +236,9 @@ export default class HeroInformation extends Component {
                   ` (Lv. ${grade})`
                 }
               </Media.Heading>
-              <p>{resolve(this.state.stat.skill_desc)}</p>
+              <p>
+                {resolve(this.state.stat.skill_desc).replace(/@|#|\$/g, '')}
+              </p>
             </Media.Body>
             <Media.Right>
               <img alt='' src={imagePath('fergus', `assets/blocks/${this.state.stat.skill_icon}.png`)} width={66} />
@@ -255,7 +258,7 @@ export default class HeroInformation extends Component {
           <Media>
             <Media.Body>
               <Media.Heading>
-                {`${resolve(i.name)} (${i.grade}★)`}
+                {resolve(i.name)}
               </Media.Heading>
               <p>{resolve(i.desc)}</p>
             </Media.Body>
