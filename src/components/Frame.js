@@ -73,9 +73,9 @@ export default class Frame extends Component {
     return (
       <Row>
         <Col md={12} sm={12} xs={12}>
-        <Breadcrumb style={{backgroundColor: '#F5F5F5'}}>
-          {pathArray.map((i, j) => this.renderBreadCrumb(i, j, pathArray))}
-        </Breadcrumb>
+          <Breadcrumb style={{backgroundColor: '#F5F5F5'}}>
+            {pathArray.map((i, j) => this.renderBreadCrumb(i, j, pathArray))}
+          </Breadcrumb>
         </Col>
       </Row>
     );

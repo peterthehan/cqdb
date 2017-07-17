@@ -20,3 +20,9 @@ body {
     padding-right: 0%;
   }
 }
+
+.panel-title a {
+    display: block;
+    padding: 10px 15px;
+    margin: -10px -15px;
+}

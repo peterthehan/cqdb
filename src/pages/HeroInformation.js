@@ -201,7 +201,6 @@ export default class HeroInformation extends Component {
   }
 
   renderBlock = () => {
-    console.log('block');
     let passive = '';
     const skill_subname = resolve(this.state.stat.skill_subname);
     const skill_subdesc = resolve(this.state.stat.skill_subdesc);
