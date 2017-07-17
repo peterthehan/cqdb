@@ -15,7 +15,9 @@ import {
 import { LinkContainer, } from 'react-router-bootstrap';
 
 import { resolve, } from '../util/resolve';
-const data = require('../Decrypted/get_character_visual.json')['character_visual'].filter(i => i.type === 'HERO');
+const data = require('../Decrypted/get_character_visual.json')
+  .character_visual
+  .filter(i => i.type === 'HERO');
 
 // for creating checkboxes
 const items = {

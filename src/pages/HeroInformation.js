@@ -6,24 +6,34 @@ import {
   Pager,
   Panel,
   Row,
+  Tab,
+  Tabs,
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
 import { resolve, } from '../util/resolve';
-const heroData = require('../Decrypted/get_character_visual.json')['character_visual'].filter(i => i.type === 'HERO');
-const statData = require('../Decrypted/get_character_stat.json')['character_stat'].filter(element => element['hero_type'] !== null);
+const heroData = require('../Decrypted/get_character_visual.json')
+  .character_visual
+  .filter(i => i.type === 'HERO');
+const sbwData = require('../Decrypted/get_weapon.json')
+  .weapon
+  .filter(i => i.type === 'HERO' && i.reqhero && i.howtoget);
+const statData = require('../Decrypted/get_character_stat.json')
+  .character_stat
+  .filter(i => i.hero_type);
 
 export default class HeroInformation extends Component {
   state = {
     hero: {},
     pager: [],
-    render: '',
+    render: [],
     stat: {},
+    weapon: [],
   }
 
   componentWillMount = () => {
     console.log('componentWillMount');
-    this.findHeroes();
+    this.initializeData();
   }
 
   componentDidMount = () => {
@@ -32,7 +42,7 @@ export default class HeroInformation extends Component {
 
   componentWillReceiveProps = () => {
     console.log('componentWillReceiveProps');
-    this.findHeroes();
+    this.initializeData();
   }
 
   componentWillUpdate = () => {
@@ -66,9 +76,15 @@ export default class HeroInformation extends Component {
     return null;
   }
 
-  findHeroes = () => {
+  initializeData = () => {
     const hero = this.findHero(this.findTarget());
-    const stat = statData.filter(j => j.id === hero.default_stat_id)[0];
+    const stat = statData.filter(i => i.id === hero.default_stat_id)[0];
+    const weapon = [6, 5, 4]
+      .filter(i => i <= stat.grade)
+      .map(i => {
+        return sbwData
+          .filter(j => parseInt(j.grade, 10) === i && j.reqhero.includes(hero.id))[0];
+      });
 
     const prevHero = this.findHero(hero.id, 'upgradetargethero');
     const nextHero = !hero.upgradetargethero ? null : this.findHero(hero.upgradetargethero, 'id');
@@ -95,23 +111,23 @@ export default class HeroInformation extends Component {
       hero: hero,
       pager: pager,
       stat: stat,
+      weapon: weapon,
     }, () => this.renderInformation());
   }
 
   renderInformation = () => {
-    const render = (
-      <div>
-        {this.renderGeneral()}
-        {this.renderBlock()}
-        {this.renderPagers()}
-      </div>
-    );
+    const render = [
+      this.renderGeneral(),
+      this.renderBlock(),
+      this.renderSbws(),
+      this.renderPagers(),
+    ];
     this.setState({render});
   }
 
   renderGeneral = () => {
     return (
-      <Accordion>
+      <Accordion key={1}>
         <Panel header={`${resolve(this.state.hero.name)} (${this.state.stat.grade}★) `}>
           <Media>
             <Media.Body>
@@ -187,7 +203,7 @@ export default class HeroInformation extends Component {
     }
 
     return (
-      <Accordion>
+      <Accordion key={2}>
         <Panel header='Block Skill'>
           <Media>
             <Media.Body>
@@ -210,10 +226,63 @@ export default class HeroInformation extends Component {
     );
   }
 
+  renderSbw = (i, index) => {
+    return (
+      <Tab eventKey={index} key={index} title={`${i.grade}★`}>
+        <div style={{paddingBottom: 15, paddingTop: 15,}}>
+          <Media>
+            <Media.Body>
+              <Media.Heading>
+                {`${resolve(i.name)} (${i.grade}★)`}
+              </Media.Heading>
+              <p>{resolve(i.desc)}</p>
+            </Media.Body>
+            <Media.Right>
+              <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/sbws/${i.skin_tex}.png`} alt='' />
+            </Media.Right>
+            <Row className="show-grid">
+              <Col xs={6} md={3}>
+                <Media.Heading>Category</Media.Heading>
+                <p>{resolve('TEXT_WEAPON_CATE_' + i.categoryid.substring(4))}</p>
+              </Col>
+              <Col xs={6} md={3}>
+                <Media.Heading>Range</Media.Heading>
+                <p>{i.range}</p>
+              </Col>
+              <Col xs={6} md={3}>
+                <Media.Heading>Atk. Power</Media.Heading>
+                <p>{i.attdmg}</p>
+              </Col>
+              <Col xs={6} md={3}>
+                <Media.Heading>Atk. Speed</Media.Heading>
+                <p>{i.attspd}</p>
+              </Col>
+            </Row>
+          </Media>
+        </div>
+      </Tab>
+    );
+  }
+
+  renderSbws = () => {
+    if (!this.state.weapon.length) {
+      return;
+    }
+    return (
+      <Accordion key={3}>
+        <Panel header='Soulbound Weapon'>
+          <Tabs defaultActiveKey={0} id="soulbound-weapon">
+            {this.state.weapon.map(this.renderSbw)}
+          </Tabs>
+        </Panel>
+      </Accordion>
+    )
+  }
+
   renderPager = (pager) => {
     const img = pager.pop();
     return (
-      <LinkContainer key={`${pager.join('')}`} to={`/cqdb/heroes/${pager.join('&')}`}>
+      <LinkContainer key={pager.join('')} to={`/cqdb/heroes/${pager.join('&')}`}>
         <Pager.Item>
           <Media>
             <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${img}.png`} alt='' />
@@ -221,14 +290,17 @@ export default class HeroInformation extends Component {
           {`${pager[0]} (${pager[1]}★)`}
         </Pager.Item>
       </LinkContainer>
-    );
+      );
   }
 
   renderPagers = () => {
+    if (!this.state.pager.length) {
+      return;
+    }
     const pagers = this.state.pager.map(this.renderPager);
     pagers.splice(1, 0, ' ');
     return (
-      <Pager>
+      <Pager key={999}>
         {pagers}
       </Pager>
     );
