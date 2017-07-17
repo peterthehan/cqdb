@@ -1,7 +1,7 @@
 import React, { Component, } from 'react';
 import {
-  Accordion,
   Col,
+  ListGroup,
   ListGroupItem,
   Media,
   Pager,
@@ -36,21 +36,21 @@ export default class HeroInformation extends Component {
   }
 
   componentWillMount = () => {
-    console.log('componentWillMount');
+    console.log('HeroInformation', 'componentWillMount');
     this.initializeData();
   }
 
   componentDidMount = () => {
-    console.log('componentDidMount');
+    console.log('HeroInformation', 'componentDidMount');
   }
 
   componentWillReceiveProps = () => {
-    console.log('componentWillReceiveProps');
+    console.log('HeroInformation', 'componentWillReceiveProps');
     this.initializeData();
   }
 
   componentWillUpdate = () => {
-    console.log('componentWillUpdate');
+    console.log('HeroInformation', 'componentWillUpdate');
   }
 
   findTarget = () => {
@@ -149,60 +149,59 @@ export default class HeroInformation extends Component {
 
   renderGeneral = () => {
     return (
-      <Accordion key={`hero${this.findTarget().join('')}`}>
-        <Panel header={`${resolve(this.state.hero.name)} (${this.state.stat.grade}★) `}>
-          <Media>
-            <Media.Body>
-              <p>{resolve(this.state.hero.desc)}</p>
-            </Media.Body>
-            <Media.Right>
-              <img alt='' src={imagePath('fergus', `assets/heroes/${this.state.hero.face_tex}.png`)} />
-            </Media.Right>
-            <Row>
-              <Col md={3} sm={6} xs={6}>
-                <Media.Heading>Class</Media.Heading>
-                <p>{resolve('TEXT_CLASS_' + this.state.hero.classid.substring(4))}</p>
-              </Col>
-              <Col md={3} sm={6} xs={6}>
-                <Media.Heading>Rarity</Media.Heading>
-                <p>
-                  {
-                    resolve(
-                      'TEXT_CONFIRM_SELL_' +
-                      (this.state.hero.rarity === 'LEGENDARY' 
-                        ? this.state.hero.isgachagolden ? 'IN_GACHA' : 'LAGENDARY'
-                        : this.state.hero.rarity
-                      ) +
-                      '_HERO'
+      <Panel collapsible defaultExpanded header={`${resolve(this.state.hero.name)} (${this.state.stat.grade}★) `} key={`hero${this.findTarget().join('')}`}>
+        <Media>
+          <Media.Body>
+            <p>{resolve(this.state.hero.desc)}</p>
+          </Media.Body>
+          <Media.Right>
+            <img alt='' src={imagePath('fergus', `assets/heroes/${this.state.hero.face_tex}.png`)} />
+          </Media.Right>
+          <Row>
+            <Col md={3} sm={6} xs={6}>
+              <Media.Heading>Class</Media.Heading>
+              <p>{resolve('TEXT_CLASS_' + this.state.hero.classid.substring(4))}</p>
+            </Col>
+            <Col md={3} sm={6} xs={6}>
+              <Media.Heading>Rarity</Media.Heading>
+              <p>
+                {
+                  resolve(
+                    'TEXT_CONFIRM_SELL_' +
+                    (this.state.hero.rarity === 'LEGENDARY' 
+                      ? this.state.hero.isgachagolden ? 'IN_GACHA' : 'LAGENDARY'
+                      : this.state.hero.rarity
+                    ) +
+                    '_HERO'
+                  )
+                }
+              </p>
+            </Col>
+            <Col md={3} sm={6} xs={6}>
+              <Media.Heading>Faction</Media.Heading>
+              <p>
+                {
+                  ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(this.state.hero.domain) || !this.state.hero.domain
+                  ? 'Unknown' // remove unreleased domains
+                  : resolve(this.state.hero.domain === 'NONEGROUP'
+                      ? 'TEXT_CHAMP_DOMAIN_' + this.state.hero.domain + '_NAME'
+                      : 'TEXT_CHAMPION_DOMAIN_' + this.state.hero.domain
                     )
-                  }
-                </p>
-              </Col>
-              <Col md={3} sm={6} xs={6}>
-                <Media.Heading>Faction</Media.Heading>
-                <p>
-                  {
-                    ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(this.state.hero.domain) || !this.state.hero.domain
-                    ? 'Unknown' // remove unreleased domains
-                    : resolve(this.state.hero.domain === 'NONEGROUP'
-                        ? 'TEXT_CHAMP_DOMAIN_' + this.state.hero.domain + '_NAME'
-                        : 'TEXT_CHAMPION_DOMAIN_' + this.state.hero.domain
-                      )
-                  }
-                </p>
-              </Col>
-              <Col md={3} sm={6} xs={6}>
-                <Media.Heading>Gender</Media.Heading>
-                <p>{resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + this.state.hero.gender)}</p>
-              </Col>
-            </Row>
-          </Media>
-        </Panel>
-      </Accordion>
+                }
+              </p>
+            </Col>
+            <Col md={3} sm={6} xs={6}>
+              <Media.Heading>Gender</Media.Heading>
+              <p>{resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + this.state.hero.gender)}</p>
+            </Col>
+          </Row>
+        </Media>
+      </Panel>
     );
   }
 
   renderBlock = () => {
+    console.log('block');
     let passive = '';
     const skill_subname = resolve(this.state.stat.skill_subname);
     const skill_subdesc = resolve(this.state.stat.skill_subdesc);
@@ -227,27 +226,25 @@ export default class HeroInformation extends Component {
 
     const grade = [1, 1, 1, 2, 2, 3][this.state.stat.grade - 1];
     return (
-      <Accordion key={`grade${grade}`}>
-        <Panel header='Block Skill'>
-          <Media>
-            <Media.Body>
-              <Media.Heading>
-                {
-                  resolve(this.state.stat.skill_name) +
-                  ` (Lv. ${grade})`
-                }
-              </Media.Heading>
-              <p>
-                {resolve(this.state.stat.skill_desc).replace(/@|#|\$/g, '')}
-              </p>
-            </Media.Body>
-            <Media.Right>
-              <img alt='' src={imagePath('fergus', `assets/blocks/${this.state.stat.skill_icon}.png`)} width={66} />
-            </Media.Right>
-            {passive}
-          </Media>
-        </Panel>
-      </Accordion>
+      <Panel collapsible defaultExpanded header='Block Skill' key={`grade${grade}`}>
+        <Media>
+          <Media.Body>
+            <Media.Heading>
+              {
+                resolve(this.state.stat.skill_name) +
+                ` (Lv. ${grade})`
+              }
+            </Media.Heading>
+            <p>
+              {resolve(this.state.stat.skill_desc).replace(/@|#|\$/g, '')}
+            </p>
+          </Media.Body>
+          <Media.Right>
+            <img alt='' src={imagePath('fergus', `assets/blocks/${this.state.stat.skill_icon}.png`)} width={66} />
+          </Media.Right>
+          {passive}
+        </Media>
+      </Panel>
     );
   }
 
@@ -294,13 +291,11 @@ export default class HeroInformation extends Component {
       return;
     }
     return (
-      <Accordion key={this.state.weapon.length}>
-        <Panel header='Soulbound Weapon'>
-          <Tabs defaultActiveKey={0} id="soulbound-weapon">
-            {this.state.weapon.map(this.renderSbw)}
-          </Tabs>
-        </Panel>
-      </Accordion>
+      <Panel collapsible defaultExpanded header='Soulbound Weapon' key={this.state.weapon.length}>
+        <Tabs defaultActiveKey={0} id="soulbound-weapon">
+          {this.state.weapon.map(this.renderSbw)}
+        </Tabs>
+      </Panel>
     )
   }
 
@@ -345,11 +340,11 @@ export default class HeroInformation extends Component {
       return;
     }
     return (
-      <Accordion key={`skin${this.state.skin.length}`}>
-        <Panel header='Skins'>
+      <Panel collapsible defaultExpanded header='Skins' key={`skin${this.state.skin.length}`}>
+        <ListGroup fill>
           {this.state.skin.map(this.renderSkin)}
-        </Panel>
-      </Accordion>
+        </ListGroup>
+      </Panel>
     );
   }
 
@@ -381,7 +376,7 @@ export default class HeroInformation extends Component {
   }
 
   render = () => {
-    console.log('render');
+    console.log('HeroInformation', 'render');
     window.scrollTo(0, 0);
     return (
       <div>

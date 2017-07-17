@@ -1,12 +1,12 @@
 import React, { Component, } from 'react';
 import ReactList from 'react-list';
 import {
-  Accordion,
   Checkbox,
   Col,
   ControlLabel,
   Form,
   FormGroup,
+  ListGroup,
   ListGroupItem,
   Media,
   Panel,
@@ -55,14 +55,22 @@ export default class Heroes extends Component {
   }
 
   componentWillMount = () => {
-    // console.log('componentWillMount');
+    console.log('Heroes', 'componentWillMount');
     this.initializeFilters();
     this.initializeHeroes();
   }
 
+  componentDidMount = () => {
+    console.log('Heroes', 'componentDidMount');
+  }
+
   componentWillReceiveProps = () => {
-    // console.log('componentWillReceiveProps');
+    console.log('Heroes', 'componentWillReceiveProps');
     this.initializeFilters();
+  }
+
+  componentWillUpdate = () => {
+    console.log('Heroes', 'componentWillUpdate');
   }
 
   initializeFilters = () => {
@@ -207,20 +215,18 @@ export default class Heroes extends Component {
   }
 
   render = () => {
-    // console.log('render');
+    console.log('Heroes', 'render');
     return (
       <Row>
         <Col md={12} sm={12} xs={12}>
-        <Accordion>
-          <Panel header='Filters'>
+          <Panel collapsible defaultExpanded header='Filters'>
             <Form horizontal>{this.renderCheckboxes()}</Form>
           </Panel>
-        </Accordion>
-        <Accordion>
-          <Panel header={`Heroes (${this.state.render.length})`}>
-            <ReactList itemRenderer={this.renderHero} length={this.state.render.length} minSize={10} />
+          <Panel collapsible defaultExpanded header={`Heroes (${this.state.render.length})`}>
+            <ListGroup fill>
+              <ReactList itemRenderer={this.renderHero} length={this.state.render.length} minSize={10} />
+            </ListGroup>
           </Panel>
-        </Accordion>
         </Col>
       </Row>
     );
