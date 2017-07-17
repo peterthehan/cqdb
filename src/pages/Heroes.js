@@ -1,4 +1,5 @@
 import React, { Component, } from 'react';
+import ReactList from 'react-list';
 import {
   Accordion,
   Checkbox,
@@ -50,29 +51,19 @@ export default class Heroes extends Component {
   }
 
   componentWillMount = () => {
-    console.log('componentWillMount');
+    // console.log('componentWillMount');
     this.initializeFilters();
     this.initializeHeroes();
-    this.renderHeroes();
-  }
-
-  componentDidMount = () => {
-    console.log('componentDidMount');
   }
 
   componentWillReceiveProps = () => {
-    console.log('componentWillReceiveProps');
+    // console.log('componentWillReceiveProps');
     this.initializeFilters();
-    this.renderHeroes();
-  }
-
-  componentWillUpdate = () => {
-    console.log('componentWillUpdate');
   }
 
   initializeFilters = () => {
     // initialize each filter category key with a filter-false value
-    const filters = this.state.filters;
+    const filters = {};
     Object.keys(items).forEach(i => {
       filters[i] = {};
       items[i].forEach(j => filters[i][j] = false);
@@ -80,7 +71,7 @@ export default class Heroes extends Component {
 
     // if url contains querystring, parse and error-check it
     if (window.location.search.length) {
-      decodeURIComponent(window.location.search.substr(1)).split('&').forEach(i => {
+      decodeURIComponent(window.location.search.substring(1)).split('&').forEach(i => {
         const kv = i.split('=');
         kv[1].split(',').forEach(j => {
           if (j in filters[kv[0]]) {
@@ -90,10 +81,10 @@ export default class Heroes extends Component {
       });
     }
 
-    this.setState({filters});
+    this.setState({filters}, () => this.renderHeroes());
   }
 
-  initializeHeroes = () => (
+  initializeHeroes = () => {
     data.forEach(i => {
       const name = resolve(i.name);
       const star = i.id.match(/_\d/)[0][1];
@@ -115,8 +106,8 @@ export default class Heroes extends Component {
       const gender = resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + i.gender);
       const image = i.face_tex;
       this.state.heroes.push([name, star, clas, rarity, faction, gender, image,]);
-    })
-  )
+    });
+  }
 
   createFilterURL = () => {
     const params = [];
@@ -186,26 +177,33 @@ export default class Heroes extends Component {
   renderHeroes = () => {
     const filtered = this.filterHeroes();
     this.setState({
-      render: filtered.map(i => (
-        <LinkContainer key={`${i[0]}${i[1]}${i[2]}`} to={`/cqdb/heroes/${i[0]}&${i[1]}&${i[2]}`}>
-          <ListGroupItem>
-            <Media>
-             <Media.Left>
-                <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${i[6]}.png`} alt='' />
-              </Media.Left>
-              <Media.Body>
-                <Media.Heading>{`${i[0]} (${i[1]}★)`}</Media.Heading>
-                <p>{`${i[2]} | ${i[3]} | ${i[4]} | ${i[5]}`}</p>
-              </Media.Body>
-            </Media>
-          </ListGroupItem>
-        </LinkContainer>
-      )),
+      render: filtered.map(i => {
+        const identifier = i.slice(0, i.length - 4);
+        return (
+          <LinkContainer key={identifier.join('')} to={`/cqdb/heroes/${identifier.join('&')}`}>
+            <ListGroupItem>
+              <Media>
+                <Media.Left>
+                  <img src={`https://raw.githubusercontent.com/Johj/fergus/master/assets/heroes/${i[6]}.png`} alt='' />
+                </Media.Left>
+                <Media.Body>
+                  <Media.Heading>{`${i[0]} (${i[1]}★)`}</Media.Heading>
+                  <p>{i.slice(2, i.length - 1).join(' | ')}</p>
+                </Media.Body>
+              </Media>
+            </ListGroupItem>
+          </LinkContainer>
+        );
+      }),
     }); 
   }
 
+  renderHero = (index) => {
+    return this.state.render[index];
+  }
+
   render = () => {
-    console.log('render');
+    // console.log('render');
     return (
       <div>
         <Accordion>
@@ -215,7 +213,9 @@ export default class Heroes extends Component {
         </Accordion>
         <Accordion>
           <Panel header={`Heroes (${this.state.render.length})`}>
-            <ListGroup>{this.state.render}</ListGroup>
+            <ListGroup>
+              <ReactList itemRenderer={this.renderHero} length={this.state.render.length} minSize={10} />
+            </ListGroup>
           </Panel>
         </Accordion>
       </div>
