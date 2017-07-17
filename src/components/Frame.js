@@ -1,7 +1,7 @@
 import React, { Component, } from 'react';
 import {
-  Col,
   Breadcrumb,
+  Col,
   Nav,
   Navbar,
   NavItem,
@@ -12,7 +12,7 @@ import { LinkContainer, } from 'react-router-bootstrap';
 export default class Frame extends Component {
   navigationBar = () => {
     return (
-      <Navbar inverse collapseOnSelect>
+      <Navbar collapseOnSelect fixedTop inverse>
         <Navbar.Header>
           <LinkContainer to='/cqdb'>
             <Navbar.Brand>
@@ -92,9 +92,12 @@ export default class Frame extends Component {
     return (
       <div>
         {this.navigationBar()}
-        {this.breadCrumb(window.location.pathname)}
-        {this.props.children}
-        {this.footer()}
+        <div className='content'>
+          <br /><br /><br /><p />
+          {this.breadCrumb(window.location.pathname)}
+          {this.props.children}
+          {this.footer()}
+        </div>
       </div>
     );
   }

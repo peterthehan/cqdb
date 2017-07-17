@@ -2,7 +2,7 @@
   //outline: 1px solid red;
 }
 
-body {
+.content {
   margin: 0;
   padding: 0;
   padding-left: 20%;
@@ -11,7 +11,7 @@ body {
 }
 
 @media (max-width: 767px) {
-  body {
+  .content {
     padding-left: 2%;
     padding-right: 2%;
   }
