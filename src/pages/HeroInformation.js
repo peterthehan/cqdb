@@ -91,7 +91,6 @@ export default class HeroInformation extends Component {
           .filter(j => parseInt(j.grade, 10) === i && j.reqhero.includes(hero.id))[0];
       });
 
-console.log(skin);
     const prevHero = this.findHero(hero.id, 'upgradetargethero');
     const nextHero = !hero.upgradetargethero ? null : this.findHero(hero.upgradetargethero, 'id');
     
@@ -125,20 +124,22 @@ console.log(skin);
   renderInformation = () => {
     const grid = (
       <Row key='grid'>
-        <Col xs={12} md={6}>
+        <Col md={12} sm={12} xs={12}>
+          {this.renderGeneral()}
+        </Col>
+        <Col md={6} sm={12} xs={12}>
           {this.renderBlock()}
         </Col>
-        <Col xs={12} md={6}>
+        <Col md={6} sm={12} xs={12}>
           {this.renderSbws()}
         </Col>
-        <Col xs={12} md={6}>
+        <Col md={6} sm={12} xs={12}>
           {this.renderSkins()}
         </Col>
       </Row>
     );
 
     const render = [
-      this.renderGeneral(),
       grid,
       this.renderPagers(),
     ];
@@ -157,11 +158,11 @@ console.log(skin);
               <img alt='' src={imagePath('fergus', `assets/heroes/${this.state.hero.face_tex}.png`)} />
             </Media.Right>
             <Row>
-              <Col xs={6} md={3}>
+              <Col md={3} sm={6} xs={6}>
                 <Media.Heading>Class</Media.Heading>
                 <p>{resolve('TEXT_CLASS_' + this.state.hero.classid.substring(4))}</p>
               </Col>
-              <Col xs={6} md={3}>
+              <Col md={3} sm={6} xs={6}>
                 <Media.Heading>Rarity</Media.Heading>
                 <p>
                   {
@@ -176,7 +177,7 @@ console.log(skin);
                   }
                 </p>
               </Col>
-              <Col xs={6} md={3}>
+              <Col md={3} sm={6} xs={6}>
                 <Media.Heading>Faction</Media.Heading>
                 <p>
                   {
@@ -189,7 +190,7 @@ console.log(skin);
                   }
                 </p>
               </Col>
-              <Col xs={6} md={3}>
+              <Col md={3} sm={6} xs={6}>
                 <Media.Heading>Gender</Media.Heading>
                 <p>{resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + this.state.hero.gender)}</p>
               </Col>
@@ -208,7 +209,7 @@ console.log(skin);
       // key does not resolve as-is, modification necessary
       passive = (
         <Row>
-          <Col xs={12} md={12}>
+          <Col md={12} sm={12} xs={12}>
             <Media.Heading>
               {
                 skill_subname + ' (' +
@@ -250,7 +251,7 @@ console.log(skin);
     console.log(i.name, index);
     return (
       <Tab eventKey={index} key={i.grade} title={`${i.grade}★`}>
-        <div style={{paddingBottom: 15, paddingTop: 15,}}>
+        <div style={{paddingTop: 15,}}>
           <Media>
             <Media.Body>
               <Media.Heading>
@@ -262,19 +263,19 @@ console.log(skin);
               <img alt='' src={imagePath('fergus', `assets/sbws/${i.skin_tex}.png`)} />
             </Media.Right>
             <Row>
-              <Col xs={6} md={3}>
+              <Col md={6} sm={6} xs={6}>
                 <Media.Heading>Category</Media.Heading>
                 <p>{resolve('TEXT_WEAPON_CATE_' + i.categoryid.substring(4))}</p>
               </Col>
-              <Col xs={6} md={3}>
+              <Col md={6} sm={6} xs={6}>
                 <Media.Heading>Range</Media.Heading>
                 <p>{i.range}</p>
               </Col>
-              <Col xs={6} md={3}>
+              <Col md={6} sm={6} xs={6}>
                 <Media.Heading>Atk. Power</Media.Heading>
                 <p>{i.attdmg}</p>
               </Col>
-              <Col xs={6} md={3}>
+              <Col md={6} sm={6} xs={6}>
                 <Media.Heading>Atk. Speed</Media.Heading>
                 <p>{i.attspd}</p>
               </Col>
@@ -322,7 +323,7 @@ console.log(skin);
             <Media.Heading>{resolve(i.costume_name)}</Media.Heading>
             <p>{stats.join(', ')}</p>
             <Row>
-              <Col xs={6} md={6}>
+              <Col md={6} sm={6} xs={6}>
                 <Media.Heading>Sell</Media.Heading>
                 <p>{i.sell_price}</p>
               </Col>

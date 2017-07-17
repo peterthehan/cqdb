@@ -10,6 +10,7 @@ import {
   ListGroupItem,
   Media,
   Panel,
+  Row,
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
@@ -207,7 +208,8 @@ export default class Heroes extends Component {
   render = () => {
     // console.log('render');
     return (
-      <div>
+      <Row>
+        <Col md={12} sm={12} xs={12}>
         <Accordion>
           <Panel header='Filters'>
             <Form horizontal>{this.renderCheckboxes()}</Form>
@@ -218,7 +220,8 @@ export default class Heroes extends Component {
             <ReactList itemRenderer={this.renderHero} length={this.state.render.length} minSize={10} />
           </Panel>
         </Accordion>
-      </div>
+        </Col>
+      </Row>
     );
   }
 }

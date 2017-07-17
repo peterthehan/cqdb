@@ -2,6 +2,7 @@ import React, { Component, } from 'react';
 import {
   Breadcrumb,
   Col,
+  Grid,
   Nav,
   Navbar,
   NavItem,
@@ -10,7 +11,7 @@ import {
 import { LinkContainer, } from 'react-router-bootstrap';
 
 export default class Frame extends Component {
-  navigationBar = () => {
+  renderNavbar = () => {
     return (
       <Navbar collapseOnSelect fixedTop inverse>
         <Navbar.Header>
@@ -39,48 +40,53 @@ export default class Frame extends Component {
     );
   }
 
-  breadCrumb = (path) => {
-    const pathArray = path.split('/').splice(1);
-    const breadCrumbs = pathArray.map((currentValue, index) => {
-      let label;
-      if (currentValue.includes('&')) {
-        const temp = currentValue.split('&');
-        label = `${temp[0]} (${temp[1]}★)`;
-      } else {
-        label = currentValue;
-      }
-      label = decodeURIComponent(label);
+  renderBreadCrumb = (i, index, pathArray) => {
+    let label;
+    if (i.includes('&')) {
+      const temp = i.split('&');
+      label = `${temp[0]} (${temp[1]}★)`;
+    } else {
+      label = i;
+    }
+    label = decodeURIComponent(label);
 
-      if (pathArray.length - 1 === index) {
-        return (
-          <Breadcrumb.Item key={index} active>
-            {label}
-          </Breadcrumb.Item>
-        );
-      }
-
+    if (pathArray.length - 1 === index) {
       return (
-        <LinkContainer key={index} to={'/' + pathArray.slice(0, index + 1).join('/')}>
-          <Breadcrumb.Item key={index}>
-            {label}
-          </Breadcrumb.Item>
-        </LinkContainer>
+        <Breadcrumb.Item active key={index}>
+          {label}
+        </Breadcrumb.Item>
       );
-    });
+    }
 
     return (
-      <Breadcrumb>
-        {breadCrumbs}
-      </Breadcrumb>
+      <LinkContainer key={index} to={'/' + pathArray.slice(0, index + 1).join('/')}>
+        <Breadcrumb.Item key={index}>
+          {label}
+        </Breadcrumb.Item>
+      </LinkContainer>
     );
   }
 
-  footer = () => {
+  renderBreadCrumbs = () => {
+    const path = window.location.pathname;
+    const pathArray = path.split('/').splice(1);
+    return (
+      <Row>
+        <Col md={12} sm={12} xs={12}>
+        <Breadcrumb>
+          {pathArray.map((i, j) => this.renderBreadCrumb(i, j, pathArray))}
+        </Breadcrumb>
+        </Col>
+      </Row>
+    );
+  }
+
+  renderFooter = () => {
     return (
       <Row>
         <Col md={12} sm={12} xs={12}>
           <hr />  
-          <p style={{textAlign: 'center'}}>
+          <p style={{textAlign: 'center',}}>
             Made with ❤ by <a href='https://github.com/Johj'>Peter Han</a>.
           </p>
         </Col>
@@ -91,12 +97,14 @@ export default class Frame extends Component {
   render = () => {
     return (
       <div>
-        {this.navigationBar()}
+        {this.renderNavbar()}
+        <br /><br /><br /><p />
         <div className='content'>
-          <br /><br /><br /><p />
-          {this.breadCrumb(window.location.pathname)}
-          {this.props.children}
-          {this.footer()}
+          <Grid fluid>
+            {this.renderBreadCrumbs(window.location.pathname)}
+            {this.props.children}
+            {this.renderFooter()}
+          </Grid>
         </div>
       </div>
     );

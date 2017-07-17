@@ -22,50 +22,51 @@ export default class Home extends Component {
 
   render = () => {
     return (
-      <div>
-        <Alert>
-          The site is currently a work-in-progress so apologies for any missing information or inconveniences.
-          Feel free to report bugs or suggest features <strong><a href='https://github.com/Johj/cqdb/issues'>here</a></strong>.
-        </Alert>
-        <Image alt='' responsive src={imagePath('cqdb', 'src/assets/banner.png')} />
-        <Panel>
-          <Media.Heading>Hello!</Media.Heading>
-          <p>
-            Welcome to the <a href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>Crusaders Quest</a> Database!
-          </p>
-        </Panel>
-        <Row>
-          <Col md={8} sm={12} xs={12}>
-            <Panel>
-              <Carousel>
-                {Array.from({length: 6}, (v, i) => i).slice(1).map(this.renderCarouselItem)}
-              </Carousel>
-            </Panel>
-          </Col>
-          <Col md={4} sm={12} xs={12}>
-            <Panel>
-              <Media.Heading>Join Us!</Media.Heading>
-              <p>Bot and cqdb Development Server</p>
-              <a href='https://discord.gg/WjEFnzC'>
-                <img alt='' src='https://discordapp.com/api/guilds/258167954913361930/embed.png?style=banner2' width='100%' />
-              </a>
-              <p></p>
-              <p>Official Server</p>
-              <a href='https://discord.gg/6TRnyhj'>
-                <img alt='' src='https://discordapp.com/api/guilds/206599473282023424/embed.png?style=banner2' width='100%' />
-              </a>
-            </Panel>
-          </Col>
-          <Col md={4} sm={12} xs={12}>
-            <Panel>
-              <Media.Heading>
-                Add <a href='https://github.com/Johj/fergus'>Fergus</a> To Your Discord Server
-              </Media.Heading>
-              <a href='https://goo.gl/nDluCQ'>Invite Link</a>
-            </Panel>
-          </Col>
-        </Row>
-      </div>
+      <Row>
+        <Col md={12} sm={12} xs={12}>
+          <Alert>
+            The site is currently a work-in-progress so apologies for any missing information or inconveniences.
+            Feel free to report bugs or suggest features <strong><a href='https://github.com/Johj/cqdb/issues'>here</a></strong>.
+          </Alert>
+          <Image alt='' responsive src={imagePath('cqdb', 'src/assets/banner.png')} />
+
+          <Panel>
+            <Media.Heading>Hello!</Media.Heading>
+            <p>
+              Welcome to the <a href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>Crusaders Quest</a> Database!
+            </p>
+          </Panel>
+        </Col>
+        <Col md={8} sm={12} xs={12}>
+          <Panel>
+            <Carousel>
+              {Array.from({length: 6}, (v, i) => i).slice(1).map(this.renderCarouselItem)}
+            </Carousel>
+          </Panel>
+        </Col>
+        <Col md={4} sm={12} xs={12}>
+          <Panel>
+            <Media.Heading>Join Us!</Media.Heading>
+            <p>Bot and cqdb Development Server</p>
+            <a href='https://discord.gg/WjEFnzC'>
+              <img alt='' src='https://discordapp.com/api/guilds/258167954913361930/embed.png?style=banner2' width='100%' />
+            </a>
+            <p></p>
+            <p>Official Server</p>
+            <a href='https://discord.gg/6TRnyhj'>
+              <img alt='' src='https://discordapp.com/api/guilds/206599473282023424/embed.png?style=banner2' width='100%' />
+            </a>
+          </Panel>
+        </Col>
+        <Col md={4} sm={12} xs={12}>
+          <Panel>
+            <Media.Heading>
+              Add <a href='https://github.com/Johj/fergus'>Fergus</a> To Your Discord Server
+            </Media.Heading>
+            <a href='https://goo.gl/nDluCQ'>Invite Link</a>
+          </Panel>
+        </Col>
+      </Row>
     );
   }
 }
