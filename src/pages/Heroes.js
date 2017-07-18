@@ -55,22 +55,85 @@ export default class Heroes extends Component {
   }
 
   componentWillMount = () => {
-    console.log('Heroes', 'componentWillMount');
-    this.initializeFilters();
-    this.initializeHeroes();
+    //console.log('Heroes', 'componentWillMount');
+    const processedData = this.initializeHeroes();
+    const filters = this.initializeFilters();
+    const render = this.renderHeroes(processedData, filters);
+    this.setState({
+      filters: filters,
+      heroes: processedData,
+      render: render,
+    });
   }
 
   componentDidMount = () => {
-    console.log('Heroes', 'componentDidMount');
+    //console.log('Heroes', 'componentDidMount');
+    //window.addEventListener('scroll', this.handleScroll);
   }
 
   componentWillReceiveProps = () => {
-    console.log('Heroes', 'componentWillReceiveProps');
-    this.initializeFilters();
+    //console.log('Heroes', 'componentWillReceiveProps');
+    const filters = this.initializeFilters();
+    const render = this.renderHeroes(this.state.heroes, filters);
+    this.setState({
+      filters: filters,
+      render: render,
+    });
   }
 
   componentWillUpdate = () => {
-    console.log('Heroes', 'componentWillUpdate');
+    //console.log('Heroes', 'componentWillUpdate');
+  }
+
+  componentWillUnmount = () => {
+    //console.log('Heroes', 'componentDidUnmount');
+    //window.removeEventListener('scroll', this.handleScroll);
+  }
+
+  initializeHeroes = () => {
+    const processedData = data.map(i => {
+      const name = resolve(i.name);
+      const star = i.id.match(/_\d/)[0][1];
+      const clas = resolve('TEXT_CLASS_' + i.classid.substring(4));
+      const rarity = resolve(
+        'TEXT_CONFIRM_SELL_' +
+        (i.rarity === 'LEGENDARY' 
+          ? i.isgachagolden ? 'IN_GACHA' : 'LAGENDARY'
+          : i.rarity
+        ) +
+        '_HERO'
+      );
+      const faction = ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(i.domain) || !i.domain
+        ? 'Unknown' // remove unreleased domains
+        : resolve(i.domain === 'NONEGROUP'
+            ? 'TEXT_CHAMP_DOMAIN_' + i.domain + '_NAME'
+            : 'TEXT_CHAMPION_DOMAIN_' + i.domain
+          );
+      const gender = resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + i.gender);
+      const image = i.face_tex;
+
+      const filterItems = [name, star, clas, rarity, faction, gender, image,];
+      const identifier = filterItems.slice(0, filterItems.length - 4);
+      const heroListItem = (
+        <LinkContainer key={identifier.join('')} to={`/cqdb/heroes/${identifier.join('&')}`}>
+          <ListGroupItem>
+            <Media>
+              <Media.Left>
+                <img alt='' src={imagePath('fergus', `assets/heroes/${filterItems[6]}.png`)} />
+              </Media.Left>
+              <Media.Body>
+                <Media.Heading>{`${filterItems[0]} (${filterItems[1]}★)`}</Media.Heading>
+                <p>{filterItems.slice(2, filterItems.length - 1).join(' | ')}</p>
+              </Media.Body>
+            </Media>
+          </ListGroupItem>
+        </LinkContainer>
+      );
+
+      return [filterItems, heroListItem];
+    });
+
+    return processedData;
   }
 
   initializeFilters = () => {
@@ -93,32 +156,30 @@ export default class Heroes extends Component {
       });
     }
 
-    this.setState({filters}, () => this.renderHeroes());
+    return filters;
   }
 
-  initializeHeroes = () => {
-    data.forEach(i => {
-      const name = resolve(i.name);
-      const star = i.id.match(/_\d/)[0][1];
-      const clas = resolve('TEXT_CLASS_' + i.classid.substring(4));
-      const rarity = resolve(
-        'TEXT_CONFIRM_SELL_' +
-        (i.rarity === 'LEGENDARY' 
-          ? i.isgachagolden ? 'IN_GACHA' : 'LAGENDARY'
-          : i.rarity
-        ) +
-        '_HERO'
-      );
-      const faction = ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(i.domain) || !i.domain
-        ? 'Unknown' // remove unreleased domains
-        : resolve(i.domain === 'NONEGROUP'
-            ? 'TEXT_CHAMP_DOMAIN_' + i.domain + '_NAME'
-            : 'TEXT_CHAMPION_DOMAIN_' + i.domain
-          );
-      const gender = resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + i.gender);
-      const image = i.face_tex;
-      this.state.heroes.push([name, star, clas, rarity, faction, gender, image,]);
-    });
+  filterHeroes = (data, filters) => {
+    let filtered = data;
+    for (let i of Object.keys(filters)) {
+      const currentFilters = Object.keys(filters[i]).filter(j => {
+        return filters[i][j];
+      });
+
+      if (!currentFilters.length) {
+        continue;
+      }
+
+      filtered = filtered
+        .filter(([filterItems, _])=> filterItems.some(k => currentFilters.includes(k)));
+    }
+
+    return filtered.map(([_, heroListItem]) => heroListItem);
+  }
+
+  renderHeroes = (data, filters) => {
+    const filtered = this.filterHeroes(data, filters);
+    return filtered;
   }
 
   createFilterURL = () => {
@@ -141,9 +202,12 @@ export default class Heroes extends Component {
     const arr = e.target.name.split('&');
     const filters = this.state.filters;
     filters[arr[0]][arr[1]] = e.target.checked;
-    this.setState({filters}, () => {
+
+    this.setState({
+      filters: filters,
+      render: this.renderHeroes(this.state.heroes, filters),
+    }, () => {
       window.history.pushState('', '', `?${this.createFilterURL()}`);
-      this.renderHeroes();
     });
   }
 
@@ -160,8 +224,8 @@ export default class Heroes extends Component {
     return (
       Object.keys(items).map(i => (
         <FormGroup key={i}>
-          <Col componentClass={ControlLabel} md={1} sm={2} xs={12}>{i}</Col>
-          <Col md={11} sm={10} xs={12}>
+          <Col componentClass={ControlLabel} lg={1} md={2} sm={2} xs={12}>{i}</Col>
+          <Col lg={11} md={10} sm={10} xs={12}>
             {items[i].map(j => this.renderCheckbox(i, j))}
           </Col>
         </FormGroup> 
@@ -169,53 +233,18 @@ export default class Heroes extends Component {
     );
   }
 
-  filterHeroes = () => {
-    let filtered = this.state.heroes;
-    for (let i of Object.keys(this.state.filters)) {
-      const currentFilters = Object.keys(this.state.filters[i]).filter(j => {
-        return this.state.filters[i][j];
-      });
-
-      if (!currentFilters.length) {
-        continue;
-      }
-
-      filtered = filtered.filter(j => j.some(k => currentFilters.includes(k)));
-    }
-
-    return filtered;
-  }
-
-  renderHeroes = () => {
-    const filtered = this.filterHeroes();
-    this.setState({
-      render: filtered.map(i => {
-        const identifier = i.slice(0, i.length - 4);
-        return (
-          <LinkContainer key={identifier.join('')} to={`/cqdb/heroes/${identifier.join('&')}`}>
-            <ListGroupItem>
-              <Media>
-                <Media.Left>
-                  <img src={imagePath('fergus', `assets/heroes/${i[6]}.png`)} alt='' />
-                </Media.Left>
-                <Media.Body>
-                  <Media.Heading>{`${i[0]} (${i[1]}★)`}</Media.Heading>
-                  <p>{i.slice(2, i.length - 1).join(' | ')}</p>
-                </Media.Body>
-              </Media>
-            </ListGroupItem>
-          </LinkContainer>
-        );
-      }),
-    }); 
-  }
+  // handleScroll = () => {
+  //   if(this.test == null) return;
+  //   const [start, end] = this.test.getVisibleRange();
+  //   console.log('visible', start)
+  // }
 
   renderHero = (index) => {
     return this.state.render[index];
   }
 
   render = () => {
-    console.log('Heroes', 'render');
+    //console.log('Heroes', 'render');
     return (
       <Row>
         <Col md={12} sm={12} xs={12}>
@@ -224,7 +253,11 @@ export default class Heroes extends Component {
           </Panel>
           <Panel collapsible defaultExpanded header={`Heroes (${this.state.render.length})`}>
             <ListGroup fill>
-              <ReactList itemRenderer={this.renderHero} length={this.state.render.length} minSize={10} />
+              <ReactList
+                itemRenderer={this.renderHero}
+                length={this.state.render.length}
+                minSize={10}
+              />
             </ListGroup>
           </Panel>
         </Col>
