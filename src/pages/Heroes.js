@@ -16,6 +16,7 @@ import { LinkContainer, } from 'react-router-bootstrap';
 
 import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
+import { toTitleCase, } from '../util/toTitleCase';
 const data = require('../Decrypted/get_character_visual.json')
   .character_visual
   .filter(i => i.type === 'HERO');
@@ -56,14 +57,10 @@ export default class Heroes extends Component {
 
   componentWillMount = () => {
     //console.log('Heroes', 'componentWillMount');
-    const processedData = this.initializeHeroes();
+    const heroes = this.initializeHeroes();
     const filters = this.initializeFilters();
-    const render = this.renderHeroes(processedData, filters);
-    this.setState({
-      filters: filters,
-      heroes: processedData,
-      render: render,
-    });
+    const render = this.renderHeroes(heroes, filters);
+    this.setState({ filters, heroes, render, });
   }
 
   componentDidMount = () => {
@@ -75,10 +72,7 @@ export default class Heroes extends Component {
     //console.log('Heroes', 'componentWillReceiveProps');
     const filters = this.initializeFilters();
     const render = this.renderHeroes(this.state.heroes, filters);
-    this.setState({
-      filters: filters,
-      render: render,
-    });
+    this.setState({ filters, render, });
   }
 
   componentWillUpdate = () => {
@@ -94,43 +88,37 @@ export default class Heroes extends Component {
     const processedData = data.map(i => {
       const name = resolve(i.name);
       const star = i.id.match(/_\d/)[0][1];
-      const clas = resolve('TEXT_CLASS_' + i.classid.substring(4));
+      const className = resolve(`TEXT_CLASS_${i.classid.substring(4)}`);
       const rarity = resolve(
-        'TEXT_CONFIRM_SELL_' +
-        (i.rarity === 'LEGENDARY' 
-          ? i.isgachagolden ? 'IN_GACHA' : 'LAGENDARY'
-          : i.rarity
-        ) +
-        '_HERO'
+        `TEXT_CONFIRM_SELL_${i.rarity === 'LEGENDARY' ? (i.isgachagolden ? 'IN_GACHA' : 'LAGENDARY') : i.rarity}_HERO`
       );
-      const faction = ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(i.domain) || !i.domain
+      const faction = !i.domain || ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(i.domain)
         ? 'Unknown' // remove unreleased domains
-        : resolve(i.domain === 'NONEGROUP'
-            ? 'TEXT_CHAMP_DOMAIN_' + i.domain + '_NAME'
-            : 'TEXT_CHAMPION_DOMAIN_' + i.domain
+        : resolve(
+            i.domain === 'NONEGROUP' ? `TEXT_CLASS_DOMAIN_${i.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${i.domain}`
           );
-      const gender = resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + i.gender);
+      const gender = resolve(`TEXT_EXPLORE_TOOLTIP_GENDER_${i.gender}`);
       const image = i.face_tex;
 
-      const filterItems = [name, star, clas, rarity, faction, gender, image,];
-      const identifier = filterItems.slice(0, filterItems.length - 4);
+      const heroFilter = [name, star, className, rarity, faction, gender, image,];
+      const identifier = heroFilter.slice(0, heroFilter.length - 4);
       const heroListItem = (
         <LinkContainer key={identifier.join('')} to={`/cqdb/heroes/${identifier.join('&')}`}>
           <ListGroupItem>
             <Media>
               <Media.Left>
-                <img alt='' src={imagePath('fergus', `assets/heroes/${filterItems[6]}.png`)} />
+                <img alt='' src={imagePath('fergus', `assets/heroes/${heroFilter[6]}.png`)} />
               </Media.Left>
               <Media.Body>
-                <Media.Heading>{`${filterItems[0]} (${filterItems[1]}★)`}</Media.Heading>
-                <p>{filterItems.slice(2, filterItems.length - 1).join(' | ')}</p>
+                <Media.Heading>{`${heroFilter[0]} (${heroFilter[1]}★)`}</Media.Heading>
+                <p>{heroFilter.slice(2, heroFilter.length - 1).join(' | ')}</p>
               </Media.Body>
             </Media>
           </ListGroupItem>
         </LinkContainer>
       );
 
-      return [filterItems, heroListItem];
+      return [heroFilter, heroListItem];
     });
 
     return processedData;
@@ -148,54 +136,45 @@ export default class Heroes extends Component {
     if (window.location.search.length) {
       decodeURIComponent(window.location.search.substring(1)).split('&').forEach(i => {
         const kv = i.split('=');
-        kv[1].split(',').forEach(j => {
-          if (j in filters[kv[0]]) {
-            filters[kv[0]][j] = true;
-          }
-        });
+        const key = toTitleCase(kv[0]);
+        if (filters[key]) {
+          const keys = kv[1].toLowerCase().split(',');
+          Object.keys(filters[key])
+            .filter(j => keys.includes(j.toLowerCase()))
+            .forEach(j => filters[key][j] = true);
+        }
       });
+
+      // update url
+      window.history.replaceState('', '', `?${this.createFilterURL(filters)}`);
     }
 
     return filters;
   }
 
-  filterHeroes = (data, filters) => {
+  renderHeroes = (data, filters) => {
     let filtered = data;
-    for (let i of Object.keys(filters)) {
-      const currentFilters = Object.keys(filters[i]).filter(j => {
-        return filters[i][j];
-      });
-
-      if (!currentFilters.length) {
-        continue;
+    Object.keys(filters).forEach(i => {
+      const currentFilters = Object.keys(filters[i]).filter(j => filters[i][j]);
+      if (currentFilters.length) {
+        filtered = filtered
+          .filter(([heroFilter, _]) => heroFilter.some(j => currentFilters.includes(j)));
       }
-
-      filtered = filtered
-        .filter(([filterItems, _])=> filterItems.some(k => currentFilters.includes(k)));
-    }
+    });
 
     return filtered.map(([_, heroListItem]) => heroListItem);
   }
 
-  renderHeroes = (data, filters) => {
-    const filtered = this.filterHeroes(data, filters);
-    return filtered;
-  }
-
-  createFilterURL = () => {
-    const params = [];
-    for (let i of Object.keys(this.state.filters)) {
-      const arr = Object.keys(this.state.filters[i]).filter(j => {
-        return this.state.filters[i][j]
-      })
-
-      if (!arr.length) {
-        continue;
+  createFilterURL = (filters) => {
+    const filterURL = [];
+    Object.keys(filters).forEach(i => {
+      const trueKeys = Object.keys(filters[i]).filter(j => filters[i][j]);
+      if (trueKeys.length) {
+        filterURL.push(`${i}=${trueKeys.join(',')}`);
       }
+    });
 
-      params.push(`${i}=${arr.join(',')}`);
-    }
-    return params.join('&');
+    return filterURL.join('&');
   }
 
   handleCheckbox = (e) => {
@@ -207,7 +186,7 @@ export default class Heroes extends Component {
       filters: filters,
       render: this.renderHeroes(this.state.heroes, filters),
     }, () => {
-      window.history.replaceState('', '', `?${this.createFilterURL()}`);
+      window.history.replaceState('', '', `?${this.createFilterURL(this.state.filters)}`);
     });
   }
 
@@ -234,9 +213,9 @@ export default class Heroes extends Component {
   }
 
   // handleScroll = () => {
-  //   if(this.test == null) return;
+  //   if (!this.test) return;
   //   const [start, end] = this.test.getVisibleRange();
-  //   console.log('visible', start)
+  //   console.log('visible', start);
   // }
 
   renderHero = (index) => {
