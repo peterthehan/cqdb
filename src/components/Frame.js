@@ -11,6 +11,7 @@ import { LinkContainer, } from 'react-router-bootstrap';
 
 const pages = [
   'Heroes',
+  'Goddesses',
   'Bread',
   'About',
 ];
