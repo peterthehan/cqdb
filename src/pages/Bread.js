@@ -12,43 +12,18 @@ import {
   Panel,
   Row,
 } from 'react-bootstrap';
-import { LinkContainer, } from 'react-router-bootstrap';
 
 import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
 import { toTitleCase, } from '../util/toTitleCase';
-const data = require('../Decrypted/get_character_visual.json')
-  .character_visual
-  .filter(i => i.type === 'HERO');
+const data = require('../Decrypted/get_bread.json').bread;
 
 // for creating checkboxes
 const checkboxes = {
-  Star: ['1', '2', '3', '4', '5', '6',],
-  Class: ['Warrior', 'Paladin', 'Archer', 'Hunter', 'Wizard', 'Priest',],
-  Rarity: [
-    'Legendary Hero',
-    'Contract only Hero',
-    'Promotion Hero',
-    'Secret Hero',
-    'Normal Hero',
-    'Supply Hero',
-  ],
-  Faction: [
-    'Grancia Empire',
-    'Eastern Kingdom - Ryu',
-    'Neth Empire',
-    'Southwestern Alliance',
-    'Eastern Kingdom - Han',
-    'Roman Republic',
-    'Heroes of Freedom',
-    'Pumpkin City',
-    'Supply all forces',
-    'Unknown',
-  ],
-  Gender: ['Male', 'Female',],
+  Star: Array.from({length: 7}, (v, i) => i).slice(1).map(i => i.toString()),
 };
 
-export default class Heroes extends Component {
+export default class Bread extends Component {
   state = {
     filters: {},
     items: [],
@@ -56,7 +31,7 @@ export default class Heroes extends Component {
   }
 
   componentWillMount = () => {
-    //console.log('Heroes', 'componentWillMount');
+    //console.log('Bread', 'componentWillMount');
     const items = this.initializeItems();
     const filters = this.initializeFilters();
     const render = this.renderItems(items, filters);
@@ -64,59 +39,55 @@ export default class Heroes extends Component {
   }
 
   componentDidMount = () => {
-    //console.log('Heroes', 'componentDidMount');
+    //console.log('Bread', 'componentDidMount');
     //window.addEventListener('scroll', this.handleScroll);
   }
 
   componentWillReceiveProps = () => {
-    //console.log('Heroes', 'componentWillReceiveProps');
+    //console.log('Bread', 'componentWillReceiveProps');
     const filters = this.initializeFilters();
     const render = this.renderItems(this.state.items, filters);
     this.setState({ filters, render, });
   }
 
   componentWillUpdate = () => {
-    //console.log('Heroes', 'componentWillUpdate');
+    //console.log('Bread', 'componentWillUpdate');
   }
 
   componentWillUnmount = () => {
-    //console.log('Heroes', 'componentDidUnmount');
+    //console.log('Bread', 'componentDidUnmount');
     //window.removeEventListener('scroll', this.handleScroll);
   }
 
   initializeItems = () => {
+    const unique = {};
     const processedData = data.map(i => {
       const name = resolve(i.name);
-      const star = i.id.match(/_\d/)[0][1];
-      const className = resolve(`TEXT_CLASS_${i.classid.substring(4)}`);
-      const rarity = resolve(
-        `TEXT_CONFIRM_SELL_${i.rarity === 'LEGENDARY' ? (i.isgachagolden ? 'IN_GACHA' : 'LAGENDARY') : i.rarity}_HERO`
-      );
-      const faction = !i.domain || ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(i.domain)
-        ? 'Unknown' // remove unreleased domains
-        : resolve(
-            i.domain === 'NONEGROUP' ? `TEXT_CLASS_DOMAIN_${i.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${i.domain}`
-          );
-      const gender = resolve(`TEXT_EXPLORE_TOOLTIP_GENDER_${i.gender}`);
-      const image = i.face_tex;
+      const star = i.grade.toString();
+      const value = i.trainpoint;
+      const rate = `${parseInt(i.critprob * 100, 10)}%`;
+      const sell = `${i.sellprice} gold`;
+      const image = i.texture;
 
-      const filters = [name, star, className, rarity, faction, gender, image,];
-      const identifier = filters.slice(0, filters.length - 4);
+      unique[rate] = true;
+
+      const filters = [name, star, value, rate, sell, image,];
+      const identifier = filters.slice(0, 2);
       const listItem = (
-        <LinkContainer key={identifier.join('')} to={`/cqdb/heroes/${identifier.join('&')}`}>
-          <ListGroupItem>
-            <Media>
-              <Media.Left>
-                <img alt='' src={imagePath('fergus', `assets/heroes/${filters[filters.length - 1]}.png`)} />
-              </Media.Left>
-              <Media.Body>
-                <Media.Heading>{`${filters[0]} (${filters[1]}★)`}</Media.Heading>
-                <p>{filters.slice(2, filters.length - 1).join(' | ')}</p>
-              </Media.Body>
-            </Media>
-          </ListGroupItem>
-        </LinkContainer>
+        <ListGroupItem key={identifier.join('')}>
+          <Media>
+            <Media.Left>
+              <img alt='' src={imagePath('fergus', `assets/bread/${filters[filters.length - 1]}.png`)} />
+            </Media.Left>
+            <Media.Body>
+              <Media.Heading>{`${filters[0]} (${filters[1]}★)`}</Media.Heading>
+              <p>{filters.slice(2, filters.length - 1).join(' | ')}</p>
+            </Media.Body>
+          </Media>
+        </ListGroupItem>
       );
+
+      checkboxes['Rate'] = Object.keys(unique).sort();
 
       return [filters, listItem];
     });
@@ -223,19 +194,19 @@ export default class Heroes extends Component {
   }
 
   render = () => {
-    //console.log('Heroes', 'render');
+    //console.log('Bread', 'render');
     return (
       <Row>
         <Col md={12} sm={12} xs={12}>
           <Panel collapsible defaultExpanded header='Filters'>
             <Form horizontal>{this.renderCheckboxes()}</Form>
           </Panel>
-          <Panel collapsible defaultExpanded header={`Heroes (${this.state.render.length})`}>
+          <Panel collapsible defaultExpanded header={`Bread (${this.state.render.length})`}>
             <ListGroup fill>
               <ReactList
                 itemRenderer={this.renderItem}
                 length={this.state.render.length}
-                minSize={parseInt(this.state.items.length / 4, 10)}
+                minSize={10}
               />
             </ListGroup>
           </Panel>
