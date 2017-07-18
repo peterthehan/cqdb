@@ -207,7 +207,7 @@ export default class Heroes extends Component {
       filters: filters,
       render: this.renderHeroes(this.state.heroes, filters),
     }, () => {
-      window.history.pushState('', '', `?${this.createFilterURL()}`);
+      window.history.replaceState('', '', `?${this.createFilterURL()}`);
     });
   }
 
