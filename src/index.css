@@ -22,7 +22,16 @@ body {
 }
 
 .panel-title a {
-    display: block;
-    margin: -10px -15px;
-    padding: 10px 15px;
+  display: block;
+  margin: -10px -15px;
+  padding: 10px 15px;
+}
+
+.navbar-brand {
+  align-items: center;
+  display: flex;
+}
+
+.navbar-brand>img {
+  padding: 7px 14px 7px 0px;
 }

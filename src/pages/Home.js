@@ -46,7 +46,7 @@ export default class Home extends Component {
         <Col lg={4} md={6} sm={12} xs={12}>
           <Panel>
             <Media.Heading>Join Us!</Media.Heading>
-            <p>Bot and cqdb Development Server</p>
+            <p>cqdb/Fergus Development Server</p>
             <a href='https://discord.gg/WjEFnzC'>
               <Image alt='' responsive src='https://discordapp.com/api/guilds/258167954913361930/embed.png?style=banner2' />
             </a>

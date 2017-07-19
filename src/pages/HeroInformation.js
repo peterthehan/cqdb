@@ -8,12 +8,16 @@ import {
   Panel,
   Row,
   Tab,
+  Table,
   Tabs,
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
+import { calculateStat, } from '../util/calculateStat';
 import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
+const berryData = require('../Decrypted/get_character_addstatmax.json')
+  .character_addstatmax;
 const heroData = require('../Decrypted/get_character_visual.json')
   .character_visual
   .filter(i => i.type === 'HERO');
@@ -27,6 +31,7 @@ const statData = require('../Decrypted/get_character_stat.json')
 
 export default class HeroInformation extends Component {
   state = {
+    berry: {},
     hero: {},
     pager: [],
     render: [],
@@ -64,9 +69,9 @@ export default class HeroInformation extends Component {
       for (let i of heroData) {
         const name = resolve(i.name);
         const star = i.id.match(/_\d/)[0][1];
-        const clas = resolve('TEXT_CLASS_' + i.classid.substring(4));
+        const className = resolve('TEXT_CLASS_' + i.classid.substring(4));
 
-        if ([name, star, clas].every(j => target.indexOf(j) > -1)) {
+        if ([name, star, className].every(j => target.indexOf(j) > -1)) {
           return i;
         }
       }
@@ -84,6 +89,9 @@ export default class HeroInformation extends Component {
     const hero = this.findHero(this.findTarget());
     const skin = skinData.filter(i => i.wearable_charid.includes(hero.id));
     const stat = statData.filter(i => i.id === hero.default_stat_id)[0];
+    const berry = stat.grade === 6 && hero.id !== 'CHA_WA_SUPPORT_6_1'
+      ? berryData.filter(i => i.id === stat.addstat_max_id)[0]
+      : {};
     const weapon = [6, 5, 4]
       .filter(i => i <= stat.grade)
       .map(i => {
@@ -99,27 +107,23 @@ export default class HeroInformation extends Component {
     if (prevHero) {
       const name = resolve(prevHero.name);
       const star = prevHero.id.match(/_\d/)[0][1];
-      const clas = resolve('TEXT_CLASS_' + prevHero.classid.substring(4));
+      const className = resolve('TEXT_CLASS_' + prevHero.classid.substring(4));
       const image = prevHero.face_tex;
 
-      pager.push([name, star, clas, image,]);
+      pager.push([name, star, className, image,]);
     }
     if (nextHero) {
       const name = resolve(nextHero.name);
       const star = nextHero.id.match(/_\d/)[0][1];
-      const clas = resolve('TEXT_CLASS_' + nextHero.classid.substring(4));
+      const className = resolve('TEXT_CLASS_' + nextHero.classid.substring(4));
       const image = nextHero.face_tex;
 
-      pager.push([name, star, clas, image,]);
+      pager.push([name, star, className, image,]);
     }
 
-    this.setState({
-      hero: hero,
-      pager: pager,
-      skin: skin,
-      stat: stat,
-      weapon: weapon,
-    }, () => this.renderInformation());
+    this.setState({berry, hero, pager, skin, stat, weapon,},
+      () => this.renderInformation()
+    );
   }
 
   renderInformation = () => {
@@ -127,6 +131,9 @@ export default class HeroInformation extends Component {
       <Row key='grid'>
         <Col md={12} sm={12} xs={12}>
           {this.renderGeneral()}
+        </Col>
+        <Col md={12} sm={12} xs={12}>
+          {this.renderStatsTable()}
         </Col>
         <Col md={6} sm={12} xs={12}>
           {this.renderBlock()}
@@ -200,6 +207,97 @@ export default class HeroInformation extends Component {
     );
   }
 
+  renderStats = (i) => {
+    return (
+      <tr key={Object.keys(i)}>
+        <td>{Object.keys(i)}</td>
+        {
+          Object.values(i)[0].map((j, index) => {
+            return (
+              <td key={index}>{j}</td>
+            );
+          })
+        }
+      </tr>
+    );
+  }
+
+  renderStatsTable = () => {
+    const level = this.state.stat.grade * 10;
+    const breadTraining = Array.from({length: this.state.stat.grade}, (v, i) => i).reverse();
+
+    // calculate bread training stats
+    const s = this.state.stat;
+    const calculated = breadTraining.map(i => {
+      return [
+        calculateStat(s.initialhp, s.growthhp, level, i),
+        calculateStat(s.initialattdmg, s.growthattdmg, level, i),
+        s.critprob,
+        s.critpower,
+        calculateStat(s.defense, s.growthdefense, level, i),
+        calculateStat(s.resist, s.growthresist, level, i),
+        s.hitrate,
+        s.dodgerate,
+      ];
+    });
+
+    // add stats + berry and just berry to calculated if it exists
+    if (Object.keys(this.state.berry).length) {
+      const b = this.state.berry;
+      const berryTraining = [
+        b.hp,
+        b.attack_power,
+        b.critical_chance,
+        b.critical_damage,
+        b.armor,
+        b.resistance,
+        b.accuracy,
+        b.dodge,
+      ];
+      const berryCalculated = berryTraining.map((i, index) => {
+        return calculated[0][index] + i;
+      });
+
+      calculated.unshift(berryCalculated);
+      calculated.push(berryTraining);
+      breadTraining.unshift('Max');
+      breadTraining.push('Berry');
+    }
+
+    // match game's decimal places
+    const rounding = [1, 1, 2, 2, 1, 1, 2, 2,];
+
+    // prep for dynamic row creation
+    const table = {};
+    breadTraining.forEach((i, _) => {
+      table[_] = {}
+      table[_][i] = calculated[_].map((j, index) => j.toFixed(rounding[index]));
+    });
+
+    return (
+      <Panel collapsible defaultExpanded header='Stats' key={this.state.stat.grade}>
+        <Table condensed hover responsive>
+          <thead>
+            <tr>
+              <th>{`Lv. ${level}, Training`}</th>
+              <th>HP</th>
+              <th>Atk. Power</th>
+              <th>Crit.Chance</th>
+              <th>Crit.Damage</th>
+              <th>Armor</th>
+              <th>Resistance</th>
+              <th>Accuracy</th>
+              <th>Evasion</th>              
+            </tr>
+          </thead>
+          <tbody>
+            {Object.values(table).map(i => this.renderStats(i))}
+          </tbody>
+        </Table>
+      </Panel>
+    );
+  }
+
   renderBlock = () => {
     let passive = '';
     const skill_subname = resolve(this.state.stat.skill_subname);
@@ -250,37 +348,35 @@ export default class HeroInformation extends Component {
   renderSbw = (i, index) => {
     return (
       <Tab eventKey={index} key={i.grade} title={`${i.grade}★`}>
-        <div style={{paddingTop: 15,}}>
-          <Media>
-            <Media.Body>
-              <Media.Heading>
-                {resolve(i.name)}
-              </Media.Heading>
-              <p>{resolve(i.desc)}</p>
-            </Media.Body>
-            <Media.Right>
-              <img alt='' src={imagePath('fergus', `assets/sbws/${i.skin_tex}.png`)} />
-            </Media.Right>
-            <Row>
-              <Col md={6} sm={6} xs={6}>
-                <Media.Heading>Category</Media.Heading>
-                <p>{resolve('TEXT_WEAPON_CATE_' + i.categoryid.substring(4))}</p>
-              </Col>
-              <Col md={6} sm={6} xs={6}>
-                <Media.Heading>Range</Media.Heading>
-                <p>{i.range}</p>
-              </Col>
-              <Col md={6} sm={6} xs={6}>
-                <Media.Heading>Atk. Power</Media.Heading>
-                <p>{i.attdmg}</p>
-              </Col>
-              <Col md={6} sm={6} xs={6}>
-                <Media.Heading>Atk. Speed</Media.Heading>
-                <p>{i.attspd}</p>
-              </Col>
-            </Row>
-          </Media>
-        </div>
+        <Media style={{paddingTop: 15,}}>
+          <Media.Body>
+            <Media.Heading>
+              {resolve(i.name)}
+            </Media.Heading>
+            <p>{resolve(i.desc)}</p>
+          </Media.Body>
+          <Media.Right>
+            <img alt='' src={imagePath('fergus', `assets/sbws/${i.skin_tex}.png`)} />
+          </Media.Right>
+          <Row>
+            <Col md={6} sm={6} xs={6}>
+              <Media.Heading>Category</Media.Heading>
+              <p>{resolve('TEXT_WEAPON_CATE_' + i.categoryid.substring(4))}</p>
+            </Col>
+            <Col md={6} sm={6} xs={6}>
+              <Media.Heading>Range</Media.Heading>
+              <p>{i.range}</p>
+            </Col>
+            <Col md={6} sm={6} xs={6}>
+              <Media.Heading>Atk. Power</Media.Heading>
+              <p>{i.attdmg}</p>
+            </Col>
+            <Col md={6} sm={6} xs={6}>
+              <Media.Heading>Atk. Speed</Media.Heading>
+              <p>{i.attspd}</p>
+            </Col>
+          </Row>
+        </Media>
       </Tab>
     );
   }
@@ -295,7 +391,7 @@ export default class HeroInformation extends Component {
           {this.state.weapon.map(this.renderSbw)}
         </Tabs>
       </Panel>
-    )
+    );
   }
 
   renderSkin = (i, index) => {
@@ -358,7 +454,7 @@ export default class HeroInformation extends Component {
           {`${pager[0]} (${pager[1]}★)`}
         </Pager.Item>
       </LinkContainer>
-      );
+    );
   }
 
   renderPagers = () => {

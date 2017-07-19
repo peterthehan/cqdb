@@ -1,2 +1,2 @@
 # cqdb
-Crusaders Quest Database.
+Crusaders Quest Database with React.

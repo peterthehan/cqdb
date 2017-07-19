@@ -9,6 +9,8 @@ import {
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
+import { imagePath, } from '../util/imagePath';
+
 const pages = [
   'Heroes',
   'Goddesses',
@@ -31,7 +33,10 @@ export default class Frame extends Component {
       <Navbar collapseOnSelect fixedTop inverse>
         <Navbar.Header>
           <LinkContainer to='/cqdb'>
-            <Navbar.Brand>cqdb</Navbar.Brand>
+            <Navbar.Brand>
+              <img alt='' src={imagePath('cqdb', 'public/favicon.png')} />
+              cqdb
+            </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle />
         </Navbar.Header>
