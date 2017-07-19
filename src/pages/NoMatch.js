@@ -24,8 +24,8 @@ export default class NoMatch extends Component {
                 <text style={{color: '#777'}}> Oops! My hands slipped!</text>
               </p>
               <p />
-              <p>
-                {`The requested URL ${window.location.pathname} was not found on this server.`}
+              <p style={{wordWrap: 'break-word'}}>
+                {`The requested URL ${window.location.pathname.replace(/\/404$/, '')} was not found on this server.`}
                 <text style={{color: '#777'}}> That's all we know.</text>
               </p>
             </Col>

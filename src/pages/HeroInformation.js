@@ -12,6 +12,7 @@ import {
   Tabs,
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
+import { Redirect, } from 'react-router-dom';
 
 import { calculateStat, } from '../util/calculateStat';
 import { imagePath, } from '../util/imagePath';
@@ -86,7 +87,17 @@ export default class HeroInformation extends Component {
   }
 
   initializeData = () => {
-    const hero = this.findHero(this.findTarget());
+    const target = this.findTarget();
+    const hero = this.findHero(target);
+    if (!hero) {
+      this.setState({
+        render: (
+          <Redirect to={`/cqdb/heroes/${target.join('&')}/404`} />
+        ),
+      });
+      return;
+    }
+
     const skin = skinData.filter(i => i.wearable_charid.includes(hero.id));
     const stat = statData.filter(i => i.id === hero.default_stat_id)[0];
     const berry = stat.grade === 6 && hero.id !== 'CHA_WA_SUPPORT_6_1'
