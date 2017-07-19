@@ -19,14 +19,12 @@ import { filterItems, } from '../util/filterItems';
 import { imagePath, } from '../util/imagePath';
 import { initializeFilters, } from '../util/initializeFilters';
 import { resolve, } from '../util/resolve';
-const data = require('../Decrypted/get_bread.json').bread;
+const data = require('../Decrypted/get_addstatitem.json').addstatitem;
 
 // for creating checkboxes
-const checkboxes = {
-  Star: Array.from({length: 7}, (v, i) => i).slice(1).map(i => i.toString()),
-};
+let checkboxes = {};
 
-export default class Bread extends Component {
+export default class Berries extends Component {
   state = {
     filters: {},
     items: [],
@@ -48,17 +46,26 @@ export default class Bread extends Component {
 
   initializeItems = () => {
     const unique = {};
+    const category = ['Star', 'Rate', 'Type',];
+    category.forEach(i => unique[i] = {});
+
     const processedData = data.map(i => {
       const name = resolve(i.name);
       const star = i.grade.toString();
-      const value = i.trainpoint;
-      const rate = `${parseInt(i.critprob * 100, 10)}%`;
-      const sell = i.sellprice;
+      const type = resolve(i.type_name);
+      const value = i.add_stat_point <= 1
+        ? parseInt(i.add_stat_point * 100, 10)
+        : i.add_stat_point;
+      const percentage = i.category === 'All' || i.type.includes('Ratio')
+        ? '%'
+        : '';
+      const rate = `${parseInt(i.great_prob * 100, 10)}%`;
+      const sell = i.sell_price;
+      const eat = i.eat_price;
       const image = i.texture;
 
-      unique[rate] = true;
-
-      const filters = [star, rate,];
+      const filters = [star, rate, type,];
+      category.forEach((i, index) => unique[i][filters[index]] = true);
       const listItem = (
         <ListGroupItem key={i.id}>
           <Media>
@@ -66,13 +73,13 @@ export default class Bread extends Component {
               <Row>
                 <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('fergus', `assets/bread/${image}.png`)} />
+                  <img alt='' src={imagePath('fergus', `assets/berries/${image}.png`)} />
                 </Media.Left>
                 </Col>
                 <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
                 <Media.Body>
-                  <Media.Heading>{`${name} (${filters[0]}★)`}</Media.Heading>
-                  <p>{`${value} | ${rate} | Sell: ${sell} gold`}</p>
+                  <Media.Heading>{`${name} (${star}★)`}</Media.Heading>
+                  <p>{`${value}${percentage} | ${rate} | Sell: ${sell} gold | Eat: ${eat} gold`}</p>
                 </Media.Body>
                 </Col>
               </Row>
@@ -83,7 +90,12 @@ export default class Bread extends Component {
 
       return [filters, listItem];
     });
-    checkboxes['Rate'] = Object.keys(unique).sort();
+
+    Object.keys(unique).forEach(i => {
+      checkboxes[i] = Object.keys(unique[i]).sort((a, b) => (
+        a.substring(0, a.length - 1) - b.substring(0, b.length - 1)
+      ));
+    })
 
     return processedData;
   }

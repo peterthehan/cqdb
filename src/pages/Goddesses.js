@@ -24,28 +24,9 @@ export default class Goddesses extends Component {
   }
 
   componentWillMount = () => {
-    //console.log('Goddesses', 'componentWillMount');
     const items = this.initializeItems();
     const render = filterItems(items);
     this.setState({ items, render, });
-  }
-
-  componentDidMount = () => {
-    //console.log('Goddesses', 'componentDidMount');
-    //window.addEventListener('scroll', this.handleScroll);
-  }
-
-  componentWillReceiveProps = () => {
-    //console.log('Goddesses', 'componentWillReceiveProps');
-  }
-
-  componentWillUpdate = () => {
-    //console.log('Goddesses', 'componentWillUpdate');
-  }
-
-  componentWillUnmount = () => {
-    //console.log('Goddesses', 'componentDidUnmount');
-    //window.removeEventListener('scroll', this.handleScroll);
   }
 
   initializeItems = () => {
@@ -55,7 +36,6 @@ export default class Goddesses extends Component {
       const skillDescription = resolve(i.skilldesc);
       const image = i.id;
 
-      const filters = [name, skillName, skillDescription, image,];
       const listItem = (
         <ListGroupItem key={i.id}>
           <Media>
@@ -63,13 +43,13 @@ export default class Goddesses extends Component {
               <Row>
                 <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('fergus', `assets/goddesses/${filters[filters.length - 1]}.png`)} />
+                  <img alt='' src={imagePath('fergus', `assets/goddesses/${image}.png`)} />
                 </Media.Left>
                 </Col>
                 <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
                 <Media.Body>
-                  <Media.Heading>{`${filters[0]} - ${filters[1]}`}</Media.Heading>
-                  <p>{filters[2]}</p>
+                  <Media.Heading>{`${name} - ${skillName}`}</Media.Heading>
+                  <p>{skillDescription}</p>
                 </Media.Body>
                 </Col>
               </Row>
@@ -78,14 +58,13 @@ export default class Goddesses extends Component {
         </ListGroupItem>
       );
 
-      return [filters, listItem];
+      return [[], listItem];
     });
 
     return processedData;
   }
 
   render = () => {
-    //console.log('Goddesses', 'render');
     return (
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>

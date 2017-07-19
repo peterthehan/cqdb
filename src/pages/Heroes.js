@@ -103,22 +103,22 @@ export default class Heroes extends Component {
       const gender = resolve(`TEXT_EXPLORE_TOOLTIP_GENDER_${i.gender}`);
       const image = i.face_tex;
 
-      const filters = [name, star, className, rarity, faction, gender, image,];
+      const filters = [star, className, rarity, faction, gender,];
       const listItem = (
-        <LinkContainer key={i.id} to={`/cqdb/heroes/${filters.slice(0, 3).join('&')}`}>
+        <LinkContainer key={i.id} to={`/cqdb/heroes/${name}&${filters.slice(0, 2).join('&')}`}>
           <ListGroupItem>
             <Media>
               <Grid fluid>
                 <Row>
                   <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
                     <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                      <img alt='' src={imagePath('fergus', `assets/heroes/${filters[filters.length - 1]}.png`)} />
+                      <img alt='' src={imagePath('fergus', `assets/heroes/${image}.png`)} />
                     </Media.Left>
                   </Col>
                   <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
                     <Media.Body>
-                      <Media.Heading>{`${filters[0]} (${filters[1]}★)`}</Media.Heading>
-                      <p>{filters.slice(2, 6).join(' | ')}</p>
+                      <Media.Heading>{`${name} (${star}★)`}</Media.Heading>
+                      <p>{filters.slice(1).join(' | ')}</p>
                     </Media.Body>
                   </Col>
                 </Row>

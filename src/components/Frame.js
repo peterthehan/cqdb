@@ -13,6 +13,7 @@ const pages = [
   'Heroes',
   'Goddesses',
   'Bread',
+  'Berries',
   'About',
 ];
 
