@@ -6,6 +6,7 @@ import {
   ControlLabel,
   Form,
   FormGroup,
+  Grid,
   ListGroup,
   ListGroupItem,
   Media,
@@ -13,9 +14,11 @@ import {
   Row,
 } from 'react-bootstrap';
 
+import { createFilterURL, } from '../util/createFilterURL';
+import { filterItems, } from '../util/filterItems';
 import { imagePath, } from '../util/imagePath';
+import { initializeFilters, } from '../util/initializeFilters';
 import { resolve, } from '../util/resolve';
-import { toTitleCase, } from '../util/toTitleCase';
 const data = require('../Decrypted/get_bread.json').bread;
 
 // for creating checkboxes
@@ -33,8 +36,8 @@ export default class Bread extends Component {
   componentWillMount = () => {
     //console.log('Bread', 'componentWillMount');
     const items = this.initializeItems();
-    const filters = this.initializeFilters();
-    const render = this.renderItems(items, filters);
+    const filters = initializeFilters(checkboxes);
+    const render = filterItems(items, filters);
     this.setState({ filters, items, render, });
   }
 
@@ -45,8 +48,8 @@ export default class Bread extends Component {
 
   componentWillReceiveProps = () => {
     //console.log('Bread', 'componentWillReceiveProps');
-    const filters = this.initializeFilters();
-    const render = this.renderItems(this.state.items, filters);
+    const filters = initializeFilters(checkboxes);
+    const render = filterItems(this.state.items, filters);
     this.setState({ filters, render, });
   }
 
@@ -72,80 +75,33 @@ export default class Bread extends Component {
       unique[rate] = true;
 
       const filters = [name, star, value, rate, sell, image,];
-      const identifier = filters.slice(0, 2);
       const listItem = (
-        <ListGroupItem key={identifier.join('')}>
+        <ListGroupItem key={i.id}>
           <Media>
-            <Media.Left>
-              <img alt='' src={imagePath('fergus', `assets/bread/${filters[filters.length - 1]}.png`)} />
-            </Media.Left>
-            <Media.Body>
-              <Media.Heading>{`${filters[0]} (${filters[1]}★)`}</Media.Heading>
-              <p>{filters.slice(2, filters.length - 1).join(' | ')}</p>
-            </Media.Body>
+            <Grid fluid>
+              <Row>
+                <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+                <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                  <img alt='' src={imagePath('fergus', `assets/bread/${filters[filters.length - 1]}.png`)} />
+                </Media.Left>
+                </Col>
+                <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+                <Media.Body>
+                  <Media.Heading>{`${filters[0]} (${filters[1]}★)`}</Media.Heading>
+                  <p>{filters.slice(2, 5).join(' | ')}</p>
+                </Media.Body>
+                </Col>
+              </Row>
+            </Grid>
           </Media>
         </ListGroupItem>
       );
 
-      checkboxes['Rate'] = Object.keys(unique).sort();
-
       return [filters, listItem];
     });
+    checkboxes['Rate'] = Object.keys(unique).sort();
 
     return processedData;
-  }
-
-  initializeFilters = () => {
-    // initialize each filter category key with a filter-false value
-    const filters = {};
-    Object.keys(checkboxes).forEach(i => {
-      filters[i] = {};
-      checkboxes[i].forEach(j => filters[i][j] = false);
-    });
-
-    // if url contains querystring, parse and error-check it
-    if (window.location.search.length) {
-      decodeURIComponent(window.location.search.substring(1)).split('&').forEach(i => {
-        const kv = i.split('=');
-        const key = toTitleCase(kv[0]);
-        if (filters[key]) {
-          const keys = kv[1].toLowerCase().split(',');
-          Object.keys(filters[key])
-            .filter(j => keys.includes(j.toLowerCase()))
-            .forEach(j => filters[key][j] = true);
-        }
-      });
-
-      // update url
-      window.history.replaceState('', '', `?${this.createFilterURL(filters)}`);
-    }
-
-    return filters;
-  }
-
-  renderItems = (data, filters) => {
-    let filtered = data;
-    Object.keys(filters).forEach(i => {
-      const currentFilters = Object.keys(filters[i]).filter(j => filters[i][j]);
-      if (currentFilters.length) {
-        filtered = filtered
-          .filter(([filters, _]) => filters.some(j => currentFilters.includes(j)));
-      }
-    });
-
-    return filtered.map(([_, listItem]) => listItem);
-  }
-
-  createFilterURL = (filters) => {
-    const filterURL = [];
-    Object.keys(filters).forEach(i => {
-      const trueKeys = Object.keys(filters[i]).filter(j => filters[i][j]);
-      if (trueKeys.length) {
-        filterURL.push(`${i}=${trueKeys.join(',')}`);
-      }
-    });
-
-    return filterURL.join('&');
   }
 
   handleCheckbox = (e) => {
@@ -155,9 +111,9 @@ export default class Bread extends Component {
 
     this.setState({
       filters: filters,
-      render: this.renderItems(this.state.items, filters),
+      render: filterItems(this.state.items, filters),
     }, () => {
-      window.history.replaceState('', '', `?${this.createFilterURL(this.state.filters)}`);
+      window.history.replaceState('', '', `?${createFilterURL(this.state.filters)}`);
     });
   }
 
@@ -183,28 +139,18 @@ export default class Bread extends Component {
     );
   }
 
-  // handleScroll = () => {
-  //   if (!this.test) return;
-  //   const [start, end] = this.test.getVisibleRange();
-  //   console.log('visible', start);
-  // }
-
-  renderItem = (index) => {
-    return this.state.render[index];
-  }
-
   render = () => {
     //console.log('Bread', 'render');
     return (
       <Row>
-        <Col md={12} sm={12} xs={12}>
+        <Col lg={12} md={12} sm={12} xs={12}>
           <Panel collapsible defaultExpanded header='Filters'>
             <Form horizontal>{this.renderCheckboxes()}</Form>
           </Panel>
           <Panel collapsible defaultExpanded header={`Bread (${this.state.render.length})`}>
             <ListGroup fill>
               <ReactList
-                itemRenderer={this.renderItem}
+                itemRenderer={i => this.state.render[i]}
                 length={this.state.render.length}
                 minSize={10}
               />

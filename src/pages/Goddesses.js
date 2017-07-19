@@ -1,6 +1,7 @@
 import React, { Component, } from 'react';
 import {
   Col,
+  Grid,
   ListGroup,
   ListGroupItem,
   Media,
@@ -9,6 +10,7 @@ import {
 } from 'react-bootstrap';
 
 import { countInstances, } from '../util/countInstances';
+import { filterItems, } from '../util/filterItems';
 import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
 const data = require('../Decrypted/get_sister.json')
@@ -24,7 +26,7 @@ export default class Goddesses extends Component {
   componentWillMount = () => {
     //console.log('Goddesses', 'componentWillMount');
     const items = this.initializeItems();
-    const render = this.renderItems(items);
+    const render = filterItems(items);
     this.setState({ items, render, });
   }
 
@@ -35,8 +37,6 @@ export default class Goddesses extends Component {
 
   componentWillReceiveProps = () => {
     //console.log('Goddesses', 'componentWillReceiveProps');
-    const render = this.renderItems(this.state.items);
-    this.setState({ render, });
   }
 
   componentWillUpdate = () => {
@@ -56,17 +56,24 @@ export default class Goddesses extends Component {
       const image = i.id;
 
       const filters = [name, skillName, skillDescription, image,];
-      const identifier = filters.slice(0, 1);
       const listItem = (
-        <ListGroupItem key={identifier.join('')}>
+        <ListGroupItem key={i.id}>
           <Media>
-            <Media.Left>
-              <img alt='' src={imagePath('fergus', `assets/goddesses/${filters[filters.length - 1]}.png`)} />
-            </Media.Left>
-            <Media.Body>
-              <Media.Heading>{`${filters[0]} - ${filters[1]}`}</Media.Heading>
-              <p>{filters[2]}</p>
-            </Media.Body>
+            <Grid fluid>
+              <Row>
+                <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+                <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                  <img alt='' src={imagePath('fergus', `assets/goddesses/${filters[filters.length - 1]}.png`)} />
+                </Media.Left>
+                </Col>
+                <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+                <Media.Body>
+                  <Media.Heading>{`${filters[0]} - ${filters[1]}`}</Media.Heading>
+                  <p>{filters[2]}</p>
+                </Media.Body>
+                </Col>
+              </Row>
+            </Grid>
           </Media>
         </ListGroupItem>
       );
@@ -77,26 +84,11 @@ export default class Goddesses extends Component {
     return processedData;
   }
 
-  renderItems = (data) => {
-    let filtered = data;
-    return filtered.map(([_, listItem]) => listItem);
-  }
-
-  // handleScroll = () => {
-  //   if (!this.test) return;
-  //   const [start, end] = this.test.getVisibleRange();
-  //   console.log('visible', start);
-  // }
-
-  renderItem = (index) => {
-    return this.state.render[index];
-  }
-
   render = () => {
     //console.log('Goddesses', 'render');
     return (
       <Row>
-        <Col md={12} sm={12} xs={12}>
+        <Col lg={12} md={12} sm={12} xs={12}>
           <Panel collapsible defaultExpanded header={`Goddesses (${this.state.render.length})`}>
             <ListGroup fill>
               {this.state.render}
