@@ -1,5 +1,5 @@
-import { createFilterURL, } from '../util/createFilterURL';
-import { toTitleCase, } from '../util/toTitleCase';
+import { createFilterURL, } from './createFilterURL';
+import { toTitleCase, } from './toTitleCase';
 
 export function initializeFilters(checkboxes) {
   // initialize each filter category key with a filter-false value
