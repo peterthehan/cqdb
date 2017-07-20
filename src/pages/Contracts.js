@@ -38,7 +38,6 @@ export default class Contracts extends Component {
 
   pickGrade = () => {
     const roll = Math.random();
-console.log(roll);
     if (roll >= 0 && roll <= 0.81) {
       return '3';
     } else if (roll > 0.81 && roll <= 0.81 + 0.149) {
@@ -56,7 +55,7 @@ console.log(roll);
       ? data
       : data.filter(i => i.isgachagolden);
     pool = pool.filter(i => i.id.match(/_\d/)[0][1] === grade);
-console.log(grade);
+    
     return pool[random(0, pool.length - 1)];
   }
 
@@ -72,7 +71,6 @@ console.log(grade);
 
         return [name, star, className, image];
       });
-    console.log(results);
 
     const jewelsSpent = this.state.amount === 10 ? 50 : 6 + (this.state.amount - 1) * 5;
     const usdSpent = jewelsSpent * 84.99 / 200;
