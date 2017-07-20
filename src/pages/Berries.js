@@ -21,7 +21,6 @@ import { initializeFilters, } from '../util/initializeFilters';
 import { resolve, } from '../util/resolve';
 const data = require('../Decrypted/get_addstatitem.json').addstatitem;
 
-// for creating checkboxes
 let checkboxes = {};
 
 export default class Berries extends Component {
@@ -72,15 +71,15 @@ export default class Berries extends Component {
             <Grid fluid>
               <Row>
                 <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
-                <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('cq-assets', `berries/${image}.png`)} />
-                </Media.Left>
+                  <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                    <img alt='' src={imagePath('cq-assets', `berries/${image}.png`)} />
+                  </Media.Left>
                 </Col>
                 <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
-                <Media.Body>
-                  <Media.Heading>{`${name} (${star}★)`}</Media.Heading>
-                  <p>{`${value}${percentage} | ${rate} | Sell: ${sell} gold | Eat: ${eat} gold`}</p>
-                </Media.Body>
+                  <Media.Body>
+                    <Media.Heading>{`${name} (${star}★)`}</Media.Heading>
+                    <p>{`${value}${percentage} | ${rate} | Sell: ${sell} gold | Eat: ${eat} gold`}</p>
+                  </Media.Body>
                 </Col>
               </Row>
             </Grid>
@@ -95,7 +94,7 @@ export default class Berries extends Component {
       checkboxes[i] = Object.keys(unique[i]).sort((a, b) => (
         a.substring(0, a.length - 1) - b.substring(0, b.length - 1)
       ));
-    })
+    });
 
     return processedData;
   }
@@ -142,7 +141,7 @@ export default class Berries extends Component {
           <Panel collapsible defaultExpanded header='Filters'>
             <Form horizontal>{this.renderCheckboxes()}</Form>
           </Panel>
-          <Panel collapsible defaultExpanded header={`Bread (${this.state.render.length})`}>
+          <Panel collapsible defaultExpanded header={`Berries (${this.state.render.length})`}>
             <ListGroup fill>
               <ReactList
                 itemRenderer={i => this.state.render[i]}

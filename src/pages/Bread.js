@@ -18,14 +18,10 @@ import { createFilterURL, } from '../util/createFilterURL';
 import { filterItems, } from '../util/filterItems';
 import { imagePath, } from '../util/imagePath';
 import { initializeFilters, } from '../util/initializeFilters';
-import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
 const data = require('../Decrypted/get_bread.json').bread;
 
-// for creating checkboxes
-const checkboxes = {
-  Star: range(6).map(i => i.toString()),
-};
+const checkboxes = {};
 
 export default class Bread extends Component {
   state = {
@@ -49,6 +45,9 @@ export default class Bread extends Component {
 
   initializeItems = () => {
     const unique = {};
+    const category = ['Star', 'Rate',];
+    category.forEach(i => unique[i] = {});
+
     const processedData = data.map(i => {
       const name = resolve(i.name);
       const star = i.grade.toString();
@@ -57,24 +56,23 @@ export default class Bread extends Component {
       const sell = i.sellprice;
       const image = i.texture;
 
-      unique[rate] = true;
-
       const filters = [star, rate,];
+      category.forEach((i, index) => unique[i][filters[index]] = true);
       const listItem = (
         <ListGroupItem key={i.id}>
           <Media>
             <Grid fluid>
               <Row>
                 <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
-                <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('cq-assets', `bread/${image}.png`)} />
-                </Media.Left>
+                  <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                    <img alt='' src={imagePath('cq-assets', `bread/${image}.png`)} />
+                  </Media.Left>
                 </Col>
                 <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
-                <Media.Body>
-                  <Media.Heading>{`${name} (${filters[0]}★)`}</Media.Heading>
-                  <p>{`${value} | ${rate} | Sell: ${sell} gold`}</p>
-                </Media.Body>
+                  <Media.Body>
+                    <Media.Heading>{`${name} (${star}★)`}</Media.Heading>
+                    <p>{`${value} | ${rate} | Sell: ${sell} gold`}</p>
+                  </Media.Body>
                 </Col>
               </Row>
             </Grid>
@@ -84,7 +82,8 @@ export default class Bread extends Component {
 
       return [filters, listItem];
     });
-    checkboxes['Rate'] = Object.keys(unique).sort();
+
+    Object.keys(unique).forEach(i => checkboxes[i] = Object.keys(unique[i]).sort());
 
     return processedData;
   }
