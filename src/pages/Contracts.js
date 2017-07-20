@@ -2,7 +2,6 @@ import React, { Component, } from 'react';
 import {
   Button,
   Col,
-  ControlLabel,
   FormControl,
   FormGroup,
   Grid,
@@ -55,7 +54,7 @@ export default class Contracts extends Component {
       ? data
       : data.filter(i => i.isgachagolden);
     pool = pool.filter(i => i.id.match(/_\d/)[0][1] === grade);
-    
+
     return pool[random(0, pool.length - 1)];
   }
 
@@ -158,7 +157,7 @@ export default class Contracts extends Component {
                   {`Jewels spent: ${this.state.jewelsSpent}`}
                 </Col>
                 <Col lg={6} md={6} sm={6} xs={6}>                
-                  {`USD spent: \$${this.state.usdSpent}`}
+                  {`USD spent: $${this.state.usdSpent}`}
                 </Col>
               </Row>
             </Grid>
