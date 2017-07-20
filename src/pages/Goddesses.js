@@ -43,7 +43,7 @@ export default class Goddesses extends Component {
               <Row>
                 <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('fergus', `assets/goddesses/${image}.png`)} />
+                  <img alt='' src={imagePath('cq-assets', `goddesses/${image}.png`)} />
                 </Media.Left>
                 </Col>
                 <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>

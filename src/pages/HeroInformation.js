@@ -16,6 +16,7 @@ import { Redirect, } from 'react-router-dom';
 
 import { calculateStat, } from '../util/calculateStat';
 import { imagePath, } from '../util/imagePath';
+import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
 const berryData = require('../Decrypted/get_character_addstatmax.json')
   .character_addstatmax;
@@ -173,7 +174,7 @@ export default class HeroInformation extends Component {
             <p>{resolve(this.state.hero.desc)}</p>
           </Media.Body>
           <Media.Right>
-            <img alt='' src={imagePath('fergus', `assets/heroes/${this.state.hero.face_tex}.png`)} />
+            <img alt='' src={imagePath('cq-assets', `heroes/${this.state.hero.face_tex}.png`)} />
           </Media.Right>
           <Row>
             <Col md={3} sm={6} xs={6}>
@@ -235,7 +236,7 @@ export default class HeroInformation extends Component {
 
   renderStatsTable = () => {
     const level = this.state.stat.grade * 10;
-    const breadTraining = Array.from({length: this.state.stat.grade}, (v, i) => i).reverse();
+    const breadTraining = range(this.state.stat.grade).map(i => i - 1).reverse();
 
     // calculate bread training stats
     const s = this.state.stat;
@@ -348,7 +349,7 @@ export default class HeroInformation extends Component {
             </p>
           </Media.Body>
           <Media.Right>
-            <img alt='' src={imagePath('fergus', `assets/blocks/${this.state.stat.skill_icon}.png`)} width={66} />
+            <img alt='' src={imagePath('cq-assets', `blocks/${this.state.stat.skill_icon}.png`)} width={66} />
           </Media.Right>
           {passive}
         </Media>
@@ -367,7 +368,7 @@ export default class HeroInformation extends Component {
             <p>{resolve(i.desc)}</p>
           </Media.Body>
           <Media.Right>
-            <img alt='' src={imagePath('fergus', `assets/sbws/${i.skin_tex}.png`)} />
+            <img alt='' src={imagePath('cq-assets', `sbws/${i.skin_tex}.png`)} />
           </Media.Right>
           <Row>
             <Col md={6} sm={6} xs={6}>
@@ -434,7 +435,7 @@ export default class HeroInformation extends Component {
             </Row>
           </Media.Body>
           <Media.Right>
-            <img alt='' src={imagePath('fergus', `assets/skins/${i.face_tex}.png`)} />
+            <img alt='' src={imagePath('cq-assets', `skins/${i.face_tex}.png`)} />
           </Media.Right>
         </Media>
       </ListGroupItem>
@@ -460,7 +461,7 @@ export default class HeroInformation extends Component {
       <LinkContainer key={pager.join('')} to={`/cqdb/heroes/${pager.join('&')}`}>
         <Pager.Item>
           <Media>
-            <img alt='' src={imagePath('fergus', `assets/heroes/${img}.png`)} />
+            <img alt='' src={imagePath('cq-assets', `heroes/${img}.png`)} />
           </Media>
           {`${pager[0]} (${pager[1]}★)`}
         </Pager.Item>

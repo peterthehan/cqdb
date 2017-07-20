@@ -2,8 +2,10 @@ import React, { Component, } from 'react';
 import {
   Col,
   Grid,
+  MenuItem,
   Nav,
   Navbar,
+  NavDropdown,
   NavItem,
   Row,
 } from 'react-bootstrap';
@@ -20,15 +22,31 @@ const pages = [
 ];
 
 export default class Frame extends Component {
-  renderNavItem = (i, index) => {
+  renderNavItem = (i) => {
     return (
-      <LinkContainer key={i} to={`/cqdb/${i}`}>
-        <NavItem eventKey={index}>{i}</NavItem>
+      <LinkContainer key={i} to={`/cqdb/${i.toLowerCase()}`}>
+        <NavItem>{i}</NavItem>
       </LinkContainer>
     );
   }
 
+  renderNavDropdown = () => {
+    return (
+      <NavDropdown id='gacha' key='gacha' title='Gacha'>
+        <LinkContainer to={`/cqdb/gacha-premium contracts`}>
+          <MenuItem>Premium Contracts</MenuItem>
+        </LinkContainer>
+        <LinkContainer to={`/cqdb/gacha-weapon forging`}>
+          <MenuItem>Weapon Forging</MenuItem>
+        </LinkContainer>
+      </NavDropdown>
+    );
+  }
+
   renderNavbar = () => {
+    const items = pages.map(this.renderNavItem);
+    items.splice(items.length - 1, 0, this.renderNavDropdown());
+
     return (
       <Navbar collapseOnSelect fixedTop inverse>
         <Navbar.Header>
@@ -41,7 +59,7 @@ export default class Frame extends Component {
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
-          <Nav>{pages.map(this.renderNavItem)}</Nav>
+          <Nav>{items}</Nav>
         </Navbar.Collapse>
       </Navbar>
     );
@@ -50,8 +68,8 @@ export default class Frame extends Component {
   renderFooter = () => {
     return (
       <Row>
-        <Col md={12} sm={12} xs={12}>
-          <hr style={{borderColor: '#DDD'}} />  
+        <Col lg={12} md={12} sm={12} xs={12}>
+          <hr style={{borderColor: '#DDD',}} />  
           <p style={{textAlign: 'center',}}>
             Made with ❤ by <a href='https://github.com/Johj'>Peter Han</a>.
           </p>
@@ -65,12 +83,12 @@ export default class Frame extends Component {
       <div>
         {this.renderNavbar()}
         <br /><br /><br /><p />
-        <div className='content'>
-          <Grid fluid>
+        <Grid fluid>
+          <div className='content'>
             {this.props.children}
             {this.renderFooter()}
-          </Grid>
-        </div>
+          </div>
+        </Grid>
       </div>
     );
   }

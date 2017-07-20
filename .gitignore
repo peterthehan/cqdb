@@ -1,6 +1,6 @@
 # packages
 node_modules
-build
 
 # privy to me
+build
 src/Decrypted

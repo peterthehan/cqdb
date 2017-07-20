@@ -18,12 +18,13 @@ import { createFilterURL, } from '../util/createFilterURL';
 import { filterItems, } from '../util/filterItems';
 import { imagePath, } from '../util/imagePath';
 import { initializeFilters, } from '../util/initializeFilters';
+import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
 const data = require('../Decrypted/get_bread.json').bread;
 
 // for creating checkboxes
 const checkboxes = {
-  Star: Array.from({length: 7}, (v, i) => i).slice(1).map(i => i.toString()),
+  Star: range(6).map(i => i.toString()),
 };
 
 export default class Bread extends Component {
@@ -66,7 +67,7 @@ export default class Bread extends Component {
               <Row>
                 <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('fergus', `assets/bread/${image}.png`)} />
+                  <img alt='' src={imagePath('cq-assets', `bread/${image}.png`)} />
                 </Media.Left>
                 </Col>
                 <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>

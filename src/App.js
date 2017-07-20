@@ -8,6 +8,8 @@ import HeroInformation from './pages/HeroInformation';
 import Goddesses from './pages/Goddesses';
 import Bread from './pages/Bread';
 import Berries from './pages/Berries';
+import Contracts from './pages/Contracts';
+import Forging from './pages/Forging';
 import About from './pages/About';
 import NoMatch from './pages/NoMatch';
 
@@ -27,7 +29,9 @@ export default class App extends Component {
               <Route exact path='/cqdb/heroes/:hero' component={HeroInformation} />
               <Route exact path='/cqdb/goddesses' component={Goddesses} />
               <Route exact path='/cqdb/bread:filters?' component={Bread} />
-              <Route exact path='/cqdb/berries:filters?' component={Berries} />              
+              <Route exact path='/cqdb/berries:filters?' component={Berries} />
+              <Route exact path='/cqdb/gacha-premium contracts' component={Contracts} />
+              <Route exact path='/cqdb/gacha-weapon forging' component={Forging} />
               <Route exact path='/cqdb/about' component={About} />
               <Route component={NoMatch} />
             </Switch>

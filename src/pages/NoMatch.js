@@ -20,7 +20,7 @@ export default class NoMatch extends Component {
               <img alt='' src={imagePath('cqdb', 'public/favicon.png')} />
               <p />
               <p>
-                <strong>404.</strong>
+                <b>404.</b>
                 <text style={{color: '#777'}}> Oops! My hands slipped!</text>
               </p>
               <p />

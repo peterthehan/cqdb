@@ -45,6 +45,7 @@ const checkboxes = {
     'Roman Republic',
     'Heroes of Freedom',
     'Pumpkin City',
+    'Order of the Goddess',
     'Supply all forces',
     'Unknown',
   ],
@@ -95,7 +96,7 @@ export default class Heroes extends Component {
       const rarity = resolve(
         `TEXT_CONFIRM_SELL_${i.rarity === 'LEGENDARY' ? (i.isgachagolden ? 'IN_GACHA' : 'LAGENDARY') : i.rarity}_HERO`
       );
-      const faction = !i.domain || ['CHEN', 'GODDESS', 'MINO', 'NOS',].includes(i.domain)
+      const faction = !i.domain || ['CHEN', 'MINO', 'NOS',].includes(i.domain)
         ? 'Unknown' // remove unreleased domains
         : resolve(
             i.domain === 'NONEGROUP' ? `TEXT_CHAMP_DOMAIN_${i.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${i.domain}`
@@ -112,7 +113,7 @@ export default class Heroes extends Component {
                 <Row>
                   <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
                     <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                      <img alt='' src={imagePath('fergus', `assets/heroes/${image}.png`)} />
+                      <img alt='' src={imagePath('cq-assets', `heroes/${image}.png`)} />
                     </Media.Left>
                   </Col>
                   <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>

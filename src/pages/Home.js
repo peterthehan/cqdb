@@ -10,6 +10,7 @@ import {
 } from 'react-bootstrap';
 
 import { imagePath, } from '../util/imagePath';
+import { range, } from '../util/range';
 
 export default class Home extends Component {
   renderCarouselItem = (i) => {
@@ -26,20 +27,21 @@ export default class Home extends Component {
         <Col lg={12} md={12} sm={12} xs={12}>
           <Alert>
             The site is currently a work-in-progress so apologies for any missing information or inconveniences.
-            Feel free to report bugs or suggest features <strong><a href='https://github.com/Johj/cqdb/issues'>here</a></strong>.
+            Feel free to report bugs or suggest features <b><a href='https://github.com/Johj/cqdb/issues'>here</a></b>.
           </Alert>
           <Image alt='' responsive src={imagePath('cqdb', 'src/assets/banner.png')} />
           <Panel>
             <Media.Heading>Hello!</Media.Heading>
             <p>
               Welcome to the <a href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>Crusaders Quest</a> Database!
+              The database is currently on game version: 3.9.5.KG.
             </p>
           </Panel>
         </Col>
         <Col lg={8} md={12} sm={12} xs={12}>
           <Panel>
             <Carousel>
-              {Array.from({length: 6}, (v, i) => i).slice(1).map(this.renderCarouselItem)}
+              {range(5).map(this.renderCarouselItem)}
             </Carousel>
           </Panel>
         </Col>

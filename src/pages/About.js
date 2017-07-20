@@ -7,37 +7,25 @@ import {
   Row,
 } from 'react-bootstrap';
 
-// for creating list
-const dep = [
-  'bootstrap: 3.3.7',
-  'react: 15.6.1',
-  'react-bootstrap: 0.31.0',
-  'react-dom: 15.6.1',
-  'react-list: 0.8.6',
-  'react-router-bootstrap: 0.24.2',
-  'react-router-dom: 4.1.1',
-];
-const npm = [
-  'https://www.npmjs.com/package/bootstrap',
-  'https://www.npmjs.com/package/react',
-  'https://www.npmjs.com/package/react-bootstrap',
-  'https://www.npmjs.com/package/react-dom',
-  'https://www.npmjs.com/package/react-list',
-  'https://www.npmjs.com/package/react-router-bootstrap',
-  'https://www.npmjs.com/package/react-router-dom',
-];
+const dependencies = {
+  'bootstrap: 3.3.7': 'https://www.npmjs.com/package/bootstrap',
+  'react: 15.6.1': 'https://www.npmjs.com/package/react',
+  'react-bootstrap: 0.31.0': 'https://www.npmjs.com/package/react-bootstrap',
+  'react-dom: 15.6.1': 'https://www.npmjs.com/package/react-dom',
+  'react-list: 0.8.6': 'https://www.npmjs.com/package/react-list',
+  'react-router-bootstrap: 0.24.2': 'https://www.npmjs.com/package/react-router-bootstrap',
+  'react-router-dom: 4.1.1': 'https://www.npmjs.com/package/react-router-dom',
+};
 
 export default class About extends Component {
-  renderDependencies = (i, index) => {
-    return (
-      <a href={npm[index]} key={index}>{i}<br /></a>
-    );
+  renderDependencies = (i) => {
+    return <a href={dependencies[i]} key={i}>{i}<br /></a>;
   }
 
   render = () => {
     return (
       <Row>
-        <Col md={6} sm={12} xs={12}>
+        <Col lg={6} md={6} sm={12} xs={12}>
           <Panel>
             <Media>
               <Media.Body>
@@ -50,13 +38,13 @@ export default class About extends Component {
             </Media>
           </Panel>
         </Col>
-        <Col md={6} sm={12} xs={12}>
+        <Col lg={6} md={6} sm={12} xs={12}>
           <Panel>
             <Media.Heading>Dependencies</Media.Heading>
-            {dep.map(this.renderDependencies)}
+            {Object.keys(dependencies).map(this.renderDependencies)}
           </Panel>
         </Col>
-        <Col md={12} sm={12} xs={12}>
+        <Col lg={12} md={12} sm={12} xs={12}>
           <Panel>
             <Media.Heading>Disclaimer</Media.Heading>
             <p>
