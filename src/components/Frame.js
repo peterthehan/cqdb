@@ -13,7 +13,7 @@ import { LinkContainer, } from 'react-router-bootstrap';
 
 import { imagePath, } from '../util/imagePath';
 
-const pages = [
+const navPages = [
   'Heroes',
   'Goddesses',
   'Bread',
@@ -21,11 +21,16 @@ const pages = [
   'About',
 ];
 
+const gachaPages = [
+  'Premium Contracts',
+  'Weapon Forging',
+];
+
 export default class Frame extends Component {
-  renderNavItem = (i) => {
+  renderItem = (i, isNavItem) => {
     return (
       <LinkContainer key={i} to={`/cqdb/${i.toLowerCase()}`}>
-        <NavItem>{i}</NavItem>
+        {isNavItem ? <NavItem>{i}</NavItem> : <MenuItem>{i}</MenuItem>}
       </LinkContainer>
     );
   }
@@ -33,19 +38,14 @@ export default class Frame extends Component {
   renderNavDropdown = () => {
     return (
       <NavDropdown id='gacha' key='gacha' title='Gacha'>
-        <LinkContainer to={`/cqdb/gacha-premium contracts`}>
-          <MenuItem>Premium Contracts</MenuItem>
-        </LinkContainer>
-        <LinkContainer to={`/cqdb/gacha-weapon forging`}>
-          <MenuItem>Weapon Forging</MenuItem>
-        </LinkContainer>
+        {gachaPages.map(i => this.renderItem(i, false))}
       </NavDropdown>
     );
   }
 
   renderNavbar = () => {
-    const items = pages.map(this.renderNavItem);
-    items.splice(items.length - 1, 0, this.renderNavDropdown());
+    const pages = navPages.map(i => this.renderItem(i, true));
+    pages.splice(pages.length - 1, 0, this.renderNavDropdown());
 
     return (
       <Navbar collapseOnSelect fixedTop inverse>
@@ -59,7 +59,7 @@ export default class Frame extends Component {
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
-          <Nav>{items}</Nav>
+          <Nav>{pages}</Nav>
         </Navbar.Collapse>
       </Navbar>
     );
@@ -71,7 +71,7 @@ export default class Frame extends Component {
         <Col lg={12} md={12} sm={12} xs={12}>
           <hr style={{borderColor: '#DDD',}} />  
           <p style={{textAlign: 'center',}}>
-            Made with ❤ by <a href='https://github.com/Johj'>Peter Han</a>.
+            Made with ❤ by <a href='https://github.com/Johj'>Peter</a>.
           </p>
         </Col>
       </Row>

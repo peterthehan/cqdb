@@ -10,7 +10,6 @@ import {
 } from 'react-bootstrap';
 
 import { countInstances, } from '../util/countInstances';
-import { filterItems, } from '../util/filterItems';
 import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
 const data = require('../Decrypted/get_sister.json')
@@ -19,14 +18,12 @@ const data = require('../Decrypted/get_sister.json')
 
 export default class Goddesses extends Component {
   state = {
-    items: [],
     render: [],
   }
 
   componentWillMount = () => {
-    const items = this.initializeItems();
-    const render = filterItems(items);
-    this.setState({ items, render, });
+    const render = this.initializeItems();
+    this.setState({ render, });
   }
 
   initializeItems = () => {
@@ -42,15 +39,15 @@ export default class Goddesses extends Component {
             <Grid fluid>
               <Row>
                 <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
-                <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('cq-assets', `goddesses/${image}.png`)} />
-                </Media.Left>
+                  <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                    <img alt='' src={imagePath('cq-assets', `goddesses/${image}.png`)} />
+                  </Media.Left>
                 </Col>
                 <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
-                <Media.Body>
-                  <Media.Heading>{`${name} - ${skillName}`}</Media.Heading>
-                  <p>{skillDescription}</p>
-                </Media.Body>
+                  <Media.Body>
+                    <Media.Heading>{`${name} - ${skillName}`}</Media.Heading>
+                    <p>{skillDescription}</p>
+                  </Media.Body>
                 </Col>
               </Row>
             </Grid>
@@ -58,7 +55,7 @@ export default class Goddesses extends Component {
         </ListGroupItem>
       );
 
-      return [[], listItem];
+      return listItem;
     });
 
     return processedData;
