@@ -17,6 +17,7 @@ import {
 import { LinkContainer, } from 'react-router-bootstrap';
 
 import { imagePath, } from '../util/imagePath';
+import { pickGrade, } from '../util/pickGrade';
 import { random, } from '../util/random';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
@@ -36,21 +37,9 @@ export default class Contracts extends Component {
     render: [],
   }
 
-  pickGrade = () => {
-    const roll = Math.random();
-    if (roll >= 0 && roll <= 0.81) {
-      return '3';
-    } else if (roll > 0.81 && roll <= 0.81 + 0.149) {
-      return '4';
-    } else if (roll > 0.81 + 0.149 && roll <= 0.81 + 0.149 + 0.035) {
-      return '5';
-    }
-    return '6';
-  }
-
   pickHero = (i) => {
     const forcedGrade = i % 10 ? null : '4';
-    const grade = !forcedGrade ? this.pickGrade() : forcedGrade;
+    const grade = !forcedGrade ? pickGrade() : forcedGrade;
     const pool = (!forcedGrade ? data : data.filter(i => i.isgachagolden))
       .filter(i => i.id.match(/_\d/)[0][1] === grade);
 
@@ -138,6 +127,7 @@ export default class Contracts extends Component {
         <p>
           Pulls 1-9: 6★: 0.60%, 5★: 3.50%, 4★: 14.90%, 3★: 81.00%.
           <sup><a href='https://goo.gl/k62wvU'>[1]</a></sup>
+          <sup><a href='https://github.com/Johj/cqdb/blob/master/src/util/pickGrade.js#L1'>[2]</a></sup>
         </p>
         <p>
           Pull 10: Guaranteed 4★ Contract only Hero.

@@ -44,7 +44,7 @@ export default class Home extends Component {
                 <Label bsStyle='primary'>Android 3.9.5.KG</Label>
               </a>
               &nbsp;
-              <a href='https://itunes.apple.com/us/app/crusaders-quest/id901858272'>
+              <a href='https://itunes.apple.com/app/id901858272?mt=8'>
                 <Label bsStyle='primary'>iOS 3.9.4</Label>
               </a>
             </p>
