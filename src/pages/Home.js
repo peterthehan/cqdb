@@ -24,11 +24,13 @@ export default class Home extends Component {
     return (
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
-          <Image alt='' responsive src={imagePath('cqdb', 'src/assets/banner.png')} />
+          <div style={{alignItems: 'center', display: 'flex', justifyContent: 'center',}}>
+            <Image alt='' responsive src={imagePath('cqdb', 'src/assets/banner.png')} />
+          </div>
           <Panel>
             <Media.Heading>Hello!</Media.Heading>
             <p>
-              Welcome to the <a href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>Crusaders Quest</a> Database!
+              Welcome to the <a href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>Crusaders Quest</a> Database (cqdb)!
             </p>
             <p>
               The database is currently on game version: <b>3.9.5.KG</b>.
