@@ -17,12 +17,8 @@ import { imagePath, } from '../util/imagePath';
 import { random, } from '../util/random';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
-const data = require('../Decrypted/get_weapon.json')
-  .weapon
-  .filter(i => (
-    i.type === 'HERO' && i.reqhero && i.howtoget
-    && i.grade === 4 && i.rarity === 'LEGENDARY'
-  ));
+const data = require('../Decrypted/filtered_weapon.json')
+  .filter(i => i.grade === 4 && i.rarity === 'LEGENDARY');
 
 export default class Forging extends Component {
   state = {

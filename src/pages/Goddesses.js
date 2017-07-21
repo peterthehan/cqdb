@@ -9,12 +9,9 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import { countInstances, } from '../util/countInstances';
 import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
-const data = require('../Decrypted/get_sister.json')
-  .sister
-  .filter(i => countInstances(i.id, '_') === 1);
+const data = require('../Decrypted/filtered_sister.json');
 
 export default class Goddesses extends Component {
   state = {

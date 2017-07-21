@@ -21,9 +21,7 @@ import { imagePath, } from '../util/imagePath';
 import { initializeFilters, } from '../util/initializeFilters';
 import { resolve, } from '../util/resolve';
 import { updateURL, } from '../util/updateURL';
-const data = require('../Decrypted/get_character_visual.json')
-  .character_visual
-  .filter(i => i.type === 'HERO');
+const data = require('../Decrypted/filtered_character_visual.json');
 
 // for creating checkboxes
 const checkboxes = {
@@ -229,7 +227,7 @@ export default class Heroes extends Component {
               <ReactList
                 itemRenderer={i => this.state.render[i]}
                 length={this.state.render.length}
-                minSize={parseInt(this.state.items.length / 8, 10)}
+                minSize={10}
               />
             </ListGroup>
           </Panel>

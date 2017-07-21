@@ -21,11 +21,9 @@ import { pickGrade, } from '../util/pickGrade';
 import { random, } from '../util/random';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
-const data = require('../Decrypted/get_character_visual.json')
-  .character_visual
+const data = require('../Decrypted/filtered_character_visual.json')
   .filter(i => {
-    return i.type === 'HERO'
-      && !(['LIMITED', 'DESTINY', 'SUPPORT'].includes(i.rarity))
+    return !(['LIMITED', 'DESTINY', 'SUPPORT'].includes(i.rarity))
       && ['3', '4', '5', '6'].includes(i.id.match(/_\d/)[0][1]);
   });
 

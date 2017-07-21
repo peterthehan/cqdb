@@ -20,16 +20,10 @@ import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
 const berryData = require('../Decrypted/get_character_addstatmax.json')
   .character_addstatmax;
-const heroData = require('../Decrypted/get_character_visual.json')
-  .character_visual
-  .filter(i => i.type === 'HERO');
-const sbwData = require('../Decrypted/get_weapon.json')
-  .weapon
-  .filter(i => i.type === 'HERO' && i.reqhero && i.howtoget);
+const heroData = require('../Decrypted/filtered_character_visual.json');
+const sbwData = require('../Decrypted/filtered_weapon.json');
 const skinData = require('../Decrypted/get_costume.json').costume;
-const statData = require('../Decrypted/get_character_stat.json')
-  .character_stat
-  .filter(i => i.hero_type);
+const statData = require('../Decrypted/filtered_character_stat.json');
 
 export default class HeroInformation extends Component {
   state = {
@@ -43,21 +37,11 @@ export default class HeroInformation extends Component {
   }
 
   componentWillMount = () => {
-    console.log('HeroInformation', 'componentWillMount');
     this.initializeData();
-  }
-
-  componentDidMount = () => {
-    console.log('HeroInformation', 'componentDidMount');
   }
 
   componentWillReceiveProps = () => {
-    console.log('HeroInformation', 'componentWillReceiveProps');
     this.initializeData();
-  }
-
-  componentWillUpdate = () => {
-    console.log('HeroInformation', 'componentWillUpdate');
   }
 
   findTarget = () => {
@@ -483,7 +467,6 @@ export default class HeroInformation extends Component {
   }
 
   render = () => {
-    console.log('HeroInformation', 'render');
     window.scrollTo(0, 0);
     return (
       <div>
