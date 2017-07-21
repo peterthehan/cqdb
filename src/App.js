@@ -30,8 +30,8 @@ export default class App extends Component {
               <Route exact path='/cqdb/goddesses' component={Goddesses} />
               <Route exact path='/cqdb/bread:filters?' component={Bread} />
               <Route exact path='/cqdb/berries:filters?' component={Berries} />
-              <Route exact path='/cqdb/gacha-premium contracts' component={Contracts} />
-              <Route exact path='/cqdb/gacha-weapon forging' component={Forging} />
+              <Route exact path='/cqdb/premium contracts' component={Contracts} />
+              <Route exact path='/cqdb/weapon forging' component={Forging} />
               <Route exact path='/cqdb/about' component={About} />
               <Route component={NoMatch} />
             </Switch>
