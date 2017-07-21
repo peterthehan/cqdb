@@ -138,6 +138,10 @@ export default class Heroes extends Component {
   }
 
   handleChange = (e) => {
+    if (e.target.value.includes('\n')) {
+      return;
+    }
+
     this.setState({
       nameFilter: e.target.value,
       render: filterItems(filterNames(e.target.value, this.state.items), this.state.filters),
@@ -183,6 +187,22 @@ export default class Heroes extends Component {
   //   console.log('visible', start);
   // }
 
+  // handleButton = (e) => {
+  //   const filters = this.state.filters;
+  //   Object.keys(filters).forEach(i => {
+  //     Object.keys(filters[i]).forEach(j => {
+  //       filters[i][j] = false;
+  //     });
+  //   });
+  //   const nameFilter = '';
+
+  //   this.setState({
+  //     filters: filters,
+  //     nameFilter: nameFilter,
+  //     render: filterItems(filterNames(nameFilter, this.state.items), filters),
+  //   }, () => window.history.replaceState('', '', '/cqdb/heroes'));
+  // }
+
   render = () => {
     //console.log('Heroes', 'render');
     return (
@@ -194,8 +214,9 @@ export default class Heroes extends Component {
                 <Col componentClass={ControlLabel} lg={1} md={2} sm={2} xs={12}>Name</Col>
                 <Col lg={11} md={10} sm={10} xs={12}>
                   <FormControl
+                    componentClass='textarea'
                     onChange={this.handleChange}
-                    type='text'
+                    style={{height: '34px', resize: 'none',}}
                     value={this.state.nameFilter}
                   />
                 </Col>
