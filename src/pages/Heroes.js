@@ -5,6 +5,7 @@ import {
   Col,
   ControlLabel,
   Form,
+  FormControl,
   FormGroup,
   Grid,
   ListGroup,
@@ -15,11 +16,11 @@ import {
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
-import { createFilterURL, } from '../util/createFilterURL';
-import { filterItems, } from '../util/filterItems';
+import { filterItems, filterNames, } from '../util/filters';
 import { imagePath, } from '../util/imagePath';
 import { initializeFilters, } from '../util/initializeFilters';
 import { resolve, } from '../util/resolve';
+import { updateURL, } from '../util/updateURL';
 const data = require('../Decrypted/get_character_visual.json')
   .character_visual
   .filter(i => i.type === 'HERO');
@@ -56,15 +57,16 @@ export default class Heroes extends Component {
   state = {
     filters: {},
     items: [],
+    nameFilter: '',
     render: [],
   }
 
   componentWillMount = () => {
     //console.log('Heroes', 'componentWillMount');
     const items = this.initializeItems();
-    const filters = initializeFilters(checkboxes);
-    const render = filterItems(items, filters);
-    this.setState({ filters, items, render, });
+    const [nameFilter, filters] = initializeFilters(checkboxes);
+    const render = filterItems(filterNames(nameFilter, items), filters);
+    this.setState({ filters, items, nameFilter, render, });
   }
 
   componentDidMount = () => {
@@ -74,9 +76,9 @@ export default class Heroes extends Component {
 
   componentWillReceiveProps = () => {
     //console.log('Heroes', 'componentWillReceiveProps');
-    const filters = initializeFilters(checkboxes);
-    const render = filterItems(this.state.items, filters);
-    this.setState({ filters, render, });
+    const [nameFilter, filters] = initializeFilters(checkboxes);
+    const render = filterItems(filterNames(nameFilter, this.state.items), filters);
+    this.setState({ filters, nameFilter, render, });
   }
 
   componentWillUpdate = () => {
@@ -104,9 +106,9 @@ export default class Heroes extends Component {
       const gender = resolve(`TEXT_EXPLORE_TOOLTIP_GENDER_${i.gender}`);
       const image = i.face_tex;
 
-      const filters = [star, className, rarity, faction, gender,];
+      const filters = [name, star, className, rarity, faction, gender,];
       const listItem = (
-        <LinkContainer key={i.id} to={`/cqdb/heroes/${name}&${filters.slice(0, 2).join('&')}`}>
+        <LinkContainer key={i.id} to={`/cqdb/heroes/${filters.slice(0, 3).join('&')}`}>
           <ListGroupItem>
             <Media>
               <Grid fluid>
@@ -119,7 +121,7 @@ export default class Heroes extends Component {
                   <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
                     <Media.Body>
                       <Media.Heading>{`${name} (${star}★)`}</Media.Heading>
-                      <p>{filters.slice(1).join(' | ')}</p>
+                      <p>{filters.slice(2).join(' | ')}</p>
                     </Media.Body>
                   </Col>
                 </Row>
@@ -135,6 +137,13 @@ export default class Heroes extends Component {
     return processedData;
   }
 
+  handleChange = (e) => {
+    this.setState({
+      nameFilter: e.target.value,
+      render: filterItems(filterNames(e.target.value, this.state.items), this.state.filters),
+    }, () => updateURL(this.state.nameFilter, this.state.filters));
+  }
+
   handleCheckbox = (e) => {
     const arr = e.target.name.split('&');
     const filters = this.state.filters;
@@ -142,10 +151,8 @@ export default class Heroes extends Component {
 
     this.setState({
       filters: filters,
-      render: filterItems(this.state.items, filters),
-    }, () => {
-      window.history.replaceState('', '', `?${createFilterURL(this.state.filters)}`);
-    });
+      render: filterItems(filterNames(this.state.nameFilter, this.state.items), filters),
+    }, () => updateURL(this.state.nameFilter, this.state.filters));
   }
 
   renderCheckbox = (key, value) => {
@@ -182,7 +189,19 @@ export default class Heroes extends Component {
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
           <Panel collapsible defaultExpanded header='Filters'>
-            <Form horizontal>{this.renderCheckboxes()}</Form>
+            <Form horizontal>
+              <FormGroup>
+                <Col componentClass={ControlLabel} lg={1} md={2} sm={2} xs={12}>Name</Col>
+                <Col lg={11} md={10} sm={10} xs={12}>
+                  <FormControl
+                    onChange={this.handleChange}
+                    type='text'
+                    value={this.state.nameFilter}
+                  />
+                </Col>
+              </FormGroup>
+              {this.renderCheckboxes()}
+            </Form>
           </Panel>
           <Panel collapsible defaultExpanded header={`Heroes (${this.state.render.length})`}>
             <ListGroup fill>

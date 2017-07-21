@@ -10,3 +10,9 @@ export function filterItems(data, filters = {}) {
 
   return filtered.map(([_, listItem]) => listItem);
 }
+
+export function filterNames(nameFilter, items) {
+  return nameFilter === ''
+    ? items
+    : items.filter(i => i[0][0].toLowerCase().includes(nameFilter));
+}

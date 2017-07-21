@@ -1,5 +1,5 @@
-import { createFilterURL, } from './createFilterURL';
 import { toTitleCase, } from './toTitleCase';
+import { updateURL, } from './updateURL';
 
 export function initializeFilters(checkboxes) {
   // initialize each filter category key with a filter-false value
@@ -9,12 +9,16 @@ export function initializeFilters(checkboxes) {
     checkboxes[i].forEach(j => filters[i][j] = false);
   });
 
+  let nameFilter = '';
   // if url contains querystring, parse and error-check it
   if (window.location.search.length) {
     decodeURIComponent(window.location.search.substring(1)).split('&').forEach(i => {
       const kv = i.split('=');
       const key = toTitleCase(kv[0]);
-      if (filters[key]) {
+      
+      if (key === 'Name') {
+        nameFilter = kv[1];
+      } else if (filters[key]) {
         const keys = kv[1].toLowerCase().split(',');
         Object.keys(filters[key])
           .filter(j => keys.includes(j.toLowerCase()))
@@ -23,8 +27,8 @@ export function initializeFilters(checkboxes) {
     });
 
     // update url
-    window.history.replaceState('', '', `?${createFilterURL(filters)}`);
+    updateURL(nameFilter, filters);
   }
 
-  return filters;
+  return [nameFilter, filters];
 }

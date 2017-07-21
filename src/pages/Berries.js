@@ -5,6 +5,7 @@ import {
   Col,
   ControlLabel,
   Form,
+  FormControl,
   FormGroup,
   Grid,
   ListGroup,
@@ -14,11 +15,11 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import { createFilterURL, } from '../util/createFilterURL';
-import { filterItems, } from '../util/filterItems';
+import { filterItems, filterNames, } from '../util/filters';
 import { imagePath, } from '../util/imagePath';
 import { initializeFilters, } from '../util/initializeFilters';
 import { resolve, } from '../util/resolve';
+import { updateURL, } from '../util/updateURL';
 const data = require('../Decrypted/get_addstatitem.json').addstatitem;
 
 let checkboxes = {};
@@ -27,20 +28,21 @@ export default class Berries extends Component {
   state = {
     filters: {},
     items: [],
+    nameFilter: '',
     render: [],
   }
 
   componentWillMount = () => {
     const items = this.initializeItems();
-    const filters = initializeFilters(checkboxes);
-    const render = filterItems(items, filters);
-    this.setState({ filters, items, render, });
+    const [nameFilter, filters] = initializeFilters(checkboxes);
+    const render = filterItems(filterNames(nameFilter, items), filters);
+    this.setState({ filters, items, nameFilter, render, });
   }
 
   componentWillReceiveProps = () => {
-    const filters = initializeFilters(checkboxes);
-    const render = filterItems(this.state.items, filters);
-    this.setState({ filters, render, });
+    const [nameFilter, filters] = initializeFilters(checkboxes);
+    const render = filterItems(filterNames(nameFilter, this.state.items), filters);
+    this.setState({ filters, nameFilter, render, });
   }
 
   initializeItems = () => {
@@ -63,8 +65,8 @@ export default class Berries extends Component {
       const eat = i.eat_price;
       const image = i.texture;
 
-      const filters = [star, rate, type,];
-      category.forEach((i, index) => unique[i][filters[index]] = true);
+      const filters = [name, star, rate, type,];
+      category.forEach((i, index) => unique[i][filters[index + 1]] = true);
       const listItem = (
         <ListGroupItem key={i.id}>
           <Media>
@@ -99,6 +101,13 @@ export default class Berries extends Component {
     return processedData;
   }
 
+  handleChange = (e) => {
+    this.setState({
+      nameFilter: e.target.value,
+      render: filterItems(filterNames(e.target.value, this.state.items), this.state.filters),
+    }, () => updateURL(this.state.nameFilter, this.state.filters));
+  }
+
   handleCheckbox = (e) => {
     const arr = e.target.name.split('&');
     const filters = this.state.filters;
@@ -106,10 +115,8 @@ export default class Berries extends Component {
 
     this.setState({
       filters: filters,
-      render: filterItems(this.state.items, filters),
-    }, () => {
-      window.history.replaceState('', '', `?${createFilterURL(this.state.filters)}`);
-    });
+      render: filterItems(filterNames(this.state.nameFilter, this.state.items), filters),
+    }, () => updateURL(this.state.nameFilter, this.state.filters));
   }
 
   renderCheckbox = (key, value) => {
@@ -139,7 +146,19 @@ export default class Berries extends Component {
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
           <Panel collapsible defaultExpanded header='Filters'>
-            <Form horizontal>{this.renderCheckboxes()}</Form>
+            <Form horizontal>
+              <FormGroup>
+                <Col componentClass={ControlLabel} lg={1} md={2} sm={2} xs={12}>Name</Col>
+                <Col lg={11} md={10} sm={10} xs={12}>
+                  <FormControl
+                    onChange={this.handleChange}
+                    type='text'
+                    value={this.state.nameFilter}
+                  />
+                </Col>
+              </FormGroup>
+              {this.renderCheckboxes()}
+            </Form>
           </Panel>
           <Panel collapsible defaultExpanded header={`Berries (${this.state.render.length})`}>
             <ListGroup fill>
