@@ -6,6 +6,7 @@ import Frame from './components/Frame';
 import Home from './pages/Home';
 import Heroes from './pages/Heroes';
 import HeroInformation from './pages/HeroInformation';
+import Skills from './pages/Skills';
 import Goddesses from './pages/Goddesses';
 import Bread from './pages/Bread';
 import Berries from './pages/Berries';
@@ -28,11 +29,12 @@ export default class App extends Component {
               <Route exact path='/cqdb' component={Home} />
               <Route exact path='/cqdb/heroes:filters?' component={Heroes} />
               <Route exact path='/cqdb/heroes/:hero' component={HeroInformation} />
+              <Route exact path='/cqdb/skills' component={Skills} />
               <Route exact path='/cqdb/goddesses' component={Goddesses} />
               <Route exact path='/cqdb/bread:filters?' component={Bread} />
               <Route exact path='/cqdb/berries:filters?' component={Berries} />
-              <Route exact path='/cqdb/premium contracts' component={Contracts} />
-              <Route exact path='/cqdb/weapon forging' component={Forging} />
+              <Route exact path='/cqdb/contract pulling simulator' component={Contracts} />
+              <Route exact path='/cqdb/sbw forging simulator' component={Forging} />
               <Route exact path='/cqdb/about' component={About} />
               <Route component={NoMatch} />
             </Switch>

@@ -2,6 +2,7 @@ import React, { Component, } from 'react';
 import {
   Col,
   Grid,
+  Label,
   MenuItem,
   Nav,
   Navbar,
@@ -15,6 +16,7 @@ import { imagePath, } from '../util/imagePath';
 
 const navPages = [
   'Heroes',
+  'Skills',
   'Goddesses',
   'Bread',
   'Berries',
@@ -22,8 +24,8 @@ const navPages = [
 ];
 
 const gachaPages = [
-  'Premium Contracts',
-  'Weapon Forging',
+  'Contract Pulling Simulator',
+  'SBW Forging Simulator',
 ];
 
 export default class Frame extends Component {
@@ -70,9 +72,19 @@ export default class Frame extends Component {
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
           <hr style={{borderColor: '#DDD',}} />  
-          <p style={{textAlign: 'center',}}>
-            Made with ❤ by <a href='https://github.com/Johj'>Peter</a>.
-          </p>
+          <div style={{textAlign: 'center',}}>
+            <a href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>
+              <Label>Android 3.9.5.KG</Label>
+            </a>
+            &nbsp;
+            <a href='https://itunes.apple.com/app/id901858272?mt=8'>
+              <Label>iOS 3.9.4</Label>
+            </a>
+            <p />
+            <p>
+              Made with ❤ by <a href='https://github.com/Johj'>Peter</a>.
+            </p>
+          </div>
         </Col>
       </Row>
     );
