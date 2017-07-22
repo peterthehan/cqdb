@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "homepage": "https://johj.github.io/cqdb",
   "dependencies": {
+    "babel-polyfill": "^6.23.0",
     "bootstrap": "^3.3.7",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.0",
