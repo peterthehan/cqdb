@@ -8,7 +8,7 @@ body {
 
 @media (max-width: 767px) {
   .content {
-    padding: 0 20% 0 20%;
+    padding: 0 0 0 0;
   }
 }
 
