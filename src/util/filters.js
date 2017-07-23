@@ -12,8 +12,20 @@ export function filterItems(data, filters = {}) {
 }
 
 export function filterNames(nameFilter, items) {
+  if (nameFilter === '') {
+    return items;
+  }
+
   nameFilter = nameFilter.toLowerCase();
-  return nameFilter === ''
-    ? items
-    : items.filter(i => i[0][0].toLowerCase().includes(nameFilter));
+  const exactMatches = [];
+  const substringMatches = [];
+  items.forEach(i => {
+    const name = i[0][0].toLowerCase();
+    if (name.split(' ').includes(nameFilter)) {
+      exactMatches.push(i);
+    } else if (name.includes(nameFilter)) {
+      substringMatches.push(i);
+    }
+  });
+  return exactMatches.concat(substringMatches);
 }
