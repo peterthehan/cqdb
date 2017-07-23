@@ -20,7 +20,7 @@ import { imagePath, } from '../util/imagePath';
 import { initializeFilters, } from '../util/initializeFilters';
 import { resolve, } from '../util/resolve';
 import { updateURL, } from '../util/updateURL';
-const data = require('../Decrypted/get_bread.json').bread;
+const data = require('../Decrypted/filtered_bread.json');
 
 const checkboxes = {};
 

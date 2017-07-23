@@ -22,7 +22,7 @@ const berryData = require('../Decrypted/get_character_addstatmax.json')
   .character_addstatmax;
 const heroData = require('../Decrypted/filtered_character_visual.json');
 const sbwData = require('../Decrypted/filtered_weapon.json');
-const skinData = require('../Decrypted/get_costume.json').costume;
+const skinData = require('../Decrypted/filtered_costume.json');
 const statData = require('../Decrypted/filtered_character_stat.json');
 
 export default class HeroInformation extends Component {
@@ -409,7 +409,7 @@ export default class HeroInformation extends Component {
       <ListGroupItem key={index}>
         <Media>
           <Media.Body>
-            <Media.Heading>{resolve(i.costume_name)}</Media.Heading>
+            <Media.Heading>{`${resolve(i.costume_name)}${['LIMITED', 'CONTRACT',].includes(i.rarity) ? ' (Event)' : ''}`}</Media.Heading>
             <p>{stats.join(', ')}</p>
             <Row>
               <Col md={6} sm={6} xs={6}>
