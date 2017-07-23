@@ -74,15 +74,15 @@ export default class Frame extends Component {
           <hr style={{borderColor: '#DDD',}} />  
           <div style={{textAlign: 'center',}}>
             <a href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>
-              <Label>Android 3.9.5.KG</Label>
+              <Label bsStyle='primary'>Android 3.9.5.KG</Label>
             </a>
             &nbsp;
             <a href='https://itunes.apple.com/app/id901858272?mt=8'>
-              <Label>iOS 3.9.4</Label>
+              <Label bsStyle='primary'>iOS 3.9.4</Label>
             </a>
             <p />
             <p>
-              Made with ❤ by <a href='https://github.com/Johj'>Peter</a>.
+              Made with ❤ by <a href='https://github.com/Johj' style={{color: '#333',}}>Peter</a>.
             </p>
           </div>
         </Col>
