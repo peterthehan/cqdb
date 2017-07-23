@@ -15,6 +15,7 @@ import { LinkContainer, } from 'react-router-bootstrap';
 import { imagePath, } from '../util/imagePath';
 
 const navPages = [
+  'Useful Links',
   'About',
 ];
 
@@ -51,8 +52,8 @@ export default class Frame extends Component {
 
   renderNavbar = () => {
     const pages = navPages.map(i => this.renderItem(i, true));
-    pages.splice(pages.length - 1, 0, this.renderNavDropdown(databasePages, 'Database'));
-    pages.splice(pages.length - 1, 0, this.renderNavDropdown(gachaPages, 'Gacha'));
+    pages.splice(0, 0, this.renderNavDropdown(gachaPages, 'Gacha'));
+    pages.splice(0, 0, this.renderNavDropdown(databasePages, 'Database'));
 
     return (
       <Navbar collapseOnSelect fixedTop inverse>
