@@ -3,14 +3,12 @@ body {
 }
 
 .content {
-  padding-left: 20%;
-  padding-right: 20%;
+  padding: 0 20% 0 20%;
 }
 
 @media (max-width: 767px) {
   .content {
-    padding-left: 0%;
-    padding-right: 0%;
+    padding: 0 20% 0 20%;
   }
 }
 
