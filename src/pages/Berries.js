@@ -33,6 +33,7 @@ export default class Berries extends Component {
   }
 
   componentWillMount = () => {
+    this.timer = null;
     const items = this.initializeItems();
     const [nameFilter, filters] = initializeFilters(checkboxes);
     const render = filterItems(filterNames(nameFilter, items), filters);
@@ -106,10 +107,16 @@ export default class Berries extends Component {
       return;
     }
 
+    clearTimeout(this.timer);
     this.setState({
       nameFilter: e.target.value,
-      render: filterItems(filterNames(e.target.value, this.state.items), this.state.filters),
-    }, () => updateURL(this.state.nameFilter, this.state.filters));
+    }, () => {
+      this.timer = setTimeout(() => {
+        this.setState({
+          render: filterItems(filterNames(this.state.nameFilter, this.state.items), this.state.filters),
+        }, () => updateURL(this.state.nameFilter, this.state.filters));
+      }, 500);
+    });
   }
 
   handleCheckbox = (e) => {

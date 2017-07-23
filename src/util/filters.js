@@ -12,6 +12,7 @@ export function filterItems(data, filters = {}) {
 }
 
 export function filterNames(nameFilter, items) {
+  nameFilter = nameFilter.toLowerCase();
   return nameFilter === ''
     ? items
     : items.filter(i => i[0][0].toLowerCase().includes(nameFilter));
