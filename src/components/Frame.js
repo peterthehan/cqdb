@@ -15,12 +15,16 @@ import { LinkContainer, } from 'react-router-bootstrap';
 import { imagePath, } from '../util/imagePath';
 
 const navPages = [
+  'About',
+];
+
+const databasePages = [
   'Heroes',
   'Skills',
   'Goddesses',
+  'Weapons',
   'Bread',
   'Berries',
-  'About',
 ];
 
 const gachaPages = [
@@ -37,17 +41,18 @@ export default class Frame extends Component {
     );
   }
 
-  renderNavDropdown = () => {
+  renderNavDropdown = (pages, title) => {
     return (
-      <NavDropdown id='gacha' key='gacha' title='Gacha'>
-        {gachaPages.map(i => this.renderItem(i, false))}
+      <NavDropdown id={title} key={title} title={title}>
+        {pages.map(i => this.renderItem(i, false))}
       </NavDropdown>
     );
   }
 
   renderNavbar = () => {
     const pages = navPages.map(i => this.renderItem(i, true));
-    pages.splice(pages.length - 1, 0, this.renderNavDropdown());
+    pages.splice(pages.length - 1, 0, this.renderNavDropdown(databasePages, 'Database'));
+    pages.splice(pages.length - 1, 0, this.renderNavDropdown(gachaPages, 'Gacha'));
 
     return (
       <Navbar collapseOnSelect fixedTop inverse>
