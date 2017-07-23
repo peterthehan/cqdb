@@ -33,21 +33,18 @@ export default class Home extends Component {
                 style={{display: 'flex', justifyContent: 'center',}}
                 lg={12} md={12} sm={12} xs={12}
               >
-                <p>
-                  <a href='https://discord.gg/WjEFnzC'>
-                    <Image alt='' responsive src='https://discordapp.com/api/guilds/258167954913361930/embed.png?style=banner2' />
-                  </a>
-                </p>
+                <a href='https://discord.gg/WjEFnzC'>
+                  <Image alt='cqdb Discord Server' responsive src='https://discordapp.com/api/guilds/258167954913361930/embed.png?style=banner2' />
+                </a>
               </Col>
+              <Col lg={12} md={12} sm={12} xs={12}><p /></Col>
               <Col
                 style={{display: 'flex', justifyContent: 'center',}}
                 lg={12} md={12} sm={12} xs={12}
               >
-                <p>
-                  <a href='https://discord.gg/6TRnyhj'>
-                    <Image alt='' responsive src='https://discordapp.com/api/guilds/206599473282023424/embed.png?style=banner2' />
-                  </a>
-                </p>
+                <a href='https://discord.gg/6TRnyhj'>
+                  <Image alt='Crusaders Quest Discord Server' responsive src='https://discordapp.com/api/guilds/206599473282023424/embed.png?style=banner2' />
+                </a>
               </Col>
             </Row>
           </Panel>
