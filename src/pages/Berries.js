@@ -22,7 +22,7 @@ import { resolve, } from '../util/resolve';
 import { updateURL, } from '../util/updateURL';
 const data = require('../Decrypted/get_addstatitem.json').addstatitem;
 
-let checkboxes = {};
+const checkboxes = {};
 
 export default class Berries extends Component {
   state = {
@@ -136,8 +136,8 @@ export default class Berries extends Component {
     return (
       Object.keys(checkboxes).map(i => (
         <FormGroup key={i}>
-          <Col componentClass={ControlLabel} lg={1} md={2} sm={2} xs={12}>{i}</Col>
-          <Col lg={11} md={10} sm={10} xs={12}>
+          <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>{i}</Col>
+          <Col lg={10} md={9} sm={8} xs={12}>
             {checkboxes[i].map(j => this.renderCheckbox(i, j))}
           </Col>
         </FormGroup> 
@@ -152,8 +152,8 @@ export default class Berries extends Component {
           <Panel collapsible defaultExpanded header='Filters'>
             <Form horizontal>
               <FormGroup>
-                <Col componentClass={ControlLabel} lg={1} md={2} sm={2} xs={12}>Name</Col>
-                <Col lg={11} md={10} sm={10} xs={12}>
+                <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>Name</Col>
+                <Col lg={10} md={9} sm={8} xs={12}>
                   <FormControl
                     componentClass='textarea'
                     onChange={this.handleChange}
