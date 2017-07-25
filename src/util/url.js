@@ -88,5 +88,5 @@ export function updateURL(textFilter, checkboxFilters, sortBy = '', sortOrder = 
     }
   }
 
-  window.history.replaceState('', '', `?${url.join('&')}`);
+  window.history.replaceState('', '', `?${encodeURIComponent(url.join('&'))}`);
 }

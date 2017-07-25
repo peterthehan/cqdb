@@ -77,7 +77,7 @@ export default class Bread extends Component {
 
   renderListGroupItem = (bread) => {
     return (
-      <ListGroupItem key={bread.name}>
+      <ListGroupItem key={bread.image}>
         <Media>
           <Grid fluid>
             <Row>

@@ -57,14 +57,15 @@ const data = berryData.map(i => {
 const checkboxes = (() => {
   const c = {};
   filterCategories.forEach((i, index) => {
-    c[i] = Object.keys(unique[i]).sort((a, b) => (
+    c[i] = Object.keys(unique[i]).sort((a, b) => 
       a.substring(0, a.length - 1) - b.substring(0, b.length - 1)
-    ));
+    );
   });
   return c;
 })();
 
 //console.log(data, checkboxes);
+
 export default class Berries extends Component {
   state = {
     textFilter: '',
