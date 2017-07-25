@@ -152,7 +152,7 @@ export default class Forging extends Component {
                   </FormGroup>
                 </Col>
                 <Col lg={12} md={12} sm={12} xs={12}>
-                  <Button block onClick={this.handleButton}>Forge SBWs</Button>
+                  <Button block onClick={this.handleButton}>Forge Sbws</Button>
                 </Col>
               </Row>
               <hr />

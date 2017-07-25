@@ -31,7 +31,7 @@ const databasePages = [
 
 const gachaPages = [
   'Contract Pulling Simulator',
-  'SBW Forging Simulator',
+  'Sbw Forging Simulator',
 ];
 
 export default class Frame extends Component {
