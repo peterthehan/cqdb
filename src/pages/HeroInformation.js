@@ -405,11 +405,17 @@ export default class HeroInformation extends Component {
       return label + ': ' + value;
     });
 
+    let rarity = '';
+    if (i.rarity === 'HIDDEN') {
+      rarity = ' (Hidden)';
+    } else {
+      rarity = ' (Event)';
+    }
     return (
       <ListGroupItem key={index}>
         <Media>
           <Media.Body>
-            <Media.Heading>{`${resolve(i.costume_name)}${['LIMITED', 'CONTRACT',].includes(i.rarity) ? ' (Event)' : ''}`}</Media.Heading>
+            <Media.Heading>{`${resolve(i.costume_name)}${rarity}`}</Media.Heading>
             <p>{stats.join(', ')}</p>
             <Row>
               <Col md={6} sm={6} xs={6}>
