@@ -6,9 +6,10 @@ import Frame from './components/Frame';
 import Home from './pages/Home';
 import Heroes from './pages/Heroes';
 import HeroInformation from './pages/HeroInformation';
+import Soulbound from './pages/Soulbound';
 import Skills from './pages/Skills';
-import Goddesses from './pages/Goddesses';
 import Weapons from './pages/Weapons';
+import Goddesses from './pages/Goddesses';
 import Bread from './pages/Bread';
 import Berries from './pages/Berries';
 import Contracts from './pages/Contracts';
@@ -31,9 +32,10 @@ export default class App extends Component {
               <Route exact path='/cqdb' component={Home} />
               <Route exact path='/cqdb/heroes' component={Heroes} />
               <Route exact path='/cqdb/heroes/:hero' component={HeroInformation} />
+              <Route exact path='/cqdb/soulbound weapons' component={Soulbound} />
+              <Route exact path='/cqdb/weapons' component={Weapons} />
               <Route exact path='/cqdb/skills' component={Skills} />
               <Route exact path='/cqdb/goddesses' component={Goddesses} />
-              <Route exact path='/cqdb/weapons' component={Weapons} />
               <Route exact path='/cqdb/bread' component={Bread} />
               <Route exact path='/cqdb/berries' component={Berries} />
               <Route exact path='/cqdb/contract pulling simulator' component={Contracts} />

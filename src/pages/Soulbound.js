@@ -14,35 +14,34 @@ import {
   Panel,
   Row,
 } from 'react-bootstrap';
+import { LinkContainer, } from 'react-router-bootstrap';
 
 import { filterByText, filterByCheckbox, } from '../util/filters';
 import { imagePath, } from '../util/imagePath';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
 import { parseURL, updateURL, } from '../util/url';
-const weaponData = require('../Decrypted/filtered_weapon.json');
-
-function getConversion(value) {
-  const prefix = 'TEXT_WEAPON_CONVERT_INFO_';
-  if (value === 'ATTACK') {
-    return prefix + 'ATK';
-  } else if (value === 'DEFENSE') {
-    return prefix + 'DEF';
-  } else if (value === 'UTILITY') {
-    return prefix + 'UTL';
-  }
-  return null;
-}
+const sbwData = require('../Decrypted/filtered_weapon_sbw.json');
 
 const filterCategories = ['Star', 'Category',];
 
-const data = weaponData.map(i => {
-  const conversions = [i.convert_slot_1, i.convert_slot_2, i.convert_slot_3,]
-    .map((i, index) => {
-      const key = getConversion(i);
-      return !index && !key ? 'None' : resolve(key);
-    })
-    .filter(i => i);
+const data = sbwData.reverse().map(i => {
+  const dict = {
+    'Sword': 'Warrior',
+    'Hammer': 'Paladin',
+    'Bow': 'Archer',
+    'Gun': 'Hunter',
+    'Staff': 'Wizard',
+    'Orb': 'Priest',
+  };
+
+  let heroName = i.grade === 5 ? i.reqhero[1] : i.reqhero_ref;
+  if (heroName.includes('LIMITED_RB') || heroName.includes('KOF')) {
+    heroName = heroName.replace(/_\d/, '');
+  } else if (heroName.includes('DEEMO')) {
+    heroName = heroName.replace(/_\d/, '') + heroName.match(/_\d/)[0];
+  }
+  heroName = resolve(`TEXT_${heroName}_NAME`);
 
   // make weapon's filterable object
   const f = [
@@ -57,10 +56,12 @@ const data = weaponData.map(i => {
     image: i.skin_tex,
     filterable: filterable,
     name: resolve(i.name),
+    description: resolve(i.desc),
     range: i.range,
     atkPower: i.attdmg,
     atkSpeed: i.attspd,
-    conversions: conversions,
+    heroName: heroName,
+    class: dict[filterable['Category']],
   };
 });
 
@@ -72,7 +73,7 @@ const checkboxes = {
 
 //console.log(data, checkboxes);
 
-export default class Weapons extends Component {
+export default class Soulbound extends Component {
   state = {
     textFilter: '',
     checkboxFilters: {},
@@ -94,26 +95,31 @@ export default class Weapons extends Component {
 
   renderListGroupItem = (weapon) => {
     return (
-      <ListGroupItem key={weapon.name}>
-        <Media>
-          <Grid fluid>
-            <Row>
-              <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
-                <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('cq-assets', `weapons/${weapon.image}.png`)} />
-                </Media.Left>
-              </Col>
-              <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
-                <Media.Body>
-                  <Media.Heading>{`${weapon.name} (${weapon.filterable.Star}★)`}</Media.Heading>
-                  <p>{`${weapon.filterable.Category} | Range: ${weapon.range} | Atk. Power: ${weapon.atkPower} | Atk. Speed: ${weapon.atkSpeed}`}</p>
-                  <p>{weapon.conversions.join(', ')}</p>
-                </Media.Body>
-              </Col>
-            </Row>
-          </Grid>
-        </Media>
-      </ListGroupItem>
+      <LinkContainer
+        key={`${weapon.image}${weapon.filterable.Star}`}
+        to={`/cqdb/heroes/${weapon.heroName}&${weapon.filterable.Star}&${weapon.class}`}
+      >
+        <ListGroupItem>
+          <Media>
+            <Grid fluid>
+              <Row>
+                <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+                  <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                    <img alt='' src={imagePath('cq-assets', `sbws/${weapon.image}.png`)} />
+                  </Media.Left>
+                </Col>
+                <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+                  <Media.Body>
+                    <Media.Heading>{`${weapon.name} (${weapon.filterable.Star}★) / ${weapon.heroName}`}</Media.Heading>
+                    <p>{`${weapon.filterable.Category} | Range: ${weapon.range} | Atk. Power: ${weapon.atkPower} | Atk. Speed: ${weapon.atkSpeed}`}</p>
+                    <p>{weapon.description}</p>
+                  </Media.Body>
+                </Col>
+              </Row>
+            </Grid>
+          </Media>
+        </ListGroupItem>
+      </LinkContainer>
     );
   }
   changeView = () => {
@@ -183,7 +189,7 @@ export default class Weapons extends Component {
               {this.renderCheckboxes()}
             </Form>
           </Panel>
-          <Panel collapsible defaultExpanded header={`Weapons (${this.state.render.length})`}>
+          <Panel collapsible defaultExpanded header={`Soulbound Weapons (${this.state.render.length})`}>
             <ListGroup fill>
               <ReactList
                 itemRenderer={i => this.state.render[i]}
