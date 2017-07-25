@@ -18,7 +18,7 @@ export function parseURL(checkboxes, selectsBy = [], selectsOrder = []) {
   if (window.location.search.length) {
     decodeURIComponent(window.location.search.substring(1)).split('&').forEach(i => {
       let [key, value] = i.split('=');
-      key = toTitleCase(key);
+      key = key.split(' ').map(toTitleCase).join(' ');
       
       // set values for matching keys if they exist
       if (key === 'Name') {

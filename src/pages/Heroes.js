@@ -25,6 +25,8 @@ import { sortBySelection, } from '../util/sortBySelection';
 import { parseURL, updateURL, } from '../util/url';
 const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax;
 const heroData = require('../Decrypted/filtered_character_visual.json');
+const sbwData = require('../Decrypted/filtered_weapon_sbw.json');
+const skinData = require('../Decrypted/filtered_costume.json');
 const statData = require('../Decrypted/filtered_character_stat.json');
 
 const statLabels = [
@@ -37,7 +39,7 @@ const statLabels = [
   'Accuracy',
   'Evasion',
 ];
-const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender',];
+const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin',];
 const sortCategories = ['By', 'Order',];
 
 // parse data files
@@ -60,6 +62,10 @@ const data = heroData.reverse().map(hero => {
       ? 'Unknown' // remove unreleased domains
       : hero.domain === 'NONEGROUP' ? `TEXT_CHAMP_DOMAIN_${hero.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${hero.domain}`,
     `TEXT_EXPLORE_TOOLTIP_GENDER_${hero.gender}`,
+    stat.grade < 4
+      ? hero.rarity === 'DESTINY' ? 'Yes' : 'No'
+      : sbwData.some(j => j.reqhero.includes(hero.id)) ? 'Yes' : 'No',
+    skinData.some(i => i.wearable_charid.includes(hero.id)) ? 'Yes' : 'No',
   ].map(resolve);
 
   const filterable = {};
@@ -145,6 +151,8 @@ const checkboxes = (() => {
       'Unknown',
     ],
     ['Male', 'Female',],
+    ['Yes', 'No',],
+    ['Yes', 'No',],
   ];
 
   const c = {};
