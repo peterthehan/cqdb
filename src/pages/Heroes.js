@@ -16,160 +16,257 @@ import {
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
-import { filterItems, filterNames, } from '../util/filters';
+import { calculateStat, } from '../util/calculateStat';
+import { filterByText, filterByCheckbox, } from '../util/filters';
 import { imagePath, } from '../util/imagePath';
-import { initializeFilters, } from '../util/initializeFilters';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
-import { updateURL, } from '../util/updateURL';
-const data = require('../Decrypted/filtered_character_visual.json');
+import { sortBySelection, } from '../util/sortBySelection';
+import { parseURL, updateURL, } from '../util/url';
+const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax;
+const heroData = require('../Decrypted/filtered_character_visual.json');
+const statData = require('../Decrypted/filtered_character_stat.json');
 
-// for creating checkboxes
-const checkboxes = {
-  Star: range(6),
-  Class: ['Warrior', 'Paladin', 'Archer', 'Hunter', 'Wizard', 'Priest',],
-  Rarity: [
-    'Legendary Hero',
-    'Contract only Hero',
-    'Promotion Hero',
-    'Secret Hero',
-    'Normal Hero',
-    'Supply Hero',
-  ],
-  Faction: [
-    'Grancia Empire',
-    'Eastern Kingdom - Ryu',
-    'Neth Empire',
-    'Southwestern Alliance',
-    'Eastern Kingdom - Han',
-    'Roman Republic',
-    'Heroes of Freedom',
-    'Pumpkin City',
-    'Order of the Goddess',
-    'Supply all forces',
-    'Unknown',
-  ],
-  Gender: ['Male', 'Female',],
-};
+const statLabels = [
+  'HP',
+  'Atk. Power',
+  'Crit.Chance',
+  'Crit.Damage',
+  'Armor',
+  'Resistance',
+  'Accuracy',
+  'Evasion',
+];
+const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender',];
+const sortCategories = ['By', 'Order',];
+
+// parse data files
+const data = heroData.map(hero => {
+  // find hero's respective stat and berry data
+  const stat = statData.filter(i => i.id === hero.default_stat_id)[0];
+  const berry = stat.grade === 6 && hero.id !== 'CHA_WA_SUPPORT_6_1'
+    ? berryData.filter(i => i.id === stat.addstat_max_id)[0]
+    : {};
+
+  const image = hero.face_tex;
+  const name = resolve(hero.name);
+
+  // make hero's filterable object
+  const f = [
+    stat.grade.toString(),
+    `TEXT_CLASS_${hero.classid.substring(4)}`,
+    `TEXT_CONFIRM_SELL_${hero.rarity === 'LEGENDARY' ? (hero.isgachagolden ? 'IN_GACHA' : 'LAGENDARY') : hero.rarity}_HERO`,
+    !hero.domain || ['CHEN', 'MINO', 'NOS',].includes(hero.domain)
+      ? 'Unknown' // remove unreleased domains
+      : hero.domain === 'NONEGROUP' ? `TEXT_CHAMP_DOMAIN_${hero.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${hero.domain}`,
+    `TEXT_EXPLORE_TOOLTIP_GENDER_${hero.gender}`,
+  ].map(resolve);
+
+  const filterable = {};
+  filterCategories.forEach((i, index) => filterable[i] = f[index]);
+
+  // make hero's sortable object
+  const level = stat.grade * 10;
+  const breadTraining = [stat.grade - 1];
+  const baseStats = breadTraining.map(i => {
+    const calculatedStats = [
+      calculateStat(stat.initialhp, stat.growthhp, level, i),
+      calculateStat(stat.initialattdmg, stat.growthattdmg, level, i),
+      stat.critprob,
+      stat.critpower,
+      calculateStat(stat.defense, stat.growthdefense, level, i),
+      calculateStat(stat.resist, stat.growthresist, level, i),
+      stat.hitrate,
+      stat.dodgerate,
+    ];
+
+    const b = {}
+    statLabels.forEach((j, index) => b[j] = calculatedStats[index]);
+    return b;
+  });
+
+  const sortable = baseStats[0];
+  if (Object.keys(berry).length) {
+    const berryStats = [
+      berry.hp,
+      berry.attack_power,
+      berry.critical_chance,
+      berry.critical_damage,
+      berry.armor,
+      berry.resistance,
+      berry.accuracy,
+      berry.dodge,
+    ];
+
+    statLabels.forEach((i, index) => sortable[i] += berryStats[index]);
+  }
+
+  // match game's decimal places
+  const rounding = [1, 1, 2, 2, 1, 1, 2, 2,];
+  statLabels.forEach((i, index) => {
+    sortable[i] = parseFloat(sortable[i].toFixed(rounding[index]));
+  });
+
+  // add name as a sortable field
+  sortable['Name'] = name;
+
+  return {
+    image: image,
+    filterable: filterable,
+    name: name,
+    sortable: sortable,
+  };
+});
+
+// initialize checkboxes
+const checkboxes = (() => {
+  const filterLabels = [
+    range(6).map(i => i.toString()),
+    ['Warrior', 'Paladin', 'Archer', 'Hunter', 'Wizard', 'Priest',],
+    [
+      'Legendary Hero',
+      'Contract only Hero',
+      'Promotion Hero',
+      'Secret Hero',
+      'Normal Hero',
+      'Supply Hero',
+    ],
+    [
+      'Grancia Empire',
+      'Eastern Kingdom - Ryu',
+      'Neth Empire',
+      'Southwestern Alliance',
+      'Eastern Kingdom - Han',
+      'Roman Republic',
+      'Heroes of Freedom',
+      'Pumpkin City',
+      'Order of the Goddess',
+      'Supply all forces',
+      'Unknown',
+    ],
+    ['Male', 'Female',],
+  ];
+
+  const c = {};
+  filterCategories.forEach((i, index) => c[i] = filterLabels[index]);
+  return c;
+})();
+
+// initialize sort's select labels and options
+const selects = (() => {
+  const sortOptions = [
+    ['Default', 'Name',].concat(statLabels),
+    ['Descending', 'Ascending',],
+  ];
+
+  const s = {};
+  sortCategories.forEach((i, index) => s[i] = sortOptions[index])
+  return s;
+})();
+
+//console.log(data, checkboxes, selects);
 
 export default class Heroes extends Component {
   state = {
-    filters: {},
-    items: [],
-    nameFilter: '',
+    textFilter: '',
+    checkboxFilters: {},
+    sortBy: '',
+    sortOrder: '',
     render: [],
   }
 
   componentWillMount = () => {
-    //console.log('Heroes', 'componentWillMount');
     this.timer = null;
-    const items = this.initializeItems();
-    const [nameFilter, filters] = initializeFilters(checkboxes);
-    const render = filterItems(filterNames(nameFilter, items), filters);
-    this.setState({ filters, items, nameFilter, render, });
-  }
+    const [
+      textFilter,
+      checkboxFilters,
+      sortBy,
+      sortOrder,
+    ] = parseURL(checkboxes, selects[sortCategories[0]], selects[sortCategories[1]]);
+    const processed = sortBySelection(
+      filterByCheckbox(filterByText(data, textFilter), checkboxFilters),
+      sortBy,
+      selects[sortCategories[1]][0] === sortOrder,
+      selects[sortCategories[0]][0]
+    );
+    const render = processed.map(i => this.renderListGroupItem(i, sortBy));
 
-  componentDidMount = () => {
-    //console.log('Heroes', 'componentDidMount');
-    //window.addEventListener('scroll', this.handleScroll);
+    this.setState({textFilter, checkboxFilters, sortBy, sortOrder, render,});
   }
 
   componentWillReceiveProps = () => {
-    //console.log('Heroes', 'componentWillReceiveProps');
-    const [nameFilter, filters] = initializeFilters(checkboxes);
-    const render = filterItems(filterNames(nameFilter, this.state.items), filters);
-    this.setState({ filters, nameFilter, render, });
+    this.componentWillMount();
   }
 
-  componentWillUpdate = () => {
-    //console.log('Heroes', 'componentWillUpdate');
+  renderListGroupItem = (hero, sortBy) => {
+    const id = [hero.name, hero.filterable.Star, hero.filterable.Class,];
+    return (
+      <LinkContainer key={id.join('')} to={`/cqdb/heroes/${id.join('&')}`}>
+        <ListGroupItem>
+          <Media>
+            <Grid fluid>
+              <Row>
+                <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+                  <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                    <img alt='' src={imagePath('cq-assets', `heroes/${hero.image}.png`)} />
+                  </Media.Left>
+                </Col>
+                <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+                  <Media.Body>
+                    <Media.Heading>{`${hero.name} (${hero.filterable.Star}★)`}</Media.Heading>
+                    <p>{Object.values(hero.filterable).slice(1).join(' | ')}</p>
+                    {statLabels.includes(sortBy) ? <p>{`${sortBy}: ${hero.sortable[sortBy]}`}</p> : ''}
+                  </Media.Body>
+                </Col>
+              </Row>
+            </Grid>
+          </Media>
+        </ListGroupItem>
+      </LinkContainer>
+    );
   }
 
-  componentWillUnmount = () => {
-    //console.log('Heroes', 'componentDidUnmount');
-    //window.removeEventListener('scroll', this.handleScroll);
+  changeView = () => {
+    updateURL(
+      this.state.textFilter,
+      this.state.checkboxFilters,
+      this.state.sortBy,
+      this.state.sortOrder,
+      selects[sortCategories[0]],
+      selects[sortCategories[1]]
+    );
+    const processed = sortBySelection(
+      filterByCheckbox(filterByText(data, this.state.textFilter), this.state.checkboxFilters),
+      this.state.sortBy,
+      selects[sortCategories[1]][0] === this.state.sortOrder,
+      selects[sortCategories[0]][0]
+    );
+
+    this.setState({ render: processed.map(i => this.renderListGroupItem(i, this.state.sortBy)), });
   }
 
-  initializeItems = () => {
-    const processedData = data.map(i => {
-      const name = resolve(i.name);
-      const star = i.id.match(/_\d/)[0][1];
-      const className = resolve(`TEXT_CLASS_${i.classid.substring(4)}`);
-      const rarity = resolve(
-        `TEXT_CONFIRM_SELL_${i.rarity === 'LEGENDARY' ? (i.isgachagolden ? 'IN_GACHA' : 'LAGENDARY') : i.rarity}_HERO`
-      );
-      const faction = !i.domain || ['CHEN', 'MINO', 'NOS',].includes(i.domain)
-        ? 'Unknown' // remove unreleased domains
-        : resolve(
-            i.domain === 'NONEGROUP' ? `TEXT_CHAMP_DOMAIN_${i.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${i.domain}`
-          );
-      const gender = resolve(`TEXT_EXPLORE_TOOLTIP_GENDER_${i.gender}`);
-      const image = i.face_tex;
-
-      const filters = [name, star, className, rarity, faction, gender,];
-      const listItem = (
-        <LinkContainer key={i.id} to={`/cqdb/heroes/${filters.slice(0, 3).join('&')}`}>
-          <ListGroupItem>
-            <Media>
-              <Grid fluid>
-                <Row>
-                  <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
-                    <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                      <img alt='' src={imagePath('cq-assets', `heroes/${image}.png`)} />
-                    </Media.Left>
-                  </Col>
-                  <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
-                    <Media.Body>
-                      <Media.Heading>{`${name} (${star}★)`}</Media.Heading>
-                      <p>{filters.slice(2).join(' | ')}</p>
-                    </Media.Body>
-                  </Col>
-                </Row>
-              </Grid>
-            </Media>
-          </ListGroupItem>
-        </LinkContainer>
-      );
-
-      return [filters, listItem,];
-    });
-
-    return processedData;
-  }
-
-  handleChange = (e) => {
-    if (e.target.value.includes('\n')) {
-      return;
-    }
+  handleTextChange = (e) => {
+    if (e.target.value.includes('\n')) { return; }
 
     clearTimeout(this.timer);
-    this.setState({
-      nameFilter: e.target.value,
-    }, () => {
-      this.timer = setTimeout(() => {
-        this.setState({
-          render: filterItems(filterNames(this.state.nameFilter, this.state.items), this.state.filters),
-        }, () => updateURL(this.state.nameFilter, this.state.filters));
-      }, 500);
+    this.setState({ textFilter: e.target.value, }, () => {
+      this.timer = setTimeout(() => this.changeView(), 500);
     });
   }
 
   handleCheckbox = (e) => {
-    const arr = e.target.name.split('&');
-    const filters = this.state.filters;
-    filters[arr[0]][arr[1]] = e.target.checked;
+    const [key, value] = e.target.name.split('&');
+    const checkboxFilters = this.state.checkboxFilters;
+    checkboxFilters[key][value] = e.target.checked;
 
-    this.setState({
-      filters: filters,
-      render: filterItems(filterNames(this.state.nameFilter, this.state.items), filters),
-    }, () => updateURL(this.state.nameFilter, this.state.filters));
+    this.setState({ checkboxFilters: checkboxFilters,}, () => this.changeView());
   }
 
-  renderCheckbox = (key, value) => {
-    const isChecked = this.state.filters[key][value];
+  renderCheckbox = (category, label) => {
+    const isChecked = this.state.checkboxFilters[category][label];
     return (
-      <Checkbox defaultChecked={isChecked} inline key={`${value}${isChecked}`} name={`${key}&${value}`} onChange={this.handleCheckbox}>
-        {value}
+      <Checkbox defaultChecked={isChecked} inline key={`${label}${isChecked}`} name={`${category}&${label}`} onChange={this.handleCheckbox}>
+        {label}
       </Checkbox>
     );
   }
@@ -179,38 +276,40 @@ export default class Heroes extends Component {
       Object.keys(checkboxes).map(i => (
         <FormGroup key={i}>
           <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>{i}</Col>
-          <Col lg={10} md={9} sm={8} xs={12}>
-            {checkboxes[i].map(j => this.renderCheckbox(i, j))}
-          </Col>
+          <Col lg={10} md={9} sm={8} xs={12}>{checkboxes[i].map(j => this.renderCheckbox(i, j))}</Col>
         </FormGroup> 
       ))
     );
   }
 
-  // handleScroll = () => {
-  //   if (!this.test) return;
-  //   const [start, end] = this.test.getVisibleRange();
-  //   console.log('visible', start);
-  // }
+  handleByChange = (e) => {
+    this.setState({ sortBy: e.target.value, }, () => this.changeView());
+  }
 
-  // handleButton = (e) => {
-  //   const filters = this.state.filters;
-  //   Object.keys(filters).forEach(i => {
-  //     Object.keys(filters[i]).forEach(j => {
-  //       filters[i][j] = false;
-  //     });
-  //   });
-  //   const nameFilter = '';
+  handleOrderChange = (e) => {
+    this.setState({ sortOrder: e.target.value, }, () => this.changeView());
+  }
 
-  //   this.setState({
-  //     filters: filters,
-  //     nameFilter: nameFilter,
-  //     render: filterItems(filterNames(nameFilter, this.state.items), filters),
-  //   }, () => window.history.replaceState('', '', '/cqdb/heroes'));
-  // }
+  renderSelect = (category, label) => {
+    return <option key={label} value={label}>{label}</option>;
+  }
+
+  renderSelects = (defaultValues, handlers) => {
+    return (
+      Object.keys(selects).map((i, index) => (
+        <FormGroup key={i}>
+          <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>{i}</Col>
+          <Col lg={10} md={9} sm={8} xs={12}>
+            <FormControl componentClass="select" defaultValue={defaultValues[index]} onChange={handlers[index]}>
+              {selects[i].map(j => this.renderSelect(i, j))}
+            </FormControl>
+          </Col>
+        </FormGroup>
+      ))
+    );
+  }
 
   render = () => {
-    //console.log('Heroes', 'render');
     return (
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
@@ -221,13 +320,18 @@ export default class Heroes extends Component {
                 <Col lg={10} md={9} sm={8} xs={12}>
                   <FormControl
                     componentClass='textarea'
-                    onChange={this.handleChange}
+                    onChange={this.handleTextChange}
                     style={{height: '34px', resize: 'none',}}
-                    value={this.state.nameFilter}
+                    value={this.state.textFilter}
                   />
                 </Col>
               </FormGroup>
               {this.renderCheckboxes()}
+            </Form>
+          </Panel>
+          <Panel collapsible defaultExpanded header='Sort'>
+            <Form horizontal>
+              {this.renderSelects([this.state.sortBy, this.state.sortOrder,], [this.handleByChange, this.handleOrderChange,])}
             </Form>
           </Panel>
           <Panel collapsible defaultExpanded header={`Heroes (${this.state.render.length})`}>

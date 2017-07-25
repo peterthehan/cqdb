@@ -11,7 +11,16 @@ import {
 
 import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
-const data = require('../Decrypted/filtered_sister.json');
+const goddessData = require('../Decrypted/filtered_sister.json');
+
+const data = goddessData.map(i => {
+  return {
+    image: i.id,
+    name: resolve(i.name),
+    skillName: resolve(i.skillname),
+    skillDescription: resolve(i.skilldesc),
+  };
+});
 
 export default class Goddesses extends Component {
   state = {
@@ -19,43 +28,33 @@ export default class Goddesses extends Component {
   }
 
   componentWillMount = () => {
-    const render = this.initializeItems();
-    this.setState({ render, });
+    const render = data.map(this.renderListGroupItem);
+
+    this.setState({render,});
   }
 
-  initializeItems = () => {
-    const processedData = data.map(i => {
-      const name = resolve(i.name);
-      const skillName = resolve(i.skillname);
-      const skillDescription = resolve(i.skilldesc);
-      const image = i.id;
-
-      const listItem = (
-        <ListGroupItem key={i.id}>
-          <Media>
-            <Grid fluid>
-              <Row>
-                <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
-                  <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                    <img alt='' src={imagePath('cq-assets', `goddesses/${image}.png`)} />
-                  </Media.Left>
-                </Col>
-                <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
-                  <Media.Body>
-                    <Media.Heading>{`${name} - ${skillName}`}</Media.Heading>
-                    <p>{skillDescription}</p>
-                  </Media.Body>
-                </Col>
-              </Row>
-            </Grid>
-          </Media>
-        </ListGroupItem>
-      );
-
-      return listItem;
-    });
-
-    return processedData;
+  renderListGroupItem = (goddess) => {
+    return (
+      <ListGroupItem key={goddess.image}>
+        <Media>
+          <Grid fluid>
+            <Row>
+              <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+                <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                  <img alt='' src={imagePath('cq-assets', `goddesses/${goddess.image}.png`)} />
+                </Media.Left>
+              </Col>
+              <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+                <Media.Body>
+                  <Media.Heading>{`${goddess.name} - ${goddess.skillName}`}</Media.Heading>
+                  <p>{goddess.skillDescription}</p>
+                </Media.Body>
+              </Col>
+            </Row>
+          </Grid>
+        </Media>
+      </ListGroupItem>
+    );
   }
 
   render = () => {

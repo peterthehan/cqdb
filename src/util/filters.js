@@ -1,31 +1,32 @@
-export function filterItems(data, filters = {}) {
-  let filtered = data;
-  Object.keys(filters).forEach(i => {
-    const currentFilters = Object.keys(filters[i]).filter(j => filters[i][j]);
-    if (currentFilters.length) {
-      filtered = filtered
-        .filter(([filters, _]) => filters.some(j => currentFilters.includes(j)));
-    }
-  });
-
-  return filtered.map(([_, listItem]) => listItem);
-}
-
-export function filterNames(nameFilter, items) {
-  if (nameFilter === '') {
-    return items;
+export function filterByText(data, textFilter) {
+  if (textFilter === '') {
+    return data;
   }
 
-  nameFilter = nameFilter.toLowerCase();
+  // case-insensitive
+  textFilter = textFilter.toLowerCase();
   const exactMatches = [];
   const substringMatches = [];
-  items.forEach(i => {
-    const name = i[0][0].toLowerCase();
-    if (name.split(' ').includes(nameFilter)) {
+  data.forEach(i => {
+    const name = i.name.toLowerCase();
+    if (name.split(' ').includes(textFilter)) {
       exactMatches.push(i);
-    } else if (name.includes(nameFilter)) {
+    } else if (name.includes(textFilter)) {
       substringMatches.push(i);
     }
   });
+
   return exactMatches.concat(substringMatches);
+}
+
+export function filterByCheckbox(data, checkboxFilters) {
+  let filtered = data;
+  Object.keys(checkboxFilters).forEach(i => {
+    const currentFilters = Object.keys(checkboxFilters[i]).filter(j => checkboxFilters[i][j]);
+    if (currentFilters.length) {
+      filtered = filtered.filter(j => currentFilters.includes(j.filterable[i]));
+    }
+  });
+
+  return filtered;
 }

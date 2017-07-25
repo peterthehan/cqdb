@@ -15,40 +15,80 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import { filterItems, filterNames, } from '../util/filters';
+import { filterByText, filterByCheckbox, } from '../util/filters';
 import { imagePath, } from '../util/imagePath';
-import { initializeFilters, } from '../util/initializeFilters';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
-import { updateURL, } from '../util/updateURL';
-const data = require('../Decrypted/filtered_weapon.json');
+import { parseURL, updateURL, } from '../util/url';
+const weaponData = require('../Decrypted/filtered_weapon.json');
 
+function getConversion(value) {
+  const prefix = 'TEXT_WEAPON_CONVERT_INFO_';
+  if (value === 'ATTACK') {
+    return prefix + 'ATK';
+  } else if (value === 'DEFENSE') {
+    return prefix + 'DEF';
+  } else if (value === 'UTILITY') {
+    return prefix + 'UTL';
+  }
+  return null;
+}
+
+const filterCategories = ['Star', 'Category',];
+
+const data = weaponData.map(i => {
+  const conversions = [i.convert_slot_1, i.convert_slot_2, i.convert_slot_3,]
+    .map((i, index) => {
+      const key = getConversion(i);
+      return !index && !key ? 'None' : resolve(key);
+    });
+
+  // make weapon's filterable object
+  const f = [
+    i.grade.toString(),
+    resolve(`TEXT_WEAPON_CATE_${i.categoryid.substring(4)}`),
+  ];
+
+  const filterable = {};
+  filterCategories.forEach((i, index) => filterable[i] = f[index]);
+
+  return {
+    image: i.skin_tex,
+    filterable: filterable,
+    name: resolve(i.name),
+    range: i.range,
+    atkPower: i.attdmg,
+    atkSpeed: i.attspd,
+    conversions: conversions,
+  };
+});
+
+// initialize checkboxes
 const checkboxes = {
   Star: range(6),
   Category: ['Sword', 'Hammer', 'Bow', 'Gun', 'Staff', 'Orb',],
-  Conversion: ['Attack', 'Defense', 'Function', 'None',],
 };
+
+//console.log(data, checkboxes);
 
 export default class Weapons extends Component {
   state = {
-    filters: {},
-    items: [],
-    nameFilter: '',
+    textFilter: '',
+    checkboxFilters: {},
     render: [],
   }
 
   componentWillMount = () => {
     this.timer = null;
-    const items = this.initializeItems();
-    const [nameFilter, filters] = initializeFilters(checkboxes);
-    const render = filterItems(filterNames(nameFilter, items), filters);
-    this.setState({ filters, items, nameFilter, render, });
+    const [textFilter, checkboxFilters] = parseURL(checkboxes);
+    const processed = filterByCheckbox(filterByText(data, textFilter), checkboxFilters);
+    const render = processed.map(this.renderListGroupItem);
+
+    this.setState({textFilter, checkboxFilters, render,});
   }
 
   componentWillReceiveProps = () => {
-    const [nameFilter, filters] = initializeFilters(checkboxes);
-    const render = filterItems(filterNames(nameFilter, this.state.items), filters);
-    this.setState({ filters, nameFilter, render, });
+    this.componentWillMount();
   }
 
   getConversion = (value) => {
@@ -63,85 +103,62 @@ export default class Weapons extends Component {
     return null;
   }
 
-  initializeItems = () => {
-    const processedData = data.map(i => {
-      const name = resolve(i.name);
-      const star = i.grade.toString();
-      const weaponCategory = resolve(`TEXT_WEAPON_CATE_${i.categoryid.substring(4)}`);
-      const range = i.range;
-      const atkPower = i.attdmg;
-      const atkSpeed = i.attspd;
-      const conversions = [i.convert_slot_1, i.convert_slot_2, i.convert_slot_3,]
-        .map((i, index) => {
-          const key = this.getConversion(i);
-          return !index && !key ? 'None' : resolve(key);
-        })
-        .filter(i => i);
-      const image = i.skin_tex;
+  renderListGroupItem = (weapon) => {
+    return (
+      <ListGroupItem key={weapon.name}>
+        <Media>
+          <Grid fluid>
+            <Row>
+              <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+                <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                  <img alt='' src={imagePath('cq-assets', `weapons/${weapon.image}.png`)} />
+                </Media.Left>
+              </Col>
+              <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+                <Media.Body>
+                  <Media.Heading>{`${weapon.name} (${weapon.filterable.Star}★)`}</Media.Heading>
+                  <p>{`${weapon.filterable.Category} | Range: ${weapon.range} | Atk. Power: ${weapon.atkPower} | Atk. Speed: ${weapon.atkSpeed}`}</p>
+                  <p>{weapon.conversions.join(', ')}</p>
+                </Media.Body>
+              </Col>
+            </Row>
+          </Grid>
+        </Media>
+      </ListGroupItem>
+    );
+  }
+  changeView = () => {
+    updateURL(
+      this.state.textFilter,
+      this.state.checkboxFilters,
+    );
+    const processed = filterByCheckbox(filterByText(data, this.state.textFilter), this.state.checkboxFilters)
 
-      const filters = [name, star, weaponCategory, ...[...new Set(conversions)],];
-      const listItem = (
-        <ListGroupItem key={name}>
-          <Media>
-            <Grid fluid>
-              <Row>
-                <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
-                  <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                    <img alt='' src={imagePath('cq-assets', `weapons/${image}.png`)} />
-                  </Media.Left>
-                </Col>
-                <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
-                  <Media.Body>
-                    <Media.Heading>{`${name} (${star}★)`}</Media.Heading>
-                    <p>{`${weaponCategory} | Range: ${range} | Atk. Power: ${atkPower} | Atk. Speed: ${atkSpeed}`}</p>
-                    <p>{conversions.join(', ')}</p>
-                  </Media.Body>
-                </Col>
-              </Row>
-            </Grid>
-          </Media>
-        </ListGroupItem>
-      );
-
-      return [filters, listItem];
-    });
-
-    return processedData;
+    this.setState({ render: processed.map(this.renderListGroupItem), });
   }
 
-  handleChange = (e) => {
-    if (e.target.value.includes('\n')) {
-      return;
-    }
+  handleTextChange = (e) => {
+    if (e.target.value.includes('\n')) { return; }
 
     clearTimeout(this.timer);
-    this.setState({
-      nameFilter: e.target.value,
-    }, () => {
-      this.timer = setTimeout(() => {
-        this.setState({
-          render: filterItems(filterNames(this.state.nameFilter, this.state.items), this.state.filters),
-        }, () => updateURL(this.state.nameFilter, this.state.filters));
-      }, 500);
+    this.setState({ textFilter: e.target.value, }, () => {
+      this.timer = setTimeout(() => this.changeView(), 500);
     });
   }
 
   handleCheckbox = (e) => {
-    const arr = e.target.name.split('&');
-    const filters = this.state.filters;
-    filters[arr[0]][arr[1]] = e.target.checked;
+    const [key, value] = e.target.name.split('&');
+    const checkboxFilters = this.state.checkboxFilters;
+    checkboxFilters[key][value] = e.target.checked;
 
-    this.setState({
-      filters: filters,
-      render: filterItems(filterNames(this.state.nameFilter, this.state.items), filters),
-    }, () => updateURL(this.state.nameFilter, this.state.filters));
+    this.setState({ checkboxFilters: checkboxFilters,}, () => this.changeView());
   }
 
-  renderCheckbox = (key, value) => {
-    const isChecked = this.state.filters[key][value];
+  renderCheckbox = (category, label) => {
+    const isChecked = this.state.checkboxFilters[category][label];
     return (
-      <Checkbox defaultChecked={isChecked} inline key={`${value}${isChecked}`} name={`${key}&${value}`} onChange={this.handleCheckbox}>
-        {value}
+      <Checkbox defaultChecked={isChecked} inline key={`${label}${isChecked}`} name={`${category}&${label}`} onChange={this.handleCheckbox}>
+        {label}
       </Checkbox>
     );
   }
@@ -151,10 +168,8 @@ export default class Weapons extends Component {
       Object.keys(checkboxes).map(i => (
         <FormGroup key={i}>
           <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>{i}</Col>
-          <Col lg={10} md={9} sm={8} xs={12}>
-            {checkboxes[i].map(j => this.renderCheckbox(i, j))}
-          </Col>
-        </FormGroup> 
+          <Col lg={10} md={9} sm={8} xs={12}>{checkboxes[i].map(j => this.renderCheckbox(i, j))}</Col>
+        </FormGroup>
       ))
     );
   }
@@ -170,9 +185,9 @@ export default class Weapons extends Component {
                 <Col lg={10} md={9} sm={8} xs={12}>
                   <FormControl
                     componentClass='textarea'
-                    onChange={this.handleChange}
+                    onChange={this.handleTextChange}
                     style={{height: '34px', resize: 'none',}}
-                    value={this.state.nameFilter}
+                    value={this.state.textFilter}
                   />
                 </Col>
               </FormGroup>

@@ -15,115 +15,122 @@ import {
   Row,
 } from 'react-bootstrap';
 
-import { filterItems, filterNames, } from '../util/filters';
+import { filterByText, filterByCheckbox, } from '../util/filters';
 import { imagePath, } from '../util/imagePath';
-import { initializeFilters, } from '../util/initializeFilters';
 import { resolve, } from '../util/resolve';
-import { updateURL, } from '../util/updateURL';
-const data = require('../Decrypted/filtered_bread.json');
+import { parseURL, updateURL, } from '../util/url';
+const breadData = require('../Decrypted/filtered_bread.json');
 
-const checkboxes = {};
+const unique = {};
+const filterCategories = ['Star', 'Rate',];
+filterCategories.forEach(i => unique[i] = {});
+
+const data = breadData.map(i => {
+  // make bread's filterable object
+  const f = [
+    i.grade.toString(),
+    `${parseInt(i.critprob * 100, 10)}%`,
+  ];
+
+  const filterable = {};
+  filterCategories.forEach((i, index) => {
+    filterable[i] = f[index];
+    unique[i][f[index]] = true;
+  });
+
+  return {
+    image: i.texture,
+    filterable: filterable,
+    name: resolve(i.name),
+    value: i.trainpoint,
+    sell: i.sellprice,
+  };
+});
+
+const checkboxes = (() => {
+  const c = {};
+  filterCategories.forEach((i, index) => c[i] = Object.keys(unique[i]).sort());
+  return c;
+})();
+
+//console.log(data, checkboxes);
 
 export default class Bread extends Component {
   state = {
-    filters: {},
-    items: [],
-    nameFilter: '',
+    textFilter: '',
+    checkboxFilters: {},
     render: [],
   }
 
   componentWillMount = () => {
     this.timer = null;
-    const items = this.initializeItems();
-    const [nameFilter, filters] = initializeFilters(checkboxes);
-    const render = filterItems(filterNames(nameFilter, items), filters);
-    this.setState({ filters, items, nameFilter, render, });
+    const [textFilter, checkboxFilters] = parseURL(checkboxes);
+    const processed = filterByCheckbox(filterByText(data, textFilter), checkboxFilters);
+    const render = processed.map(this.renderListGroupItem);
+
+    this.setState({textFilter, checkboxFilters, render,});
   }
 
   componentWillReceiveProps = () => {
-    const [nameFilter, filters] = initializeFilters(checkboxes);
-    const render = filterItems(filterNames(nameFilter, this.state.items), filters);
-    this.setState({ filters, nameFilter, render, });
+    this.componentWillMount();
   }
 
-  initializeItems = () => {
-    const unique = {};
-    const category = ['Star', 'Rate',];
-    category.forEach(i => unique[i] = {});
-
-    const processedData = data.map(i => {
-      const name = resolve(i.name);
-      const star = i.grade.toString();
-      const value = i.trainpoint;
-      const rate = `${parseInt(i.critprob * 100, 10)}%`;
-      const sell = i.sellprice;
-      const image = i.texture;
-
-      const filters = [name, star, rate,];
-      category.forEach((i, index) => unique[i][filters[index + 1]] = true);
-      const listItem = (
-        <ListGroupItem key={name}>
-          <Media>
-            <Grid fluid>
-              <Row>
-                <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
-                  <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                    <img alt='' src={imagePath('cq-assets', `bread/${image}.png`)} />
-                  </Media.Left>
-                </Col>
-                <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
-                  <Media.Body>
-                    <Media.Heading>{`${name} (${star}★)`}</Media.Heading>
-                    <p>{`${value} | ${rate} | Sell: ${sell} gold`}</p>
-                  </Media.Body>
-                </Col>
-              </Row>
-            </Grid>
-          </Media>
-        </ListGroupItem>
-      );
-
-      return [filters, listItem];
-    });
-
-    Object.keys(unique).forEach(i => checkboxes[i] = Object.keys(unique[i]).sort());
-
-    return processedData;
+  renderListGroupItem = (bread) => {
+    return (
+      <ListGroupItem key={bread.name}>
+        <Media>
+          <Grid fluid>
+            <Row>
+              <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+                <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
+                  <img alt='' src={imagePath('cq-assets', `bread/${bread.image}.png`)} />
+                </Media.Left>
+              </Col>
+              <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+                <Media.Body>
+                  <Media.Heading>{`${bread.name} (${bread.filterable.Star}★)`}</Media.Heading>
+                  <p>{`${bread.value} | ${bread.filterable.Rate} | Sell: ${bread.sell} gold`}</p>
+                </Media.Body>
+              </Col>
+            </Row>
+          </Grid>
+        </Media>
+      </ListGroupItem>
+    );
   }
 
-  handleChange = (e) => {
-    if (e.target.value.includes('\n')) {
-      return;
-    }
+  changeView = () => {
+    updateURL(
+      this.state.textFilter,
+      this.state.checkboxFilters,
+    );
+    const processed = filterByCheckbox(filterByText(data, this.state.textFilter), this.state.checkboxFilters)
+
+    this.setState({ render: processed.map(this.renderListGroupItem), });
+  }
+
+  handleTextChange = (e) => {
+    if (e.target.value.includes('\n')) { return; }
 
     clearTimeout(this.timer);
-    this.setState({
-      nameFilter: e.target.value,
-    }, () => {
-      this.timer = setTimeout(() => {
-        this.setState({
-          render: filterItems(filterNames(this.state.nameFilter, this.state.items), this.state.filters),
-        }, () => updateURL(this.state.nameFilter, this.state.filters));
-      }, 500);
+    this.setState({ textFilter: e.target.value, }, () => {
+      this.timer = setTimeout(() => this.changeView(), 500);
     });
   }
 
   handleCheckbox = (e) => {
-    const arr = e.target.name.split('&');
-    const filters = this.state.filters;
-    filters[arr[0]][arr[1]] = e.target.checked;
+    const [key, value] = e.target.name.split('&');
+    const checkboxFilters = this.state.checkboxFilters;
+    checkboxFilters[key][value] = e.target.checked;
 
-    this.setState({
-      filters: filters,
-      render: filterItems(filterNames(this.state.nameFilter, this.state.items), filters),
-    }, () => updateURL(this.state.nameFilter, this.state.filters));
+    this.setState({ checkboxFilters: checkboxFilters,}, () => this.changeView());
   }
 
-  renderCheckbox = (key, value) => {
-    const isChecked = this.state.filters[key][value];
+  renderCheckbox = (category, label) => {
+    const isChecked = this.state.checkboxFilters[category][label];
     return (
-      <Checkbox defaultChecked={isChecked} inline key={`${value}${isChecked}`} name={`${key}&${value}`} onChange={this.handleCheckbox}>
-        {value}
+      <Checkbox defaultChecked={isChecked} inline key={`${label}${isChecked}`} name={`${category}&${label}`} onChange={this.handleCheckbox}>
+        {label}
       </Checkbox>
     );
   }
@@ -133,10 +140,8 @@ export default class Bread extends Component {
       Object.keys(checkboxes).map(i => (
         <FormGroup key={i}>
           <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>{i}</Col>
-          <Col lg={10} md={9} sm={8} xs={12}>
-            {checkboxes[i].map(j => this.renderCheckbox(i, j))}
-          </Col>
-        </FormGroup> 
+          <Col lg={10} md={9} sm={8} xs={12}>{checkboxes[i].map(j => this.renderCheckbox(i, j))}</Col>
+        </FormGroup>
       ))
     );
   }
@@ -152,9 +157,9 @@ export default class Bread extends Component {
                 <Col lg={10} md={9} sm={8} xs={12}>
                   <FormControl
                     componentClass='textarea'
-                    onChange={this.handleChange}
+                    onChange={this.handleTextChange}
                     style={{height: '34px', resize: 'none',}}
-                    value={this.state.nameFilter}
+                    value={this.state.textFilter}
                   />
                 </Col>
               </FormGroup>
