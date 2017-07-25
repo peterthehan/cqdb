@@ -16,7 +16,8 @@ export function filterByText(data, textFilter) {
     }
   });
 
-  return exactMatches.concat(substringMatches);
+  // return in ascending order
+  return substringMatches.concat(exactMatches);
 }
 
 export function filterByCheckbox(data, checkboxFilters) {
