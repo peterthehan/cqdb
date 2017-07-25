@@ -222,7 +222,7 @@ export default class Heroes extends Component {
                 <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
                   <Media.Body>
                     <Media.Heading>{`${hero.name} (${hero.filterable.Star}★)`}</Media.Heading>
-                    <p>{Object.values(hero.filterable).slice(1).join(' | ')}</p>
+                    <p>{Object.values(hero.filterable).slice(1, 5).join(' | ')}</p>
                     {statLabels.includes(sortBy) ? <p>{`${sortBy}: ${hero.sortable[sortBy]}`}</p> : ''}
                   </Media.Body>
                 </Col>

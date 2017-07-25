@@ -107,9 +107,9 @@ export default class Forging extends Component {
                           <Col style={{padding: 0,}} lg={9} md={8} sm={8} xs={7}>
                             <Media.Body>
                               <Media.Heading>
-                                {i[0]}
+                                {`${i[0]} / ${i[2]}`}
                               </Media.Heading>
-                              <p>{`${i[1].join(', ')} | ${i[2]}`}</p>
+                              <p>{i[1].join(', ')}</p>
                             </Media.Body>
                           </Col>
                         </Row>

@@ -46,7 +46,7 @@ export default class Goddesses extends Component {
               </Col>
               <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
                 <Media.Body>
-                  <Media.Heading>{`${goddess.name} - ${goddess.skillName}`}</Media.Heading>
+                  <Media.Heading>{`${goddess.name} / ${goddess.skillName}`}</Media.Heading>
                   <p>{goddess.skillDescription}</p>
                 </Media.Body>
               </Col>
