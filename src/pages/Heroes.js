@@ -41,7 +41,7 @@ const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender',];
 const sortCategories = ['By', 'Order',];
 
 // parse data files
-const data = heroData.map(hero => {
+const data = heroData.reverse().map(hero => {
   // find hero's respective stat and berry data
   const stat = statData.filter(i => i.id === hero.default_stat_id)[0];
   const berry = stat.grade === 6 && hero.id !== 'CHA_WA_SUPPORT_6_1'

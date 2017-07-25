@@ -2,7 +2,7 @@ export function sortBySelection(filtered, sortBy, sortIsDescending, selectsDefau
   const cloned = [...filtered];
   
   if (sortBy === selectsDefault) {
-    if (sortIsDescending) {
+    if (!sortIsDescending) {
       cloned.reverse();
     }
   } else {

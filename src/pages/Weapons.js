@@ -41,7 +41,8 @@ const data = weaponData.map(i => {
     .map((i, index) => {
       const key = getConversion(i);
       return !index && !key ? 'None' : resolve(key);
-    });
+    })
+    .filter(i => i);
 
   // make weapon's filterable object
   const f = [
