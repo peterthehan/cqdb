@@ -1,14 +1,11 @@
 import React, { Component, } from 'react';
-import ReactList from 'react-list';
 import {
-  Checkbox,
   Col,
   ControlLabel,
   Form,
   FormControl,
   FormGroup,
   Grid,
-  ListGroup,
   ListGroupItem,
   Media,
   Panel,
@@ -16,6 +13,9 @@ import {
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
+import { renderCheckboxes, } from '../components/renderCheckboxes';
+import { renderResults, } from '../components/renderResults';
+import { renderTextArea, } from '../components/renderTextArea';
 import { calculateStat, } from '../util/calculateStat';
 import { filterByText, filterByCheckbox, } from '../util/filters';
 import { imagePath, } from '../util/imagePath';
@@ -270,26 +270,6 @@ export default class Heroes extends Component {
     this.setState({ checkboxFilters: checkboxFilters,}, () => this.changeView());
   }
 
-  renderCheckbox = (category, label) => {
-    const isChecked = this.state.checkboxFilters[category][label];
-    return (
-      <Checkbox defaultChecked={isChecked} inline key={`${label}${isChecked}`} name={`${category}&${label}`} onChange={this.handleCheckbox}>
-        {label}
-      </Checkbox>
-    );
-  }
-
-  renderCheckboxes = () => {
-    return (
-      Object.keys(checkboxes).map(i => (
-        <FormGroup key={i}>
-          <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>{i}</Col>
-          <Col lg={10} md={9} sm={8} xs={12}>{checkboxes[i].map(j => this.renderCheckbox(i, j))}</Col>
-        </FormGroup> 
-      ))
-    );
-  }
-
   handleByChange = (e) => {
     this.setState({ sortBy: e.target.value, }, () => this.changeView());
   }
@@ -321,36 +301,14 @@ export default class Heroes extends Component {
     return (
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
-          <Panel collapsible defaultExpanded header='Filters'>
-            <Form horizontal>
-              <FormGroup>
-                <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>Name</Col>
-                <Col lg={10} md={9} sm={8} xs={12}>
-                  <FormControl
-                    componentClass='textarea'
-                    onChange={this.handleTextChange}
-                    style={{height: '34px', resize: 'none',}}
-                    value={this.state.textFilter}
-                  />
-                </Col>
-              </FormGroup>
-              {this.renderCheckboxes()}
-            </Form>
-          </Panel>
-          <Panel collapsible defaultExpanded header='Sort'>
+          {renderTextArea(this.handleTextChange, this.state.textFilter)}
+          {renderCheckboxes(this.handleCheckbox, this.state.checkboxFilters, checkboxes)}
+          <Panel collapsible header='Sort' style={{marginBottom: '5px',}}>
             <Form horizontal>
               {this.renderSelects([this.state.sortBy, this.state.sortOrder,], [this.handleByChange, this.handleOrderChange,])}
             </Form>
           </Panel>
-          <Panel collapsible defaultExpanded header={`Heroes (${this.state.render.length})`}>
-            <ListGroup fill>
-              <ReactList
-                itemRenderer={i => this.state.render[i]}
-                length={this.state.render.length}
-                minSize={10}
-              />
-            </ListGroup>
-          </Panel>
+          {renderResults('Heroes', this.state.render)}
         </Col>
       </Row>
     );

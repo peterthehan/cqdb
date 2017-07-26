@@ -1,20 +1,15 @@
 import React, { Component, } from 'react';
-import ReactList from 'react-list';
 import {
-  Checkbox,
   Col,
-  ControlLabel,
-  Form,
-  FormControl,
-  FormGroup,
   Grid,
-  ListGroup,
   ListGroupItem,
   Media,
-  Panel,
   Row,
 } from 'react-bootstrap';
 
+import { renderCheckboxes, } from '../components/renderCheckboxes';
+import { renderResults, } from '../components/renderResults';
+import { renderTextArea, } from '../components/renderTextArea';
 import { filterByText, filterByCheckbox, } from '../util/filters';
 import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
@@ -137,55 +132,13 @@ export default class Berries extends Component {
     this.setState({ checkboxFilters: checkboxFilters,}, () => this.changeView());
   }
 
-  renderCheckbox = (category, label) => {
-    const isChecked = this.state.checkboxFilters[category][label];
-    return (
-      <Checkbox defaultChecked={isChecked} inline key={`${label}${isChecked}`} name={`${category}&${label}`} onChange={this.handleCheckbox}>
-        {label}
-      </Checkbox>
-    );
-  }
-
-  renderCheckboxes = () => {
-    return (
-      Object.keys(checkboxes).map(i => (
-        <FormGroup key={i}>
-          <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>{i}</Col>
-          <Col lg={10} md={9} sm={8} xs={12}>{checkboxes[i].map(j => this.renderCheckbox(i, j))}</Col>
-        </FormGroup>
-      ))
-    );
-  }
-
   render = () => {
     return (
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
-          <Panel collapsible defaultExpanded header='Filters'>
-            <Form horizontal>
-              <FormGroup>
-                <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>Name</Col>
-                <Col lg={10} md={9} sm={8} xs={12}>
-                  <FormControl
-                    componentClass='textarea'
-                    onChange={this.handleTextChange}
-                    style={{height: '34px', resize: 'none',}}
-                    value={this.state.textFilter}
-                  />
-                </Col>
-              </FormGroup>
-              {this.renderCheckboxes()}
-            </Form>
-          </Panel>
-          <Panel collapsible defaultExpanded header={`Berries (${this.state.render.length})`}>
-            <ListGroup fill>
-              <ReactList
-                itemRenderer={i => this.state.render[i]}
-                length={this.state.render.length}
-                minSize={10}
-              />
-            </ListGroup>
-          </Panel>
+          {renderTextArea(this.handleTextChange, this.state.textFilter)}
+          {renderCheckboxes(this.handleCheckbox, this.state.checkboxFilters, checkboxes)}
+          {renderResults('Berries', this.state.render)}
         </Col>
       </Row>
     );
