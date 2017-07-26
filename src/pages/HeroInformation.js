@@ -408,7 +408,7 @@ export default class HeroInformation extends Component {
     let rarity = '';
     if (i.rarity === 'HIDDEN') {
       rarity = ' (Hidden)';
-    } else {
+    } else if (['CONTRACT', 'LIMITED',].includes(i.rarity)) {
       rarity = ' (Event)';
     }
     return (
