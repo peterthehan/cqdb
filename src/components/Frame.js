@@ -1,8 +1,8 @@
 import React, { Component, } from 'react';
 import {
+  Button,
   Col,
   Grid,
-  Label,
   MenuItem,
   Nav,
   Navbar,
@@ -69,6 +69,15 @@ export default class Frame extends Component {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>{pages}</Nav>
+          <Navbar.Form pullRight style={{textAlign: 'center',}}>
+            <Button bsStyle='primary' href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>
+              Android 3.9.5.KG
+            </Button>
+            &nbsp;
+            <Button bsStyle='primary' href='https://itunes.apple.com/app/id901858272?mt=8'>
+              iOS 3.9.4
+            </Button>
+          </Navbar.Form>
         </Navbar.Collapse>
       </Navbar>
     );
@@ -78,20 +87,10 @@ export default class Frame extends Component {
     return (
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
-          <hr style={{borderColor: '#DDD',}} />  
-          <div style={{textAlign: 'center',}}>
-            <a href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>
-              <Label bsStyle='primary'>Android 3.9.5.KG</Label>
-            </a>
-            &nbsp;
-            <a href='https://itunes.apple.com/app/id901858272?mt=8'>
-              <Label bsStyle='primary'>iOS 3.9.4</Label>
-            </a>
-            <p />
-            <p>
-              Made with ❤ by <a href='https://github.com/Johj' style={{color: '#333',}}>Peter</a>.
-            </p>
-          </div>
+          <hr style={{borderColor: '#DDD',}} />
+          <p style={{textAlign: 'center',}}>
+            Made with ❤ by <a href='https://github.com/Johj' style={{color: '#333',}}>Peter</a>.
+          </p>
         </Col>
       </Row>
     );
