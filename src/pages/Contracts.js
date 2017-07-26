@@ -148,7 +148,7 @@ export default class Contracts extends Component {
       
     return (
       <Row>
-        <Col lg={4} md={4} sm={12} xs={12}>
+        <Col lg={4} md={5} sm={12} xs={12}>
           <Panel footer={footer}>
             <Grid fluid>
               <Row>
@@ -177,7 +177,7 @@ export default class Contracts extends Component {
             </Grid>
           </Panel>
         </Col>
-        <Col lg={8} md={8} sm={12} xs={12}>
+        <Col lg={8} md={7} sm={12} xs={12}>
           {this.state.render}
         </Col>
       </Row>
