@@ -123,10 +123,13 @@ export default class HeroInformation extends Component {
   }
 
   renderInformation = () => {
-    const grid = (
+    const render = (
       <Row key='grid'>
         <Col md={12} sm={12} xs={12}>
           {this.renderGeneral()}
+        </Col>
+        <Col md={12} sm={12} xs={12}>
+          {this.renderPagers()}
         </Col>
         <Col md={12} sm={12} xs={12}>
           {this.renderStatsTable()}
@@ -143,10 +146,6 @@ export default class HeroInformation extends Component {
       </Row>
     );
 
-    const render = [
-      grid,
-      this.renderPagers(),
-    ];
     this.setState({render});
   }
 
@@ -204,9 +203,10 @@ export default class HeroInformation extends Component {
   }
 
   renderStats = (i) => {
+    const key = Object.keys(i);
     return (
-      <tr key={Object.keys(i)}>
-        <td>{Object.keys(i)}</td>
+      <tr key={key}>
+        <td>{`${!isNaN(key) ? '+' : ''}${key}`}</td>
         {
           Object.values(i)[0].map((j, index) => {
             return (
@@ -448,12 +448,14 @@ export default class HeroInformation extends Component {
   renderPager = (pager) => {
     const img = pager.pop();
     return (
-      <LinkContainer key={pager.join('')} to={`/cqdb/heroes/${pager.join('&')}`}>
+      <LinkContainer key={pager.join('')} style={{display: 'flex',}} to={`/cqdb/heroes/${pager.join('&')}`}>
         <Pager.Item>
-          <Media>
-            <img alt='' src={imagePath('cq-assets', `heroes/${img}.png`)} />
-          </Media>
-          {`${pager[0]} (${pager[1]}★)`}
+          <div style={{display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'flex-end',}}>
+            <Media>
+              <img alt='' src={imagePath('cq-assets', `heroes/${img}.png`)} />
+            </Media>
+            <text>{`${pager[0]} (${pager[1]}★)`}</text>
+          </div>
         </Pager.Item>
       </LinkContainer>
     );
@@ -464,9 +466,9 @@ export default class HeroInformation extends Component {
       return;
     }
     const pagers = this.state.pager.map(this.renderPager);
-    pagers.splice(1, 0, ' ');
+    pagers.splice(1, 0, '\xa0'); // non-breakable space
     return (
-      <Pager key='pager'>
+      <Pager key='pager' style={{display: 'flex', justifyContent: 'center', marginTop: '0',}}>
         {pagers}
       </Pager>
     );
