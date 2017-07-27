@@ -84,9 +84,9 @@ export default class HeroInformation extends Component {
     }
 
     const skin = skinData.filter(i => i.wearable_charid.includes(hero.id));
-    const stat = statData.filter(i => i.id === hero.default_stat_id)[0];
+    const stat = statData[statData.findIndex(i => i.id === hero.default_stat_id)];
     const berry = stat.grade === 6 && hero.id !== 'CHA_WA_SUPPORT_6_1'
-      ? berryData.filter(i => i.id === stat.addstat_max_id)[0]
+      ? berryData[berryData.findIndex(i => i.id === stat.addstat_max_id)]
       : {};
     const weapon = [6, 5, 4]
       .filter(i => i <= stat.grade)

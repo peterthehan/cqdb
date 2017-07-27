@@ -43,11 +43,11 @@ const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has S
 const sortCategories = ['By', 'Order',];
 
 // parse data files
-const data = heroData.reverse().map(hero => {
+const data = heroData.map(hero => {
   // find hero's respective stat and berry data
-  const stat = statData.filter(i => i.id === hero.default_stat_id)[0];
+  const stat = statData[statData.findIndex(i => i.id === hero.default_stat_id)];
   const berry = stat.grade === 6 && hero.id !== 'CHA_WA_SUPPORT_6_1'
-    ? berryData.filter(i => i.id === stat.addstat_max_id)[0]
+    ? berryData[berryData.findIndex(i => i.id === stat.addstat_max_id)]
     : {};
 
   const image = hero.face_tex;
@@ -122,7 +122,8 @@ const data = heroData.reverse().map(hero => {
     name: name,
     sortable: sortable,
   };
-});
+})
+.reverse(); // show latest heroes at the top
 
 // initialize checkboxes
 const checkboxes = (() => {
