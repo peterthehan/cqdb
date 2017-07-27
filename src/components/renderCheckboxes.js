@@ -5,7 +5,6 @@ import {
   ControlLabel,
   Form,
   FormGroup,
-  Panel,
 } from 'react-bootstrap';
 
 function renderCheckbox(handleCheckbox, checkboxFilters, category, label) {
@@ -19,19 +18,17 @@ function renderCheckbox(handleCheckbox, checkboxFilters, category, label) {
 
 export function renderCheckboxes(handleCheckbox, checkboxFilters, checkboxes) {
   return (
-    <Panel collapsible header='Filters' style={{marginBottom: '5px',}}>
-      <Form horizontal>
-        {
-          Object.keys(checkboxes).map(i => (
-            <FormGroup key={i}>
-              <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>{i}</Col>
-              <Col lg={10} md={9} sm={8} xs={12}>
-                {checkboxes[i].map(j => renderCheckbox(handleCheckbox, checkboxFilters, i, j))}
-              </Col>
-            </FormGroup>
-          ))
-        }
-      </Form>
-    </Panel>
+    <Form horizontal>
+      {
+        Object.keys(checkboxes).map(i => (
+          <FormGroup key={i}>
+            <Col componentClass={ControlLabel} lg={2} md={2} sm={2} xs={12}>{i}</Col>
+            <Col lg={10} md={10} sm={10} xs={12}>
+              {checkboxes[i].map(j => renderCheckbox(handleCheckbox, checkboxFilters, i, j))}
+            </Col>
+          </FormGroup>
+        ))
+      }
+    </Form>
   );
 }
