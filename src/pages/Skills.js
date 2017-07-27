@@ -7,7 +7,9 @@ import {
   Row,
 } from 'react-bootstrap';
 
+import { renderButton, } from '../components/renderButton';
 import { renderCheckboxes, } from '../components/renderCheckboxes';
+import { renderModal, } from '../components/renderModal';
 import { renderResults, } from '../components/renderResults';
 import { renderTextArea, } from '../components/renderTextArea';
 import { filterByText, filterByCheckbox, } from '../util/filters';
@@ -15,6 +17,7 @@ import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
 import { toTitleCase, } from '../util/toTitleCase';
 import { parseURL, updateURL, } from '../util/url';
+
 const skillData = require('../Decrypted/filtered_spskill.json');
 const heroData = require('../Decrypted/filtered_character_visual.json');
 
@@ -70,7 +73,6 @@ const data = skillData.map(i => {
   };
 });
 
-// initialize checkboxes
 const checkboxes = {
   Level: ['Max',],
   Class: ['Warrior', 'Paladin', 'Archer', 'Hunter', 'Wizard', 'Priest', 'KOF',],
@@ -81,6 +83,7 @@ const checkboxes = {
 export default class Skills extends Component {
   state = {
     textFilter: '',
+    showFilterModal: false,
     checkboxFilters: {},
     render: [],
   }
@@ -123,7 +126,7 @@ export default class Skills extends Component {
     );
   }
 
-  changeView = () => {
+  update = () => {
     updateURL(
       this.state.textFilter,
       this.state.checkboxFilters,
@@ -138,7 +141,7 @@ export default class Skills extends Component {
 
     clearTimeout(this.timer);
     this.setState({ textFilter: e.target.value, }, () => {
-      this.timer = setTimeout(() => this.changeView(), 500);
+      this.timer = setTimeout(() => this.update(), 500);
     });
   }
 
@@ -147,17 +150,25 @@ export default class Skills extends Component {
     const checkboxFilters = this.state.checkboxFilters;
     checkboxFilters[key][value] = e.target.checked;
 
-    this.setState({ checkboxFilters: checkboxFilters,}, () => this.changeView());
+    this.setState({ checkboxFilters: checkboxFilters,}, () => this.update());
+  }
+
+  handleFilterButton = () => {
+    this.setState({ showFilterModal: !this.state.showFilterModal, });
   }
 
   render = () => {
     return (
       <Row>
-        <Col lg={12} md={12} sm={12} xs={12}>
-          {renderTextArea(this.handleTextChange, this.state.textFilter)}
-          {renderCheckboxes(this.handleCheckbox, this.state.checkboxFilters, checkboxes)}
-          {renderResults('Skills', this.state.render)}
-        </Col>
+        {renderTextArea(this.handleTextChange, this.state.textFilter)}
+        {renderButton(this.handleFilterButton, 'Filter')}
+        {renderModal(
+          this.handleFilterButton,
+          this.state.showFilterModal,
+          'Filters',
+          renderCheckboxes(this.handleCheckbox, this.state.checkboxFilters, checkboxes)
+        )}
+        {renderResults('Skills', this.state.render)}
       </Row>
     );
   }

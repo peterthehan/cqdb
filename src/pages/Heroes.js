@@ -1,20 +1,18 @@
 import React, { Component, } from 'react';
 import {
+  Button,
   Col,
-  ControlLabel,
-  Form,
-  FormControl,
-  FormGroup,
   Grid,
   ListGroupItem,
   Media,
-  Panel,
   Row,
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
 
 import { renderCheckboxes, } from '../components/renderCheckboxes';
+import { renderModal, } from '../components/renderModal';
 import { renderResults, } from '../components/renderResults';
+import { renderSelects, } from '../components/renderSelects';
 import { renderTextArea, } from '../components/renderTextArea';
 import { calculateStat, } from '../util/calculateStat';
 import { filterByText, filterByCheckbox, } from '../util/filters';
@@ -23,6 +21,7 @@ import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
 import { sortBySelection, } from '../util/sortBySelection';
 import { parseURL, updateURL, } from '../util/url';
+
 const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax;
 const heroData = require('../Decrypted/filtered_character_visual.json');
 const sbwData = require('../Decrypted/filtered_weapon_sbw.json');
@@ -123,7 +122,7 @@ const data = heroData.map(hero => {
     sortable: sortable,
   };
 })
-.reverse(); // show latest heroes at the top
+.reverse(); // show latest heroes at the top by default
 
 // initialize checkboxes
 const checkboxes = (() => {
@@ -178,6 +177,8 @@ const selects = (() => {
 export default class Heroes extends Component {
   state = {
     textFilter: '',
+    showFilterModal: false,
+    showSortModal: false,
     checkboxFilters: {},
     sortBy: '',
     sortOrder: '',
@@ -235,7 +236,7 @@ export default class Heroes extends Component {
     );
   }
 
-  changeView = () => {
+  update = () => {
     updateURL(
       this.state.textFilter,
       this.state.checkboxFilters,
@@ -259,7 +260,7 @@ export default class Heroes extends Component {
 
     clearTimeout(this.timer);
     this.setState({ textFilter: e.target.value, }, () => {
-      this.timer = setTimeout(() => this.changeView(), 500);
+      this.timer = setTimeout(() => this.update(), 500);
     });
   }
 
@@ -268,49 +269,52 @@ export default class Heroes extends Component {
     const checkboxFilters = this.state.checkboxFilters;
     checkboxFilters[key][value] = e.target.checked;
 
-    this.setState({ checkboxFilters: checkboxFilters,}, () => this.changeView());
+    this.setState({ checkboxFilters: checkboxFilters,}, () => this.update());
   }
 
-  handleByChange = (e) => {
-    this.setState({ sortBy: e.target.value, }, () => this.changeView());
+  handleFilterButton = () => {
+    this.setState({ showFilterModal: !this.state.showFilterModal, });
   }
 
-  handleOrderChange = (e) => {
-    this.setState({ sortOrder: e.target.value, }, () => this.changeView());
+  handleSortButton = () => {
+    this.setState({ showSortModal: !this.state.showSortModal, });
   }
 
-  renderSelect = (category, label) => {
-    return <option key={label} value={label}>{label}</option>;
+  handleSortByChange = (e) => {
+    this.setState({ sortBy: e.target.value, }, () => this.update());
   }
 
-  renderSelects = (defaultValues, handlers) => {
-    return (
-      Object.keys(selects).map((i, index) => (
-        <FormGroup key={i}>
-          <Col componentClass={ControlLabel} lg={2} md={3} sm={4} xs={12}>{i}</Col>
-          <Col lg={10} md={9} sm={8} xs={12}>
-            <FormControl componentClass="select" defaultValue={defaultValues[index]} onChange={handlers[index]}>
-              {selects[i].map(j => this.renderSelect(i, j))}
-            </FormControl>
-          </Col>
-        </FormGroup>
-      ))
-    );
+  handleSortOrderChange = (e) => {
+    this.setState({ sortOrder: e.target.value, }, () => this.update());
   }
 
   render = () => {
     return (
       <Row>
-        <Col lg={12} md={12} sm={12} xs={12}>
-          {renderTextArea(this.handleTextChange, this.state.textFilter)}
-          {renderCheckboxes(this.handleCheckbox, this.state.checkboxFilters, checkboxes)}
-          <Panel collapsible header='Sort' style={{marginBottom: '5px',}}>
-            <Form horizontal>
-              {this.renderSelects([this.state.sortBy, this.state.sortOrder,], [this.handleByChange, this.handleOrderChange,])}
-            </Form>
-          </Panel>
-          {renderResults('Heroes', this.state.render)}
+        {renderTextArea(this.handleTextChange, this.state.textFilter)}
+        <Col style={{paddingRight: '2.5px',}} lg={2} md={2} sm={6} xs={6}>
+          <Button style={{marginBottom: '5px',}} block onClick={this.handleFilterButton}>
+            Filter
+          </Button>
         </Col>
+         <Col style={{paddingLeft: '2.5px',}} lg={2} md={2} sm={6} xs={6}>
+          <Button style={{marginBottom: '5px',}} block onClick={this.handleSortButton}>
+            Sort
+          </Button>
+        </Col>
+        {renderModal(
+          this.handleFilterButton,
+          this.state.showFilterModal,
+          'Filters',
+          renderCheckboxes(this.handleCheckbox, this.state.checkboxFilters, checkboxes)
+        )}
+        {renderModal(
+          this.handleSortButton,
+          this.state.showSortModal,
+          'Sort',
+          renderSelects([this.handleSortByChange, this.handleSortOrderChange,], [this.state.sortBy, this.state.sortOrder,], selects)
+        )}
+        {renderResults('Heroes', this.state.render)}
       </Row>
     );
   }

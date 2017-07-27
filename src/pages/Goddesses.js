@@ -11,6 +11,7 @@ import {
 
 import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
+
 const goddessData = require('../Decrypted/filtered_sister.json');
 
 const data = goddessData.map(i => {

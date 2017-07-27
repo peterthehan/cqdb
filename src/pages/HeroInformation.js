@@ -18,8 +18,7 @@ import { calculateStat, } from '../util/calculateStat';
 import { imagePath, } from '../util/imagePath';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
-const berryData = require('../Decrypted/get_character_addstatmax.json')
-  .character_addstatmax;
+const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax;
 const heroData = require('../Decrypted/filtered_character_visual.json');
 const sbwData = require('../Decrypted/filtered_weapon_sbw.json');
 const skinData = require('../Decrypted/filtered_costume.json');
