@@ -260,7 +260,7 @@ export default class HeroInformation extends Component {
     }
 
     // match game's decimal places
-    const rounding = [1, 1, 2, 2, 1, 1, 2, 2,];
+    const rounding = [1, 1, 3, 2, 1, 1, 2, 2,];
 
     // prep for dynamic row creation
     const table = {};
