@@ -109,7 +109,7 @@ export default class Skills extends Component {
             <Row>
               <Col style={{padding: 0,}} lg={3} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img width={'50%'} height={'50%'} alt='' src={imagePath('cq-assets', `skills/${skill.image}.png`)} />
+                  <img alt='' src={imagePath('cq-assets', `skills/${skill.image}.png`)} />
                 </Media.Left>
               </Col>
               <Col style={{padding: 0,}} lg={9} md={9} sm={8} xs={7}>
