@@ -23,7 +23,7 @@ export function filterByText(data, textFilter) {
 export function filterByCheckbox(data, checkboxFilters) {
   let filtered = data;
   Object.keys(checkboxFilters).forEach(i => {
-    if (Object.keys(checkboxFilters[i]).some(j => checkboxFilters[i][j])) {
+    if (Object.values(checkboxFilters[i]).includes(true)) {
       filtered = filtered.filter(j => checkboxFilters[i][j.filterable[i]]);
     }
   });
