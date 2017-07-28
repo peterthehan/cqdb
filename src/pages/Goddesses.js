@@ -40,12 +40,12 @@ export default class Goddesses extends Component {
         <Media>
           <Grid fluid>
             <Row>
-              <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+              <Col style={{padding: 0,}} lg={3} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
                   <img alt='' src={imagePath('cq-assets', `goddesses/${goddess.image}.png`)} />
                 </Media.Left>
               </Col>
-              <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+              <Col style={{padding: 0,}} lg={9} md={9} sm={8} xs={7}>
                 <Media.Body>
                   <Media.Heading>{`${goddess.name} / ${goddess.skillName}`}</Media.Heading>
                   <p>{goddess.skillDescription}</p>

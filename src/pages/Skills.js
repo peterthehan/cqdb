@@ -107,12 +107,12 @@ export default class Skills extends Component {
         <Media>
           <Grid fluid>
             <Row>
-              <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+              <Col style={{padding: 0,}} lg={3} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
                   <img width={'50%'} height={'50%'} alt='' src={imagePath('cq-assets', `skills/${skill.image}.png`)} />
                 </Media.Left>
               </Col>
-              <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+              <Col style={{padding: 0,}} lg={9} md={9} sm={8} xs={7}>
                 <Media.Body>
                   <Media.Heading>{`${skill.name} (Lv. ${skill.level}${!skill.filterable.Level ? '' : ', '}${skill.filterable.Level})`}</Media.Heading>
                   <p>{`${skill.filterable.Class} | ${skill.type} | ${skill.cost} | Rate: ${skill.rate} | ${skill.unlockCondition}`}</p>

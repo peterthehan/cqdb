@@ -80,12 +80,12 @@ export default class Bread extends Component {
         <Media>
           <Grid fluid>
             <Row>
-              <Col style={{padding: 0,}} lg={2} md={3} sm={4} xs={5}>
+              <Col style={{padding: 0,}} lg={3} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
                   <img alt='' src={imagePath('cq-assets', `bread/${bread.image}.png`)} />
                 </Media.Left>
               </Col>
-              <Col style={{padding: 0,}} lg={10} md={9} sm={8} xs={7}>
+              <Col style={{padding: 0,}} lg={9} md={9} sm={8} xs={7}>
                 <Media.Body>
                   <Media.Heading>{`${bread.name} (${bread.filterable.Star}★)`}</Media.Heading>
                   <p>{`${bread.value} | ${bread.filterable.Rate} | Sell: ${bread.sell} gold`}</p>
