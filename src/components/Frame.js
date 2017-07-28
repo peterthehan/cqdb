@@ -90,7 +90,7 @@ export default class Frame extends Component {
         <Col lg={12} md={12} sm={12} xs={12}>
           <hr style={{borderColor: '#DDD',}} />
           <p style={{textAlign: 'center',}}>
-            Made with ❤ by <a href='https://github.com/Johj' style={{color: '#333',}}>Peter</a>.
+            Made with ❤ by <a href='https://github.com/Johj'>Peter</a>
           </p>
         </Col>
       </Row>
