@@ -29,9 +29,10 @@ const databasePages = [
   'Berries',
 ];
 
-const gachaPages = [
+const toolsPages = [
   'Contract Pulling Simulator',
   'Sbw Forging Simulator',
+  'Effective Attack Optimizer',
 ];
 
 export default class Frame extends Component {
@@ -53,7 +54,7 @@ export default class Frame extends Component {
 
   renderNavbar = () => {
     const pages = navPages.map(i => this.renderItem(i, true));
-    pages.splice(0, 0, this.renderNavDropdown(gachaPages, 'Gacha'));
+    pages.splice(0, 0, this.renderNavDropdown(toolsPages, 'Tools'));
     pages.splice(0, 0, this.renderNavDropdown(databasePages, 'Database'));
 
     return (
