@@ -25,7 +25,7 @@ export default class Home extends Component {
             <p>Welcome to the Crusaders Quest Database.</p>
           </Panel>
         </Col>
-        <Col lg={4} md={6} sm={12} xs={12}>
+        <Col lg={6} md={6} sm={12} xs={12}>
           <Panel>
             <Media.Heading>Join the Discussion</Media.Heading>
             <Row>
@@ -49,7 +49,7 @@ export default class Home extends Component {
             </Row>
           </Panel>
         </Col>
-        <Col lg={8} md={6} sm={12} xs={12}>
+        <Col lg={6} md={6} sm={12} xs={12}>
           <Panel>
             <Media.Heading>
               <a href='https://github.com/Johj/fergus'>Fergus</a>

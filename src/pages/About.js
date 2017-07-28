@@ -17,10 +17,9 @@ export default class About extends Component {
               <Media.Body>
                 <Media.Heading>Contacts</Media.Heading>
                 <p>Discord: Miku#0039<br />Crusaders Quest: Saarja</p>
-                <a href='https://github.com/Johj/cqdb'>https://github.com/Johj/cqdb</a>
               </Media.Body>
               <Media.Right>
-                <Image alt='' rounded src='https://avatars6.githubusercontent.com/u/16639331?v=4&s=460' width='128' />
+                <Image alt='' rounded src='https://avatars6.githubusercontent.com/u/16639331' width='128' />
               </Media.Right>
             </Media>
           </Panel>
