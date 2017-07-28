@@ -467,7 +467,7 @@ export default class HeroInformation extends Component {
     const pagers = this.state.pager.map(this.renderPager);
     pagers.splice(1, 0, '\xa0'); // non-breakable space
     return (
-      <Pager key='pager' style={{display: 'flex', justifyContent: 'center', marginTop: '0',}}>
+      <Pager key='pager' style={{display: 'flex', justifyContent: 'center', marginTop: 0,}}>
         {pagers}
       </Pager>
     );

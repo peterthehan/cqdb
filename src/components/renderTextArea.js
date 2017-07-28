@@ -10,7 +10,7 @@ import {
 export function renderTextArea(handleTextChange, textFilter) {
   return (
     <Col lg={8} md={8} sm={12} xs={12}>
-      <FormGroup style={{marginBottom: '5px',}}>
+      <FormGroup style={{marginBottom: 5,}}>
         <InputGroup>
           <FormControl
             onChange={handleTextChange}
