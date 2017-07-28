@@ -293,12 +293,12 @@ export default class Heroes extends Component {
       <Row>
         {renderTextArea(this.handleTextChange, this.state.textFilter)}
         <Col style={{paddingRight: '2.5px',}} lg={2} md={2} sm={6} xs={6}>
-          <Button style={{marginBottom: '5px',}} block onClick={this.handleFilterButton}>
+          <Button block onClick={this.handleFilterButton}>
             Filter
           </Button>
         </Col>
          <Col style={{paddingLeft: '2.5px',}} lg={2} md={2} sm={6} xs={6}>
-          <Button style={{marginBottom: '5px',}} block onClick={this.handleSortButton}>
+          <Button block onClick={this.handleSortButton}>
             Sort
           </Button>
         </Col>
