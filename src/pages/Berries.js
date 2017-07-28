@@ -124,7 +124,7 @@ export default class Berries extends Component {
 
     clearTimeout(this.timer);
     this.setState({ textFilter: e.target.value, }, () => {
-      this.timer = setTimeout(() => this.update(), 500);
+      this.timer = setTimeout(() => this.update(), 300);
     });
   }
 
