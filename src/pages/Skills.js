@@ -161,7 +161,7 @@ export default class Skills extends Component {
     return (
       <Row>
         {renderTextArea(this.handleTextChange, this.state.textFilter)}
-        {renderButton(this.handleFilterButton, 'Filter')}
+        {renderButton(this.handleFilterButton, 'Filter', this.state.checkboxFilters)}
         {renderModal(
           this.handleFilterButton,
           this.state.showFilterModal,

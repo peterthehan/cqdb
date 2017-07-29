@@ -133,7 +133,7 @@ export default class Bread extends Component {
     return (
       <Row>
         {renderTextArea(this.handleTextChange, this.state.textFilter)}
-        {renderButton(this.handleFilterButton, 'Filter')}
+        {renderButton(this.handleFilterButton, 'Filter', this.state.checkboxFilters)}
         {renderModal(
           this.handleFilterButton,
           this.state.showFilterModal,

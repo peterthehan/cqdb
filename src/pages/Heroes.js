@@ -15,6 +15,7 @@ import { renderResults, } from '../components/renderResults';
 import { renderSelects, } from '../components/renderSelects';
 import { renderTextArea, } from '../components/renderTextArea';
 import { calculateStat, } from '../util/calculateStat';
+import { countFilters, } from '../util/countFilters';
 import { filterByText, filterByCheckbox, } from '../util/filters';
 import { imagePath, } from '../util/imagePath';
 import { range, } from '../util/range';
@@ -294,7 +295,7 @@ export default class Heroes extends Component {
         {renderTextArea(this.handleTextChange, this.state.textFilter)}
         <Col style={{paddingRight: 2.5,}} lg={2} md={2} sm={6} xs={6}>
           <Button block onClick={this.handleFilterButton} style={{marginBottom: 5,}}>
-            Filter
+            {`Filter ${countFilters(this.state.checkboxFilters)}`}
           </Button>
         </Col>
          <Col style={{paddingLeft: 2.5,}} lg={2} md={2} sm={6} xs={6}>
