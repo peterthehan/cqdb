@@ -21,6 +21,7 @@ import { imagePath, } from '../util/imagePath';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
 import { sortBySelection, } from '../util/sortBySelection';
+import { toTitleCase, } from '../util/toTitleCase';
 import { parseURL, updateURL, } from '../util/url';
 
 const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax;
@@ -39,7 +40,7 @@ const statLabels = [
   'Accuracy',
   'Evasion',
 ];
-const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin',];
+const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin', 'Damage',];
 const sortCategories = ['By', 'Order',];
 
 // parse data files
@@ -54,6 +55,10 @@ const data = heroData.map(hero => {
   const name = resolve(hero.name);
 
   // make hero's filterable object
+  const hasSbw = stat.grade < 4
+    ? hero.rarity === 'DESTINY' ? 'Yes' : 'No'
+    : sbwData.some(j => j.reqhero.includes(hero.id)) ? 'Yes' : 'No';
+
   const f = [
     stat.grade.toString(),
     `TEXT_CLASS_${hero.classid.substring(4)}`,
@@ -62,11 +67,30 @@ const data = heroData.map(hero => {
       ? 'Unknown' // remove unreleased domains
       : hero.domain === 'NONEGROUP' ? `TEXT_CHAMP_DOMAIN_${hero.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${hero.domain}`,
     `TEXT_EXPLORE_TOOLTIP_GENDER_${hero.gender}`,
-    stat.grade < 4
-      ? hero.rarity === 'DESTINY' ? 'Yes' : 'No'
-      : sbwData.some(j => j.reqhero.includes(hero.id)) ? 'Yes' : 'No',
+    hasSbw,
     skinData.some(i => i.wearable_charid.includes(hero.id)) ? 'Yes' : 'No',
   ].map(resolve);
+
+  // filter null entries, resolve and match words, filter no match cases
+  let damage = [
+    stat.skill_desc,
+    stat.skill_subdesc,
+    hasSbw === 'Yes' && stat.grade >= 4
+      ? sbwData[sbwData.findIndex(j => parseInt(j.grade, 10) === stat.grade && j.reqhero.includes(hero.id))].desc
+      : null,
+  ]
+  .filter(j => j)
+  .map(j => resolve(j).match(/physical|magic|neutral/gi))
+  .filter(j => j);
+
+  // flatten, map to titlecase, and remove duplicates
+  damage = [...new Set([].concat(...damage).map(toTitleCase))];
+
+  if (!damage.length) {
+    damage = ['None',];
+  }
+
+  f.push(damage);
 
   const filterable = {};
   filterCategories.forEach((i, index) => filterable[i] = f[index]);
@@ -154,6 +178,7 @@ const checkboxes = (() => {
     ['Male', 'Female',],
     ['Yes', 'No',],
     ['Yes', 'No',],
+    ['Physical', 'Magic', 'Neutral', 'None',],
   ];
 
   const c = {};
