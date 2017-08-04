@@ -3,7 +3,7 @@ export function sortBySelection(filtered, sortBy, sortIsDescending, selectsDefau
     return filtered; // return as-is if default
   }
 
-  const cloned = [...filtered];
+  const cloned = filtered.slice();
   
   if (sortBy === selectsDefault) {
     cloned.reverse();
