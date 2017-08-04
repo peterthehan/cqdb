@@ -491,7 +491,7 @@ export default class Optimizer extends Component {
               Effective Atk. Power = Atk. Power * Raw * Crit. * Pen. * Acc.
               <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L270-L278'>[2]</a></sup>&nbsp;
               The heatmaps generated use a global scale that takes into account all loadouts, not a relative scale per loadout;
-              Green is set to the highest Effective Atk. Power considering all loadouts, red to the lowest.
+              green is set to the highest Effective Atk. Power considering all loadouts, red to the lowest.
             </li>
             <Table condensed responsive>
               <thead>
