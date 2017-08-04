@@ -101,7 +101,7 @@ export default class Frame extends Component {
     return (
       <div>
         {this.renderNavbar()}
-        <br /><br /><br /><p />
+        <div style={{marginBottom: 51,}}>&nbsp;</div>
         <Grid fluid>
           <div className='content'>
             {this.props.children}

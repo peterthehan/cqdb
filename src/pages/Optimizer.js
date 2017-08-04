@@ -3,7 +3,6 @@ import ReactList from 'react-list';
 import {
   Col,
   FormControl,
-  FormGroup,
   Panel,
   Row,
   Table,
@@ -376,7 +375,7 @@ export default class Optimizer extends Component {
 
     return (
       <Col key={index} lg={12} md={12} sm={12} xs={12}>
-        <Panel header={`#${index + 1}`}>
+        <Panel header={`#${index + 1}`} style={{marginBottom: 5, marginTop: 15,}}>
           <Row>
             <Col lg={6} md={6} sm={12} xs={12}>
               <Panel header='Loadout'>
@@ -554,15 +553,13 @@ export default class Optimizer extends Component {
           </Panel>
         </Col>
         <Col lg={8} md={6} sm={12} xs={12}>
-          <FormGroup controlId="formControlsSelect">
-            <FormControl componentClass="select" defaultValue='' onChange={this.handleHeroSelect}>
-              {
-                [<option disabled key='null' value=''>Select a hero...</option>].concat(
-                  heroSelectData.map((i, index) => this.renderOptions(i, index))
-                )
-              }
-            </FormControl>
-          </FormGroup>
+          <FormControl componentClass='select' defaultValue='' onChange={this.handleHeroSelect} style={{marginBottom: 5,}}>
+            {
+              [<option disabled key='null' value=''>Select a hero...</option>].concat(
+                heroSelectData.map((i, index) => this.renderOptions(i, index))
+              )
+            }
+          </FormControl>
         </Col>
         {renderButton(this.handleSortButton, 'Sort')}
         {renderModal(
