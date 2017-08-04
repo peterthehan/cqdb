@@ -125,7 +125,7 @@ export default class Contracts extends Component {
         <p>
           Pulls 1-9: 6★: 0.60%, 5★: 3.50%, 4★: 14.90%, 3★: 81.00%.
           <sup><a href='https://goo.gl/k62wvU'>[1]</a></sup>
-          <sup><a href='https://github.com/Johj/cqdb/blob/master/src/util/pickGrade.js#L1'>[2]</a></sup>
+          <sup><a href='https://github.com/Johj/cqdb/blob/master/src/util/pickGrade.js'>[2]</a></sup>
         </p>
         <p>
           Pull 10: Guaranteed 4★ Contract only Hero.
