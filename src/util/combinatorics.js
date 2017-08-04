@@ -42,3 +42,15 @@ export function cartesian() {
     helper([], 0);
     return r;
 }
+
+// https://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-an-array-based-on-suppl
+export function range(start, end, step, offset) {
+  const len = (Math.abs(end - start) + ((offset || 0) * 2)) / (step || 1) + 1;
+  const direction = start < end ? 1 : -1;
+  const startingPoint = start - (direction * (offset || 0));
+  const stepSize = direction * (step || 1);
+  
+  return Array(len).fill(0).map(function(_, index) {
+    return startingPoint + (stepSize * index);
+  });
+}

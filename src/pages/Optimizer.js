@@ -1,20 +1,23 @@
 import React, { Component, } from 'react';
+import ReactList from 'react-list';
 import {
-  Button,
   Col,
   FormControl,
   FormGroup,
-  Glyphicon,
-  OverlayTrigger,
   Panel,
-  Popover,
   Row,
   Table,
 } from 'react-bootstrap';
 
+import { renderButton, } from '../components/renderButton';
+import { renderModal, } from '../components/renderModal';
+import { renderSelects, } from '../components/renderSelects';
 import { calculateStat, } from '../util/calculateStat';
-import { cartesian, combinationWithRepetition, } from '../util/combinatorics';
+import { cartesian, combinationWithRepetition, range, } from '../util/combinatorics';
+import { color, } from '../util/color';
 import { resolve, } from '../util/resolve';
+import { sortBySelection, } from '../util/sortBySelection';
+import { mean, median, mode, standardDeviation, } from '../util/statistics';
 
 const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax;
 const heroData = require('../Decrypted/filtered_character_visual.json');
@@ -32,6 +35,7 @@ const statLabels = [
   'Accuracy',
   'Evasion',
 ];
+const sortCategories = ['By', 'Order',];
 
 // parse data files
 const heroSelectData = heroData
@@ -53,25 +57,65 @@ const heroSelectData = heroData
   })
   .filter(i => i); // remove null from the pool
 
-//console.log(heroSelectData);
+// console.log(heroSelectData);
 
-const ringMainOptions = {
+const translator = {
+  '0.2875': 'Atk. Power Percent',
+  '0.20125': 'Crit.Chance',
+  '0.8625': 'Crit.Damage',
+  '517': 'Penetration',
+  '0': 'Penetration',
+
   '230': 'Atk. Power',
   '0.081': 'Crit.Chance',
   '0.13': 'Crit.Chance',
   '0.345': 'Crit.Damage',
+
+  '171': 'Penetration',
+  '0.126': 'Accuracy',
+  '0.1': 'Damage Percent',
 };
 
-const weaponOptions = {
-  '0.2875': 'Atk. Power',
-  '0.20125': 'Crit.Chance',
-  '0.8625': 'Crit.Damage',
-};
+const weaponConversions = combinationWithRepetition([0.2875, 0.20125, 0.8625, 517,], 2);
+const ringMainOptions = [230, 0.081, 0.13, 0.345,];
+const ringSubOptions = [[171, 171, 171, 0.126, 0.126, 0.126], [0.1, 0.1, 0.1,], [0, 0, 0,],]
+  .map(i => [...new Set(combinationWithRepetition(i, 3).map(j => j.join(',')))]
+    .map(j => j.split(',').map(parseFloat))
+  )
+  .reduce((a, b) => a.concat(b), []);
+// console.log(weaponConversions, ringMainOptions, ringSubOptions);
+
+const combinations = cartesian(weaponConversions, ringMainOptions, ringSubOptions)
+  .map(i => i.reduce((a, b) => a.concat(b), []))
+  .filter(i => (i.includes(0) && i.includes(0.13)) || (!i.includes(0) && !i.includes(0.13))); // filter invalid ring combinations
+// console.log(combinations, JSON.stringify(combinations));
+
+const defenseIncrements = range(500, 2500, 250);
+const evasionIncrements = range(15, 75, 10).map(i => i * 0.01);
+
+// initialize sort's select labels and options
+const selects = (() => {
+  const sortOptions = [
+    ['Default', 'Mean', 'Median', 'Mode', 'Standard Deviation', 'Variability', 'Minimum', 'Maximum',],
+    ['Descending', 'Ascending',],
+  ];
+
+  const s = {};
+  sortCategories.forEach((i, index) => s[i] = sortOptions[index])
+  return s;
+})();
 
 export default class Optimizer extends Component {
   state = {
-    heroIndex: 0,
+    heroIndex: null,
+    showSortModal: false,
+    sortBy: '',
+    sortOrder: '',
     render: [],
+  }
+
+  componentWillMount = () => {
+    this.setState({ sortBy: selects.By[0], sortOrder: selects.Order[0], });
   }
 
   findHero = () => {
@@ -163,132 +207,160 @@ export default class Optimizer extends Component {
     };
   }
 
-  calculateDamage = (hero) => {
-    const weaponCombinations = [
-      combinationWithRepetition(Object.keys(weaponOptions), 1),
-      combinationWithRepetition(Object.keys(weaponOptions), 2),
-    ];
-    const carte = weaponCombinations.map(i => {
-      return cartesian(i, Object.keys(ringMainOptions), !hero.skin.length ? [null] : hero.skin);
-    });
+  accumulateStats = (hero, combo) => {
+    const loadout = combo[0];
 
-    const calculated = carte.map(i => {
-      return i.map(j => {
-        // initialize stats
-        const net = {
-          'Atk. Power': 0,
-          'Crit.Chance': 0,
-          'Crit.Damage': 0,
-        };
+    // aggregate loadout
+    const accumulator = {
+      'Atk. Power Percent': 0,
+      'Atk. Power': 0,
+      'Crit.Chance': 0,
+      'Crit.Damage': 0,
+      'Accuracy': 0,
+      'Penetration': 0,
+      'Damage Percent': 0,
+    };
+    loadout.forEach(i => accumulator[translator[i]] += parseFloat(i));
 
-        // add base stats
-        Object.keys(net).forEach(k => {
-          net[k] += hero.baseStats[k];
-        });
+    // initialize hero base stats
+    const heroAccumulator = {
+      'Atk. Power': 0,
+      'Crit.Chance': 0,
+      'Crit.Damage': 0,
+      'Accuracy':  0,
+      'Penetration': 0,
+    };
+    Object.keys(heroAccumulator).forEach(i => heroAccumulator[i] += i in hero.baseStats ? hero.baseStats[i] : 0);
 
-        // add weapon conversions
-        // do this first because atk. power % conversion affects base stats
-        const weapon = j[0];
-        weapon.forEach(k => {
-          if (weaponOptions[k] === 'Atk. Power') {
-            net[weaponOptions[k]] *= (1 + parseFloat(k));
-          } else {
-            net[weaponOptions[k]] += parseFloat(k);
-          }
-        });
+    // calculate atk. power percent edge case
+    heroAccumulator['Atk. Power'] *= (1 + accumulator['Atk. Power Percent']);
 
-        // add ring stats
-        const ring = j[1];
-        net[ringMainOptions[ring]] += parseFloat(ring);
+    // add hero sbw
+    heroAccumulator['Atk. Power'] += hero.sbw['Atk. Power'];
 
-        // add berry stats
-        Object.keys(net).forEach(k => {
-          net[k] += hero.berryStats[k];
-        });
+    // add loadout + hero berry stats
+    Object.keys(heroAccumulator).forEach(i => heroAccumulator[i] += accumulator[i] + (i in hero.berryStats ? hero.berryStats[i] : 0));
 
-        // add sbw stats
-        net['Atk. Power'] += hero.sbw['Atk. Power'];
-
-        // add skin stats
-        const skin = j[2];
-        if (skin) {
-          Object.keys(skin.stats).forEach(k => {
-            if (k in net) {
-              net[k] += skin.stats[k];
-            }
-          });
+    // add skin stats
+    const skin = combo[1];
+    if (skin) {
+      Object.keys(skin.stats).forEach(i => {
+        if (i in heroAccumulator) {
+          heroAccumulator[i] += skin.stats[i];
         }
+      });
+    }
 
-        const effectiveAtkPower = net['Atk. Power'] * (1 + net['Crit.Chance'] * net['Crit.Damage']);
-        const weaponConversions = {};
-        weapon.map(k => weaponConversions[weaponOptions[k]] = k);
-        const ringOption = {};
-        ringOption[ringMainOptions[ring]] = ring;
+    heroAccumulator['Damage Percent'] = accumulator['Damage Percent'];
 
-        return {
-          net: net,
-          effectiveAtkPower: effectiveAtkPower.toFixed(1),
-          weapon: weapon,
-          skin: skin,
-          ring: ringOption,
-        };
-      }).sort((a, b) => b.effectiveAtkPower - a.effectiveAtkPower)
+    // for printing purposes
+    heroAccumulator['Loadout'] = loadout;
+    heroAccumulator['Skin'] = skin;
+    heroAccumulator['Hero'] = hero;
+
+    return heroAccumulator;
+  }
+
+  calculateOutput = (hero) => {
+    // calculate all multipliers
+    const rawMult = 1 + hero['Damage Percent'];
+    const critMult = 1 + hero['Crit.Chance'] * hero['Crit.Damage'];
+    const penMultArray = defenseIncrements.map(i => 1 / (1 + 0.0034 * Math.max(i - hero['Penetration'], 0)));
+    const accMultArray = evasionIncrements.map(i => 1 - Math.max(i - hero['Accuracy'], 0));
+
+    // calculate effective atk. power
+    const effAtkPower = [];
+    for (let accMult of accMultArray) {
+      const row = [];
+      for (let penMult of penMultArray) {
+        row.push(hero['Atk. Power'] * rawMult * critMult * penMult * accMult);
+      }
+      effAtkPower.push(row);
+    }
+
+    // flatten to find statistical values
+    const flattened = effAtkPower.reduce((a, b) => a.concat(b), []);
+
+    const meanAtkPower = mean(flattened);
+    const stddev = standardDeviation(flattened);
+
+    return {
+      'sortable': {
+        'Default': effAtkPower[0][3], // defense 1250, evasion 0.15
+        'Mean': meanAtkPower,
+        'Median': median(flattened),
+        'Mode': mode(flattened),
+        'Standard Deviation': stddev,
+        'Variability': stddev / meanAtkPower, // coefficient of variation
+        'Minimum': Math.min(...flattened),
+        'Maximum': Math.max(...flattened),
+      },
+      'atkPower': hero['Atk. Power'],
+      'rawMult': rawMult,
+      'critMult': critMult,
+      'penMult': penMultArray,
+      'accMult': accMultArray,
+      'effective': effAtkPower,
+      'skin': hero.Skin,
+      'loadout': hero.Loadout,
+    };
+  }
+
+  update = () => {
+    if (!this.state.heroIndex) {
+      return;
+    }
+
+    const hero = this.findHero();
+    const fullCombinations = cartesian(combinations, !hero.skin.length ? [null] : hero.skin);
+
+    const calculated = fullCombinations
+      .map(i => this.accumulateStats(hero, i))
+      .map(this.calculateOutput)
+      .sort((a, b) => b.sortable[this.state.sortBy] - a.sortable[this.state.sortBy]);
+
+    const eff = calculated.map(i => i.effective).reduce((a, b) => a.concat(b), []).reduce((a, b) => a.concat(b), []);
+    const globalMin = Math.min(...eff);
+    const globalMax = Math.max(...eff);
+
+    calculated.forEach(loadout => {
+      // create table cell object with effective atk. power and relative color
+      const effAtkPowerAndColor = [];
+      for (let i = 0; i < loadout.effective.length; ++i) {
+        const row = [];
+        for (let j = 0; j < loadout.effective[i].length; ++j) {
+          row.push({ atkPower: loadout.effective[i][j], color: color(globalMin, globalMax, loadout.effective[i][j]), });
+        }
+        effAtkPowerAndColor.push(row);
+      }
+
+      loadout['effective'] = effAtkPowerAndColor;
     });
 
-    return calculated;
+    const sorted = sortBySelection(
+      calculated,
+      this.state.sortBy,
+      selects[sortCategories[1]][0] === this.state.sortOrder,
+      selects[sortCategories[0]][0]
+    );
+
+    this.setState({ render: sorted.map(this.renderPanel), });
   }
 
   handleHeroSelect = (e) => {
-    this.setState({ heroIndex: e.target.value, }, () => {
-      const calculated = this.calculateDamage(this.findHero());
-      const render = calculated.map(this.renderTable);
-
-      this.setState({render,});
-    });
+    this.setState({ heroIndex: e.target.value, }, () => this.update());
   }
 
-  renderRow = (result, index) => {
-    const weaponValue = result.weapon.map(i => `${weaponOptions[i]}: ${(parseFloat(i) * 100).toFixed(3)}%`);
-    const ringValue = parseFloat(Object.values(result.ring)) < 1
-      ? `${(parseFloat(Object.values(result.ring)) * 100).toFixed(1)}%`
-      : parseInt(Object.values(result.ring), 10);
-
-    return (
-      <tr key={index}>
-        <td>
-          <text>{`${weaponValue[0]}`}</text>
-          {weaponValue.length > 1 ? <text><br />{weaponValue[1]}</text> : ''}
-          <br />
-          <text>{`${Object.keys(result.ring)}: ${ringValue}`}</text>
-          {result.skin ? <text><br />{result.skin.name}</text> : ''}
-        </td>
-        <td>{result.effectiveAtkPower}</td>
-        <td>{result.net['Atk. Power'].toFixed(1)}</td>
-        <td>{`${(parseFloat(result.net['Crit.Chance']) * 100).toFixed(3)}%`}</td>
-        <td>{result.net['Crit.Damage'].toFixed(4)}</td>
-      </tr>
-    );
+  handleSortButton = () => {
+    this.setState({ showSortModal: !this.state.showSortModal, });
   }
 
-  renderTable = (calculated, index) => {
-    return (
-      <Panel collapsible defaultExpanded header={`Weapon Conversions: ${index + 1}`} key={index}>
-        <Table condensed hover responsive>
-          <thead>
-            <tr>
-              <th>Parameters</th>
-              <th>eAtk. Power</th>
-              <th>Atk. Power</th>
-              <th>Crit.Chance</th>
-              <th>Crit.Damage</th>
-            </tr>
-          </thead>
-          <tbody>
-            {calculated.map(this.renderRow)}
-          </tbody>
-        </Table>
-      </Panel>
-    );
+  handleSortByChange = (e) => {
+    this.setState({ sortBy: e.target.value, }, () => this.update());
+  }
+
+  handleSortOrderChange = (e) => {
+    this.setState({ sortOrder: e.target.value, }, () => this.update());
   }
 
   renderOptions = (i, index) => {
@@ -299,51 +371,211 @@ export default class Optimizer extends Component {
     );
   }
 
+  renderPanel = (i, index) => {
+    const loadout = i.loadout.map(i => `${translator[i]}: ${i}`);
+
+    return (
+      <Col key={index} lg={12} md={12} sm={12} xs={12}>
+        <Panel header={`#${index + 1}`}>
+          <Row>
+            <Col lg={6} md={6} sm={12} xs={12}>
+              <Panel header='Loadout'>
+                <p>
+                  <text><b>Weapon</b>: {loadout.slice(0, 2).join(', ')}<br /></text>
+                  <text><b>Ring</b>: {loadout.slice(2).join(', ')}<br /></text>
+                  {
+                    i.skin
+                      ? <text><b>Skin</b>: {i.skin.name}: {Object.keys(i.skin.stats).map(j => `${j}: ${i.skin.stats[j]}`).join(', ')}</text>
+                      : ''
+                  }
+                </p>
+              </Panel>
+            </Col>
+            <Col lg={6} md={6} sm={12} xs={12}>
+              <Panel header='Statistics'>
+                <p>
+                  {Object.keys(i.sortable).slice(1).map(j => <text key={j}><b>{j}</b>{`: ${i.sortable[j].toFixed(2)}`}<br /></text>)}
+                </p>
+              </Panel>
+            </Col>
+            <Col lg={12} md={12} sm={12} xs={12}>
+              <Panel header={`Effective Atk. Power`}>
+                <Table condensed responsive>
+                  <thead>
+                    <tr>
+                      <td></td>
+                      <td><b>Atk. Power</b></td>
+                      <td>{i.atkPower.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td><b>Raw Multiplier</b></td>
+                      <td>{i.rawMult.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td><b>Crit. Multiplier</b></td>
+                      <td>{i.critMult.toFixed(2)}</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td></td>
+                      <td><b>Pen. Multiplier</b></td>
+                      {i.penMult.map((j, index) => <td key={index}>{j.toFixed(2)}</td>)}
+                    </tr>
+                    <tr>
+                      <td><b>Acc. Multiplier</b></td>
+                      <td><b>Evasion/Defense</b></td>
+                      {defenseIncrements.map((j, index) => <td key={index}>{j}</td>)}
+                    </tr>
+                    {evasionIncrements.map((j, index) => this.renderTableRows(i.accMult[index], j, i.effective[index]))}
+                  </tbody>
+                </Table>
+              </Panel>
+            </Col>
+          </Row>
+        </Panel>
+      </Col>
+    );
+  }
+
+  renderTableRows = (accMult, evasion, effective) => {
+    return (
+      <tr key={evasion}>
+        <td>{accMult.toFixed(2)}</td>
+        <td>{evasion.toFixed(2)}</td>
+        {effective.map((i, index) => <td key={index} style={{backgroundColor: i.color,}}>{i.atkPower.toFixed(2)}</td>)}
+      </tr>
+    );
+  }
+
   render = () => {
-    const popover = (
-      <Popover id='info'>
-
-        <p>
-          This tool only considers attack power, critical chance, and critical damage in its calculations.
-          It assumes the hero is max bread and berry trained and that the hero has their sbw equipped.
-          As such, this tool is best used for heroes whose damage strictly scale off their attack power
-          (i.e. Night Witch Teresa, Creator Benjamin, etc).
-        </p>
-        <p>
-          This tool is not conclusive for "tricky" heroes whose damage scale off non-attack stats or complicated passive procs
-          (i.e. Ocean King Koxinga, Berserk - V, Devil Bullet No. 9, etc).
-        </p>
-      </Popover>
-    );
-
-    const footer = (
-      <OverlayTrigger overlay={popover} placement='bottom' rootClose trigger='click'>
-        <Button bsStyle='link'>
-          <Glyphicon glyph='info-sign' />
-        </Button>
-      </OverlayTrigger>
-    );
-
     return (
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
-          <Panel footer={footer}>
-            <p>
-              Effective Attack Optimizer computes every combination of weapon conversions, ring options, and skins to maximize 
-              the selected hero's effective attack power.
-            </p>
+          <Panel collapsible defaultExpanded header='Methodology'>
+          <ol style={{paddingLeft: 15,}}>
+            <li>
+              <p>
+                Calculations assume the hero is max bread and berry trained and has their sbw equipped.
+                Skin stats are considered if they exist for the selected hero.
+              </p>
+            </li>
+            <li>
+              Every possible equipment combination is generated in considering the optimal loadout.
+              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L79-91'>[1]</a></sup>
+            </li>
+            <Table condensed responsive>
+              <thead>
+                <tr>
+                  <th>Equipment</th>
+                  <th>Stats</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Weapon Conversions</td>
+                  <td>0.2875 Atk. Power Percent, 0.20125 Crit.Chance, 0.8625 Crit.Damage, 517 Penetration</td>
+                </tr>
+                <tr>
+                  <td>Ring Main Options</td>
+                  <td>230 Atk. Power, 0.081 Crit.Chance, 0.13 Crit.Chance, 0.345 Crit.Damage</td>
+                </tr>
+                <tr>
+                  <td>Ring Sub Options</td>
+                  <td>171 Penetration, 0.126 Accuracy, 0.1 Damage Percent</td>
+                </tr>
+              </tbody>
+            </Table>
+            <li>
+              Effective Atk. Power = Atk. Power * Raw * Crit. * Pen. * Acc.
+              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L271-279'>[2]</a></sup>&nbsp;
+              The heatmaps generated use a global scale that takes into account all loadouts, not a relative scale per loadout;
+              Green is set to the highest Effective Atk. Power considering all loadouts, red to the lowest.
+            </li>
+            <Table condensed responsive>
+              <thead>
+                <tr>
+                  <th>Multiplier</th>
+                  <th>Formula<sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L265-269'>[3]</a></sup></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Raw</td>
+                  <td>1 + Damage Percent</td>
+                </tr>
+                <tr>
+                  <td>Crit.</td>
+                  <td>1 + Crit.Chance * Crit.Damage</td>
+                </tr>
+                <tr>
+                  <td>Pen.</td>
+                  <td>1 / (1 + 0.0034 * max(Defense - Penetration, 0))</td>
+                </tr>
+                <tr>
+                  <td>Acc.</td>
+                  <td>1 - max(Evasion - Accuracy, 0)</td>
+                </tr>
+              </tbody>
+            </Table>
+            <li>
+              Sort by Default compares loadouts using the Effective Atk. Power that results from 1250 Defense and 0.15 Evasion.
+              Warriors and Paladins are commonly seen with an additional 460 armor/resistance due to a Defense weapon conversion.
+              This would put them at roughly this defense range using either the mean or median listed below.
+            </li>
+            <Table condensed responsive>
+              <thead>
+                <tr>
+                  <th>Class</th>
+                  <th>Mean Defense</th>
+                  <th>Median Defense</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Warrior</td>
+                  <td>722.70</td>
+                  <td>703.30</td>
+                </tr>
+                <tr>
+                  <td>Paladin</td>
+                  <td>811.66</td>
+                  <td>763.45</td>
+                </tr>
+              </tbody>
+            </Table>
+            <li>
+              Note: This tool is not conclusive for "tricky" heroes whose damage scale off non-attack stats or complicated passive procs
+              (i.e. Ocean King Koxinga, Berserk - V, Devil Bullet No. 9, etc).
+            </li>
+            </ol>
           </Panel>
+        </Col>
+        <Col lg={8} md={6} sm={12} xs={12}>
           <FormGroup controlId="formControlsSelect">
             <FormControl componentClass="select" defaultValue='' onChange={this.handleHeroSelect}>
               {
-                [<option disabled key='null' value=''>Select a hero</option>].concat(
+                [<option disabled key='null' value=''>Select a hero...</option>].concat(
                   heroSelectData.map((i, index) => this.renderOptions(i, index))
                 )
               }
             </FormControl>
           </FormGroup>
-          {this.state.render}
         </Col>
+        {renderButton(this.handleSortButton, 'Sort')}
+        {renderModal(
+          this.handleSortButton,
+          this.state.showSortModal,
+          'Sort',
+          renderSelects([this.handleSortByChange, this.handleSortOrderChange,], [this.state.sortBy, this.state.sortOrder,], selects)
+        )}
+        <ReactList
+          itemRenderer={i => this.state.render[i]}
+          length={this.state.render.length}
+          minSize={10}
+        />
       </Row>
     );
   }
