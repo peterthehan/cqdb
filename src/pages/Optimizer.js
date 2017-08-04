@@ -375,7 +375,7 @@ export default class Optimizer extends Component {
 
     return (
       <Col key={index} lg={12} md={12} sm={12} xs={12}>
-        <Panel header={`#${index + 1}`} style={{marginBottom: 5, marginTop: 15,}}>
+        <Panel collapsible defaultExpanded header={`#${index + 1}`} style={{marginBottom: 5, marginTop: 15,}}>
           <Row>
             <Col lg={6} md={6} sm={12} xs={12}>
               <Panel header='Loadout'>
@@ -463,7 +463,7 @@ export default class Optimizer extends Component {
             </li>
             <li>
               Every possible equipment combination is generated in considering the optimal loadout.
-              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L79-91'>[1]</a></sup>
+              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L78-90'>[1]</a></sup>
             </li>
             <Table condensed responsive>
               <thead>
@@ -489,7 +489,7 @@ export default class Optimizer extends Component {
             </Table>
             <li>
               Effective Atk. Power = Atk. Power * Raw * Crit. * Pen. * Acc.
-              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L271-279'>[2]</a></sup>&nbsp;
+              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L270-278'>[2]</a></sup>&nbsp;
               The heatmaps generated use a global scale that takes into account all loadouts, not a relative scale per loadout;
               Green is set to the highest Effective Atk. Power considering all loadouts, red to the lowest.
             </li>
@@ -497,7 +497,7 @@ export default class Optimizer extends Component {
               <thead>
                 <tr>
                   <th>Multiplier</th>
-                  <th>Formula<sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L265-269'>[3]</a></sup></th>
+                  <th>Formula<sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L264-268'>[3]</a></sup></th>
                 </tr>
               </thead>
               <tbody>
