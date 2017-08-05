@@ -77,7 +77,7 @@ const translator = {
 
 const weaponConversions = combinationWithRepetition([0.2875, 0.20125, 0.8625, 517,], 2);
 const ringMainOptions = [230, 0.081, 0.13, 0.345,];
-const ringSubOptions = [[171, 171, 171, 0.126, 0.126, 0.126], [0.1, 0.1, 0.1,], [0, 0, 0,],]
+const ringSubOptions = [[171, 171, 171, 0.126, 0.126, 0.126], [0.1, 0.1, 0.1,], [0, 0, 0,],] // 120 pen
   .map(i => [...new Set(combinationWithRepetition(i, 3).map(j => j.join(',')))]
     .map(j => j.split(',').map(parseFloat))
   )
@@ -285,7 +285,7 @@ export default class Optimizer extends Component {
 
     return {
       'sortable': {
-        'Default': effAtkPower[0][3], // defense 1250, evasion 0.15
+        'Default': effAtkPower[0][2], // defense 1000, evasion 0.15
         'Mean': meanAtkPower,
         'Median': median(flattened),
         'Mode': mode(flattened),
@@ -453,7 +453,7 @@ export default class Optimizer extends Component {
     return (
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
-          <Panel collapsible defaultExpanded header='Methodology'>
+          <Panel collapsible header='Methodology'>
           <ol style={{paddingLeft: 15,}}>
             <li>
               <p>
@@ -520,9 +520,18 @@ export default class Optimizer extends Component {
               </tbody>
             </Table>
             <li>
-              Sort by Default compares loadouts using the Effective Atk. Power that results from 1250 Defense and 0.15 Evasion.
+              <p>
+                Keep in mind the yield of the Acc. and Crit. Multipliers are the result of probabilities converging over many repeated events.
+                Crusaders Quest PvP generally occurs within the realms of 10-20 seconds over a dozen or so blocks (not many opportunities to "roll the dice").
+                The resulting small sample size will generally skew the effects of chance-based damage multipliers.
+              </p>
+            </li>
+            <li>
+              Sort by Default compares loadouts using the Effective Atk. Power that results from 1000 Defense and 0.15 Evasion.
               Warriors and Paladins are commonly seen with an additional 460 armor/resistance due to a Defense weapon conversion.
-              This would put them at roughly this defense range using either the mean or median listed below.
+              While this would put them at roughly 1250 armor/resistance using either the mean or median listed below,
+              sorting by this metric seems to emphasize penetration-heavy loadouts (which the other types of sorts already do).
+              Using 1000 Defense yields a more meaningful sort that allows a comparison of a larger variety of equipment combinations.
             </li>
             <Table condensed responsive>
               <thead>
@@ -546,8 +555,10 @@ export default class Optimizer extends Component {
               </tbody>
             </Table>
             <li>
-              Note: This tool is not conclusive for "tricky" heroes whose damage scale off non-attack stats or complicated passive procs
-              (i.e. Ocean King Koxinga, Berserk - V, Devil Bullet No. 9, etc).
+              <p>
+                This tool is not conclusive for "tricky" heroes whose damage scale off non-attack stats or complicated passive procs
+                (i.e. Ocean King Koxinga, Berserk - V, Devil Bullet No. 9, etc).
+              </p>
             </li>
             </ol>
           </Panel>
