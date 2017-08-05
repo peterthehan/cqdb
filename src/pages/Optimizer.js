@@ -286,7 +286,7 @@ export default class Optimizer extends Component {
     return {
       'sortable': {
         'Default': effAtkPower[0][2], // defense 1000, evasion 0.15
-        'Neutral': hero['Atk. Power'] * rawMult * critMult,
+        'Neutral': hero['Atk. Power'] * critMult,
         'Mean': meanAtkPower,
         'Median': median(flattened),
         'Mode': mode(flattened),
@@ -562,7 +562,7 @@ export default class Optimizer extends Component {
             </Table>
             <li>
               <p>
-                Sort by Neutral compares loadouts using Effective Atk. Power = Atk. Power * Raw * Crit.
+                Sort by Neutral compares loadouts using Effective Atk. Power = Atk. Power * Crit.
                 This is useful for heroes that deal neutral damage and to some degree, those that have innate penetration.
               </p>
             </li>
