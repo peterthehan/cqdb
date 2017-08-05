@@ -494,10 +494,9 @@ export default class Optimizer extends Component {
               </tbody>
             </Table>
             <li>
-              Effective Atk. Power = Atk. Power * Raw * Crit. * Pen. * Acc.
+              <i>Effective Atk. Power = Atk. Power * Raw * Crit. * Pen. * Acc.</i>
               <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L270-L278'>[2]</a></sup>&nbsp;
-              The heatmaps generated use a global scale that takes into account all loadouts, not a relative scale per loadout;
-              green is set to the highest Effective Atk. Power considering all loadouts, red to the lowest.
+              The heatmaps generated use a global scale that considers all loadouts, not a relative scale per loadout.
             </li>
             <Table condensed responsive>
               <thead>
@@ -527,9 +526,9 @@ export default class Optimizer extends Component {
             </Table>
             <li>
               <p>
-                Keep in mind the yield of the Acc. and Crit. Multipliers are the result of probabilities converging over many repeated events.
-                Crusaders Quest PvP generally occurs within the realms of 10-20 seconds over a dozen or so blocks (not many opportunities to "roll the dice").
-                The resulting small sample size will generally skew the effects of chance-based damage multipliers.
+                The yield of the acc. and crit. multipliers are the result of probabilities converging over many repeated events.
+                Crusaders Quest PvP generally occurs within 10-20 seconds over a dozen or so blocks (not many opportunities to "roll the dice").
+                This small sample size will skew the effects of chance-based damage multipliers.
               </p>
             </li>
             <li>
@@ -562,7 +561,7 @@ export default class Optimizer extends Component {
             </Table>
             <li>
               <p>
-                Sort by Neutral compares loadouts using Effective Atk. Power = Atk. Power * Crit.
+                Sort by Neutral compares loadouts using <i>Effective Atk. Power = Atk. Power * Crit.</i>
                 This is useful for heroes that deal neutral damage and to some degree, those that have innate penetration.
               </p>
             </li>
