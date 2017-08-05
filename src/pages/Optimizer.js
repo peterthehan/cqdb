@@ -378,11 +378,12 @@ export default class Optimizer extends Component {
       <Col key={index} lg={12} md={12} sm={12} xs={12}>
         <Panel collapsible defaultExpanded header={`#${index + 1}`} style={{marginBottom: 5, marginTop: 15,}}>
           <Row>
-            <Col lg={6} md={6} sm={12} xs={12}>
+            <Col lg={8} md={6} sm={12} xs={12}>
               <Panel header='Loadout'>
                 <p>
                   <text><b>Weapon</b>: {loadout.slice(0, 2).join(', ')}<br /></text>
-                  <text><b>Ring</b>: {loadout.slice(2).join(', ')}<br /></text>
+                  <text><b>Ring Main</b>: {loadout[2]}<br /></text>
+                  <text><b>Ring Sub</b>: {loadout.slice(3).join(', ')}<br /></text>
                   {
                     i.skin
                       ? <text><b>Skin</b>: {i.skin.name}: {Object.keys(i.skin.stats).map(j => `${j}: ${i.skin.stats[j]}`).join(', ')}</text>
@@ -391,7 +392,7 @@ export default class Optimizer extends Component {
                 </p>
               </Panel>
             </Col>
-            <Col lg={6} md={6} sm={12} xs={12}>
+            <Col lg={4} md={6} sm={12} xs={12}>
               <Panel header='Statistics'>
                 <p>
                   {Object.keys(i.sortable).slice(2).map(j => <text key={j}><b>{j}</b>{`: ${i.sortable[j].toFixed(2)}`}<br /></text>)}
@@ -403,22 +404,18 @@ export default class Optimizer extends Component {
                 <Table condensed responsive>
                   <thead>
                     <tr>
-                      <td></td>
                       <td><b>Atk. Power</b></td>
                       <td>{i.atkPower.toFixed(2)}</td>
                     </tr>
                     <tr>
-                      <td></td>
                       <td><b>Neutral</b></td>
                       <td>{i.sortable.Neutral.toFixed(2)}</td>
                     </tr>
                     <tr>
-                      <td></td>
                       <td><b>Raw Multiplier</b></td>
                       <td>{i.rawMult.toFixed(2)}</td>
                     </tr>
                     <tr>
-                      <td></td>
                       <td><b>Crit. Multiplier</b></td>
                       <td>{i.critMult.toFixed(2)}</td>
                     </tr>
