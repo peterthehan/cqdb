@@ -95,7 +95,7 @@ const evasionIncrements = range(15, 75, 10).map(i => i * 0.01);
 // initialize sort's select labels and options
 const selects = (() => {
   const sortOptions = [
-    ['Default', 'Mean', 'Median', 'Mode', 'Standard Deviation', 'Variability', 'Minimum', 'Maximum',],
+    ['Default', 'Neutral', 'Mean', 'Median', 'Mode', 'Standard Deviation', 'Variability', 'Minimum', 'Maximum',],
     ['Descending', 'Ascending',],
   ];
 
@@ -286,6 +286,7 @@ export default class Optimizer extends Component {
     return {
       'sortable': {
         'Default': effAtkPower[0][2], // defense 1000, evasion 0.15
+        'Neutral': hero['Atk. Power'] * rawMult * critMult,
         'Mean': meanAtkPower,
         'Median': median(flattened),
         'Mode': mode(flattened),
@@ -393,7 +394,7 @@ export default class Optimizer extends Component {
             <Col lg={6} md={6} sm={12} xs={12}>
               <Panel header='Statistics'>
                 <p>
-                  {Object.keys(i.sortable).slice(1).map(j => <text key={j}><b>{j}</b>{`: ${i.sortable[j].toFixed(2)}`}<br /></text>)}
+                  {Object.keys(i.sortable).slice(2).map(j => <text key={j}><b>{j}</b>{`: ${i.sortable[j].toFixed(2)}`}<br /></text>)}
                 </p>
               </Panel>
             </Col>
@@ -405,6 +406,11 @@ export default class Optimizer extends Component {
                       <td></td>
                       <td><b>Atk. Power</b></td>
                       <td>{i.atkPower.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td><b>Neutral</b></td>
+                      <td>{i.sortable.Neutral.toFixed(2)}</td>
                     </tr>
                     <tr>
                       <td></td>
@@ -554,6 +560,12 @@ export default class Optimizer extends Component {
                 </tr>
               </tbody>
             </Table>
+            <li>
+              <p>
+                Sort by Neutral compares loadouts using Effective Atk. Power = Atk. Power * Raw * Crit.
+                This is useful for heroes that deal neutral damage and to some degree, those that have innate penetration.
+              </p>
+            </li>
             <li>
               <p>
                 This tool is not conclusive for "tricky" heroes whose damage scale off non-attack stats or complicated passive procs
