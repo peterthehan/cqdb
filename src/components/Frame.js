@@ -72,11 +72,11 @@ export default class Frame extends Component {
           <Nav>{pages}</Nav>
           <Navbar.Form pullRight style={{textAlign: 'center',}}>
             <Button bsStyle='primary' href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>
-              Android 3.9.5.KG
+              Android 3.9.6.KG
             </Button>
             &nbsp;
             <Button bsStyle='primary' href='https://itunes.apple.com/app/id901858272?mt=8'>
-              iOS 3.9.4
+              iOS 3.9.6
             </Button>
           </Navbar.Form>
         </Navbar.Collapse>
