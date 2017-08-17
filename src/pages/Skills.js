@@ -52,13 +52,28 @@ const filterCategories = ['Level', 'Class',];
 
 const data = skillData.map(i => {
   // make skill's filterable object
+
+  // edge case with skill classes
+  let className;
+  if (i.class === 'KOF') {
+    className = i.class;
+  } else if (i.class === 'CLA_OBJECT') {
+    className = 'Unique';
+  } else {
+    className = resolve('TEXT_CLASS_' + i.class.substring(4));
+  }
   const f = [
     i.unlockcond.next_id === 'MAX' ? 'Max' : '',
-    i.class === 'KOF' ? i.class : resolve('TEXT_CLASS_' + i.class.substring(4)),
+    className,
   ];
 
   const filterable = {};
   filterCategories.forEach((i, index) => filterable[i] = f[index]);
+
+  // edge case with captain skill
+  const cost = i.name === 'TEXT_SKILL_PA_CAPTAIN_NAME'
+    ? i.cost_json.map(j => `${toTitleCase(j.type)}: ${j.value}`).join(', ')
+    : i.cost_json.map(j => `${toTitleCase(j.Cost_Type.replace('ITEM_', ''))}: ${j.Cost_Amount}`).join(', ');
 
   return {
     image: i.icon,
@@ -67,7 +82,7 @@ const data = skillData.map(i => {
     level: i.level,
     description: resolve(i.desc).replace(/@|#|\$/g, ''),
     type: resolve(i.simpledesc),
-    cost: i.cost.map(j => `${toTitleCase(j.type)}: ${j.value}`).join(', '),
+    cost: cost,
     rate: i.huge === -1 ? '-' : `${parseInt(i.huge * 100, 10)}%`,
     unlockCondition: unlockCondition(i.unlockcond),
   };
@@ -75,7 +90,7 @@ const data = skillData.map(i => {
 
 const checkboxes = {
   Level: ['Max',],
-  Class: ['Warrior', 'Paladin', 'Archer', 'Hunter', 'Wizard', 'Priest', 'KOF',],
+  Class: ['Warrior', 'Paladin', 'Archer', 'Hunter', 'Wizard', 'Priest', 'KOF', 'Unique',],
 };
 
 //console.log(data, checkboxes);

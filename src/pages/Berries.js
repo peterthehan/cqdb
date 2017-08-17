@@ -17,7 +17,7 @@ import { imagePath, } from '../util/imagePath';
 import { resolve, } from '../util/resolve';
 import { parseURL, updateURL, } from '../util/url';
 
-const berryData = require('../Decrypted/get_addstatitem.json').addstatitem;
+const berryData = require('../Decrypted/filtered_addstatitem.json');
 
 const unique = {};
 const filterCategories = ['Star', 'Rate', 'Type',];
@@ -38,7 +38,7 @@ const data = berryData.map(i => {
   });
 
   return {
-    image: i.texture,
+    image: i.image,
     filterable: filterable,
     name: resolve(i.name),
     value: i.add_stat_point <= 1

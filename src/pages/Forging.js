@@ -70,7 +70,7 @@ export default class Forging extends Component {
         const heroName = resolve(`TEXT_${i.reqhero_ref}_NAME`);
         const star = 4;
         const className = dict[this.state.weaponType];
-        const weaponImage = i.skin_tex;
+        const weaponImage = i.image;
 
         return [weaponName, conversion, heroName, star, className, weaponImage,];
       });

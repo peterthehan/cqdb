@@ -37,7 +37,7 @@ const data = breadData.map(i => {
   });
 
   return {
-    image: i.texture,
+    image: i.image,
     filterable: filterable,
     name: resolve(i.name),
     value: i.trainpoint,

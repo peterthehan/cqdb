@@ -351,7 +351,7 @@ export default class HeroInformation extends Component {
             <p>{resolve(i.desc)}</p>
           </Media.Body>
           <Media.Right>
-            <img alt='' src={imagePath('cq-assets', `sbws/${i.skin_tex}.png`)} />
+            <img alt='' src={imagePath('cq-assets', `sbws/${i.image}.png`)} />
           </Media.Right>
           <Row>
             <Col md={6} sm={6} xs={6}>

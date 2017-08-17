@@ -52,7 +52,7 @@ const data = weaponData.map(i => {
   filterCategories.forEach((i, index) => filterable[i] = f[index]);
 
   return {
-    image: i.skin_tex,
+    image: i.image,
     filterable: filterable,
     name: resolve(i.name),
     range: i.range,
