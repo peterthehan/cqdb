@@ -104,7 +104,7 @@ const selects = (() => {
   return s;
 })();
 
-export default class Optimizer extends Component {
+export default class AttackOptimizer extends Component {
   state = {
     heroIndex: null,
     showSortModal: false,

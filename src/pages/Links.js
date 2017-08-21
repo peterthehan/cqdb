@@ -99,6 +99,12 @@ const lists = {
   ],
   'Miscellaneous': [
     {
+      authors: ['kamakiller',],
+      title: 'Corrected Block Skills/Passives/SBW Passives List',
+      link: 'https://goo.gl/Bz1DWB',
+      notes: '',
+    },
+    {
       authors: ['/u/Cyloz',],
       title: 'CQ Hero Illustrations',
       link: 'https://goo.gl/06hnsT',

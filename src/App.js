@@ -14,7 +14,7 @@ import Bread from './pages/Bread';
 import Berries from './pages/Berries';
 import Contracts from './pages/Contracts';
 import Forging from './pages/Forging';
-import Optimizer from './pages/Optimizer';
+import AttackOptimizer from './pages/AttackOptimizer';
 import Links from './pages/Links';
 import About from './pages/About';
 import NoMatch from './pages/NoMatch';
@@ -41,7 +41,7 @@ export default class App extends Component {
               <Route exact path='/cqdb/berries' component={Berries} />
               <Route exact path='/cqdb/contract pulling simulator' component={Contracts} />
               <Route exact path='/cqdb/sbw forging simulator' component={Forging} />
-              <Route exact path='/cqdb/effective attack optimizer' component={Optimizer} />
+              <Route exact path='/cqdb/effective attack optimizer' component={AttackOptimizer} />
               <Route exact path='/cqdb/useful links' component={Links} />
               <Route exact path='/cqdb/about' component={About} />
               <Route component={NoMatch} />
