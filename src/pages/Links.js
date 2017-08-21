@@ -40,7 +40,7 @@ const lists = {
       authors: ['Vyrlokar',],
       title: 'Vyrlokar\'s Ultimate Guide to the CQ Champions',
       link: 'https://goo.gl/M37qRm',
-      notes: 'Missing the champion Noa.',
+      notes: '',
     },
   ],
   'Legend of Primal Flames': [
