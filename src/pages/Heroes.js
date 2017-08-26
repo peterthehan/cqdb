@@ -40,7 +40,7 @@ const statLabels = [
   'Accuracy',
   'Evasion',
 ];
-const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin', 'Damage',];
+const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin', 'Trait',];
 const sortCategories = ['By', 'Order',];
 
 // parse data files
@@ -63,7 +63,7 @@ const data = heroData.map(hero => {
     stat.grade.toString(),
     `TEXT_CLASS_${hero.classid.substring(4)}`,
     `TEXT_CONFIRM_SELL_${hero.rarity === 'LEGENDARY' ? (hero.isgachagolden ? 'IN_GACHA' : 'LAGENDARY') : hero.rarity}_HERO`,
-    !hero.domain || ['CHEN', 'MINO', 'NOS',].includes(hero.domain)
+    !hero.domain || ['CHEN', 'MINO',].includes(hero.domain)
       ? 'Unknown' // remove unreleased domains
       : hero.domain === 'NONEGROUP' ? `TEXT_CHAMP_DOMAIN_${hero.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${hero.domain}`,
     `TEXT_EXPLORE_TOOLTIP_GENDER_${hero.gender}`,
@@ -80,7 +80,7 @@ const data = heroData.map(hero => {
       : null,
   ]
   .filter(j => j)
-  .map(j => resolve(j).match(/physical|magic|neutral/gi))
+  .map(j => resolve(j).match(/physical|magic|neutral|3.chain|stun|push|receives all/gi))
   .filter(j => j);
 
   // flatten, map to titlecase, and remove duplicates
@@ -172,13 +172,14 @@ const checkboxes = (() => {
       'Heroes of Freedom',
       'Pumpkin City',
       'Order of the Goddess',
+      'Nosgard',
       'Supply all forces',
       'Unknown',
     ],
     ['Male', 'Female',],
     ['Yes', 'No',],
     ['Yes', 'No',],
-    ['Physical', 'Magic', 'Neutral', 'None',],
+    ['Physical', 'Magic', 'Neutral', '3-chain', 'Stun', 'Push', 'Receives all', 'None',],
   ];
 
   const c = {};

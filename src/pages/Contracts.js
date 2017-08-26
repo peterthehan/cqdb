@@ -58,7 +58,7 @@ export default class Contracts extends Component {
         const rarity = resolve(
           `TEXT_CONFIRM_SELL_${i.rarity === 'LEGENDARY' ? (i.isgachagolden ? 'IN_GACHA' : 'LAGENDARY') : i.rarity}_HERO`
         );
-        const faction = !i.domain || ['CHEN', 'MINO', 'NOS',].includes(i.domain)
+        const faction = !i.domain || ['CHEN', 'MINO',].includes(i.domain)
           ? 'Unknown' // remove unreleased domains
           : resolve(
               i.domain === 'NONEGROUP' ? `TEXT_CHAMP_DOMAIN_${i.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${i.domain}`

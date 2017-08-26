@@ -24,7 +24,7 @@ export function filterByCheckbox(data, checkboxFilters) {
   let filtered = data;
   Object.keys(checkboxFilters).forEach(i => {
     if (Object.values(checkboxFilters[i]).includes(true)) {
-      filtered = i === 'Damage'
+      filtered = i === 'Trait'
         ? filtered.filter(j => j.filterable[i].some(k => checkboxFilters[i][k]))
         : filtered.filter(j => checkboxFilters[i][j.filterable[i]]);
     }
