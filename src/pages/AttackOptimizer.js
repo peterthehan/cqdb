@@ -466,7 +466,7 @@ export default class AttackOptimizer extends Component {
             </li>
             <li>
               Every possible equipment combination is generated in considering the optimal loadout.
-              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L78-L90'>[1]</a></sup>
+              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/AttackOptimizer.js#L78-L90'>[1]</a></sup>
             </li>
             <Table condensed responsive>
               <thead>
@@ -492,14 +492,14 @@ export default class AttackOptimizer extends Component {
             </Table>
             <li>
               <i>Effective Atk. Power = Atk. Power * Raw * Crit. * Pen. * Acc.</i>
-              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L270-L278'>[2]</a></sup>&nbsp;
+              <sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/AttackOptimizer.js#L270-L278'>[2]</a></sup>&nbsp;
               The heatmaps generated use a global scale that considers all loadouts, not a relative scale per loadout.
             </li>
             <Table condensed responsive>
               <thead>
                 <tr>
                   <th>Multiplier</th>
-                  <th>Formula<sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/Optimizer.js#L264-L268'>[3]</a></sup></th>
+                  <th>Formula<sup><a href='https://github.com/Johj/cqdb/blob/master/src/pages/AttackOptimizer.js#L264-L268'>[3]</a></sup></th>
                 </tr>
               </thead>
               <tbody>
