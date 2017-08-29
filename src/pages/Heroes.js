@@ -80,7 +80,7 @@ const data = heroData.map(hero => {
       : null,
   ]
   .filter(j => j)
-  .map(j => resolve(j).match(/physical|magic|neutral|3.chain|stun|push|receives all/gi))
+  .map(j => resolve(j).match(/physical|magic|neutral|heal|3.chain|stun|push|reflect|receives all/gi))
   .filter(j => j);
 
   // flatten, map to titlecase, and remove duplicates
@@ -179,7 +179,7 @@ const checkboxes = (() => {
     ['Male', 'Female',],
     ['Yes', 'No',],
     ['Yes', 'No',],
-    ['Physical', 'Magic', 'Neutral', '3-chain', 'Stun', 'Push', 'Receives all', 'None',],
+    ['Physical', 'Magic', 'Neutral', 'Heal', '3-chain', 'Stun', 'Push', 'Reflect', 'Receives all', 'None',],
   ];
 
   const c = {};
