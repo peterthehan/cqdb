@@ -30,7 +30,7 @@ const sbwData = require('../Decrypted/filtered_weapon_sbw.json');
 const skinData = require('../Decrypted/filtered_costume.json');
 const statData = require('../Decrypted/filtered_character_stat.json');
 
-const statLabels = [
+let statLabels = [
   'HP',
   'Atk. Power',
   'Crit.Chance',
@@ -40,6 +40,7 @@ const statLabels = [
   'Accuracy',
   'Evasion',
 ];
+statLabels = statLabels.concat(statLabels.map(i => `Base ${i}`), statLabels.map(i => `Berry ${i}`));
 const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin', 'Trait',];
 const sortCategories = ['By', 'Order',];
 
@@ -111,7 +112,11 @@ const data = heroData.map(hero => {
     ];
 
     const b = {}
-    statLabels.forEach((j, index) => b[j] = calculatedStats[index]);
+    for (let j = 0; j < calculatedStats.length; ++j) {
+      b[statLabels[j]] = calculatedStats[j];
+      b[statLabels[j + statLabels.length * 1 / 3]] = calculatedStats[j];
+      b[statLabels[j + statLabels.length * 2 / 3]] = 0;
+    }
     return b;
   });
 
@@ -128,13 +133,16 @@ const data = heroData.map(hero => {
       berry.dodge,
     ];
 
-    statLabels.forEach((i, index) => sortable[i] += berryStats[index]);
+    for (let i = 0; i < berryStats.length; ++i) {
+      sortable[statLabels[i]] += berryStats[i];
+      sortable[statLabels[i + statLabels.length * 2 / 3]] += berryStats[i];
+    }
   }
 
   // match game's decimal places
   const rounding = [1, 1, 2, 2, 1, 1, 2, 2,];
   statLabels.forEach((i, index) => {
-    sortable[i] = parseFloat(sortable[i].toFixed(rounding[index]));
+    sortable[i] = parseFloat(sortable[i].toFixed(rounding[index % rounding.length]));
   });
 
   // add name as a sortable field
