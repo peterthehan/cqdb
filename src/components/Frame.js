@@ -27,6 +27,7 @@ const databasePages = [
   'Goddesses',
   'Bread',
   'Berries',
+  'Interactions',
 ];
 
 const toolsPages = [

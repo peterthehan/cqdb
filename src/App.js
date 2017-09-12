@@ -12,6 +12,7 @@ import Skills from './pages/Skills';
 import Goddesses from './pages/Goddesses';
 import Bread from './pages/Bread';
 import Berries from './pages/Berries';
+import Interactions from './pages/Interactions';
 import Contracts from './pages/Contracts';
 import Forging from './pages/Forging';
 import AttackOptimizer from './pages/AttackOptimizer';
@@ -39,6 +40,7 @@ export default class App extends Component {
               <Route exact path='/cqdb/goddesses' component={Goddesses} />
               <Route exact path='/cqdb/bread' component={Bread} />
               <Route exact path='/cqdb/berries' component={Berries} />
+              <Route exact path='/cqdb/interactions' component={Interactions} />
               <Route exact path='/cqdb/contract pulling simulator' component={Contracts} />
               <Route exact path='/cqdb/sbw forging simulator' component={Forging} />
               <Route exact path='/cqdb/effective attack optimizer' component={AttackOptimizer} />

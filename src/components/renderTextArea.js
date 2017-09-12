@@ -7,9 +7,9 @@ import {
   InputGroup,
 } from 'react-bootstrap';
 
-export function renderTextArea(handleTextChange, textFilter) {
+export function renderTextArea(handleTextChange, textFilter, size = [8, 6, 12, 12,]) {
   return (
-    <Col lg={8} md={6} sm={12} xs={12}>
+    <Col lg={size[0]} md={size[1]} sm={size[2]} xs={size[3]}>
       <FormGroup style={{marginBottom: 5,}}>
         <InputGroup>
           <FormControl
