@@ -93,7 +93,7 @@ const checkboxes = {
   Class: ['Warrior', 'Paladin', 'Archer', 'Hunter', 'Wizard', 'Priest', 'KOF', 'Unique',],
 };
 
-//console.log(data, checkboxes);
+// console.log(data, checkboxes);
 
 export default class Skills extends Component {
   state = {
@@ -146,7 +146,7 @@ export default class Skills extends Component {
       this.state.textFilter,
       this.state.checkboxFilters,
     );
-    const processed = filterByCheckbox(filterByText(data, this.state.textFilter), this.state.checkboxFilters)
+    const processed = filterByCheckbox(filterByText(data, this.state.textFilter), this.state.checkboxFilters);
 
     this.setState({ render: processed.map(this.renderListGroupItem), });
   }

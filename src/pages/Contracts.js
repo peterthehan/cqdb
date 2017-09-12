@@ -21,6 +21,7 @@ import { pickGrade, } from '../util/pickGrade';
 import { random, } from '../util/random';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
+
 const data = require('../Decrypted/filtered_character_visual.json')
   .filter(i => {
     return !(['LIMITED', 'DESTINY', 'SUPPORT'].includes(i.rarity))

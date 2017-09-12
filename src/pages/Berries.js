@@ -62,7 +62,7 @@ const checkboxes = (() => {
   return c;
 })();
 
-//console.log(data, checkboxes);
+// console.log(data, checkboxes);
 
 export default class Berries extends Component {
   state = {
@@ -114,7 +114,7 @@ export default class Berries extends Component {
       this.state.textFilter,
       this.state.checkboxFilters,
     );
-    const processed = filterByCheckbox(filterByText(data, this.state.textFilter), this.state.checkboxFilters)
+    const processed = filterByCheckbox(filterByText(data, this.state.textFilter), this.state.checkboxFilters);
 
     this.setState({ render: processed.map(this.renderListGroupItem), });
   }

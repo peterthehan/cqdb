@@ -17,6 +17,7 @@ import { imagePath, } from '../util/imagePath';
 import { random, } from '../util/random';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
+
 const data = require('../Decrypted/filtered_weapon_sbw.json')
   .filter(i => i.grade === 4 && i.rarity === 'LEGENDARY');
 

@@ -67,7 +67,7 @@ const checkboxes = {
   Category: ['Sword', 'Hammer', 'Bow', 'Gun', 'Staff', 'Orb',],
 };
 
-//console.log(data, checkboxes);
+// console.log(data, checkboxes);
 
 export default class Soulbound extends Component {
   state = {
@@ -125,7 +125,7 @@ export default class Soulbound extends Component {
       this.state.textFilter,
       this.state.checkboxFilters,
     );
-    const processed = filterByCheckbox(filterByText(data, this.state.textFilter), this.state.checkboxFilters)
+    const processed = filterByCheckbox(filterByText(data, this.state.textFilter), this.state.checkboxFilters);
 
     this.setState({ render: processed.map(this.renderListGroupItem), });
   }

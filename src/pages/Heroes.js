@@ -207,7 +207,7 @@ const selects = (() => {
   return s;
 })();
 
-//console.log(data, checkboxes, selects);
+// console.log(data, checkboxes, selects);
 
 export default class Heroes extends Component {
   state = {
