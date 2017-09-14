@@ -24,20 +24,20 @@ const data = interactionData.map(i => {
   for (let j of Object.keys(i.eatereggherotext)) {
     let d;
 
-    if (j.startsWith('CHA')) {
-      const hero = heroData[heroData.findIndex(k => k.id === j)];
-      d = {
-        name: resolve(hero.name),
-        dialogue: resolve(i.eatereggherotext[j]),
-        image: imagePath('cq-assets', `heroes/${hero.face_tex}.png`),
-      };
-    } else {
-      const hero = skinData[skinData.findIndex(k => k.costume_name === `TEXT_${j}${k.costume_name.endsWith('_NAME') ? '_NAME' : ''}`)];
-      d = {
-        name: resolve(hero.costume_name),
-        dialogue: resolve(i.eatereggherotext[j]),
-        image: imagePath('cq-assets', `skins/${hero.face_tex}.png`),
-      };
+    const flag = j.startsWith('CHA');
+    const hero = flag
+      ? heroData[heroData.findIndex(k => k.id === j)]
+      : skinData[skinData.findIndex(k => k.costume_name === `TEXT_${j}${k.costume_name.endsWith('_NAME') ? '_NAME' : ''}`)];
+
+    if (hero == null) {
+      // console.log(j, hero);
+      continue;
+    }
+
+    d = {
+      name: resolve(flag ? hero.name : hero.costume_name),
+      dialogue: resolve(i.eatereggherotext[j]),
+      image: imagePath('cq-assets', `${flag ? 'heroes' : 'skins'}/${hero.face_tex}.png`),
     }
 
     dialogues.push(d);
