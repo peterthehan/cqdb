@@ -24,11 +24,18 @@ import { sortBySelection, } from '../util/sortBySelection';
 import { toTitleCase, } from '../util/toTitleCase';
 import { parseURL, updateURL, } from '../util/url';
 
-const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax;
-const heroData = require('../Decrypted/filtered_character_visual.json');
+const frivberryData = require('../Decrypted/frivolous_character_addstatmax.json');
+const frivHeroData = require('../Decrypted/frivolous_character_visual.json');
+const frivStatData = require('../Decrypted/frivolous_character_stat.json');
+
+const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax
+  .concat(frivberryData);
+const heroData = require('../Decrypted/filtered_character_visual.json')
+  .concat(frivHeroData);
 const sbwData = require('../Decrypted/filtered_weapon_sbw.json');
 const skinData = require('../Decrypted/filtered_costume.json');
-const statData = require('../Decrypted/filtered_character_stat.json');
+const statData = require('../Decrypted/filtered_character_stat.json')
+  .concat(frivStatData);
 
 let statLabels = [
   'HP',
@@ -41,7 +48,7 @@ let statLabels = [
   'Evasion',
 ];
 statLabels = statLabels.concat(statLabels.map(i => `Base ${i}`), statLabels.map(i => `Berry ${i}`));
-const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin', 'Trait',];
+const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin', 'Archetype', 'Hero',];
 const sortCategories = ['By', 'Order',];
 
 // parse data files
@@ -73,7 +80,7 @@ const data = heroData.map(hero => {
   ].map(resolve);
 
   // filter null entries, resolve and match words, filter no match cases
-  let damage = [
+  let archetype = [
     stat.skill_desc,
     stat.skill_subdesc,
     hasSbw === 'Yes' && stat.grade >= 4
@@ -85,13 +92,17 @@ const data = heroData.map(hero => {
   .filter(j => j);
 
   // flatten, map to titlecase, and remove duplicates
-  damage = [...new Set([].concat(...damage).map(toTitleCase))];
+  archetype = [...new Set([].concat(...archetype).map(toTitleCase))];
 
-  if (!damage.length) {
-    damage = ['None',];
+  if (!archetype.length) {
+    archetype = ['None',];
   }
 
-  f.push(damage);
+  // add archetype filter
+  f.push(archetype);
+
+  // add easter egg filter
+  f.push(resolve(hero.desc).startsWith('(Easter Egg)') ? 'Easter Egg' : 'Real');
 
   const filterable = {};
   filterCategories.forEach((i, index) => filterable[i] = f[index]);
@@ -188,6 +199,7 @@ const checkboxes = (() => {
     ['Yes', 'No',],
     ['Yes', 'No',],
     ['Physical', 'Magic', 'Neutral', 'Heal', '3-chain', 'Stun', 'Push', 'Reflect', 'Receives all', 'None',],
+    ['Real', 'Easter Egg',],
   ];
 
   const c = {};
@@ -228,6 +240,21 @@ export default class Heroes extends Component {
       sortBy,
       sortOrder,
     ] = parseURL(checkboxes, selects[sortCategories[0]], selects[sortCategories[1]]);
+
+    // make easter egg not url linkable
+    checkboxFilters.Hero.Real = true;
+    checkboxFilters.Hero['Easter Egg'] = false;
+
+    // update url since querystring may have contained bad values
+    updateURL(
+      textFilter,
+      checkboxFilters,
+      sortBy,
+      sortOrder,
+      selects[sortCategories[0]],
+      selects[sortCategories[1]]
+    );
+
     const processed = sortBySelection(
       filterByCheckbox(filterByText(data, textFilter), checkboxFilters),
       sortBy,
@@ -324,12 +351,13 @@ export default class Heroes extends Component {
   }
 
   render = () => {
+    const numCheckboxFilters = countFilters(this.state.checkboxFilters);
     return (
       <Row>
         {renderTextArea(this.handleTextChange, this.state.textFilter)}
         <Col style={{paddingRight: 2.5,}} lg={2} md={3} sm={6} xs={6}>
           <Button block onClick={this.handleFilterButton} style={{marginBottom: 5,}}>
-            {`Filter ${countFilters(this.state.checkboxFilters)}`}
+            {'Filter' + (!numCheckboxFilters ? '' : ` (${numCheckboxFilters})`)}
           </Button>
         </Col>
         <Col style={{paddingLeft: 2.5,}} lg={2} md={3} sm={6} xs={6}>
