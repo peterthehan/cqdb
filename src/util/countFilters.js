@@ -6,5 +6,5 @@ export function countFilters(checkboxFilters) {
     });
   });
 
-  return !count ? '' : `(${count})`;
+  return count;
 }

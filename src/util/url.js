@@ -42,16 +42,6 @@ export function parseURL(checkboxes, selectsBy = [], selectsOrder = []) {
         }
       }
     });
-
-    // update url since querystring may have contained bad values
-    updateURL(
-      textFilter,
-      checkboxFilters,
-      sortBy,
-      sortOrder,
-      selectsBy,
-      selectsOrder
-    );
   }
 
   return [textFilter, checkboxFilters, sortBy, sortOrder,];

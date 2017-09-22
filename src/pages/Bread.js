@@ -64,6 +64,10 @@ export default class Bread extends Component {
   componentWillMount = () => {
     this.timer = null;
     const [textFilter, checkboxFilters] = parseURL(checkboxes);
+
+    // update url since querystring may have contained bad values
+    updateURL(textFilter, checkboxFilters);
+
     const processed = filterByCheckbox(filterByText(data, textFilter), checkboxFilters);
     const render = processed.map(this.renderListGroupItem);
 
