@@ -19,18 +19,18 @@ import { imagePath, } from '../util/imagePath';
 import { range, } from '../util/range';
 import { resolve, } from '../util/resolve';
 
-const frivberryData = require('../Decrypted/frivolous_character_addstatmax.json');
-const frivHeroData = require('../Decrypted/frivolous_character_visual.json');
-const frivStatData = require('../Decrypted/frivolous_character_stat.json');
+// const frivberryData = require('../Decrypted/frivolous_character_addstatmax.json');
+// const frivHeroData = require('../Decrypted/frivolous_character_visual.json');
+// const frivStatData = require('../Decrypted/frivolous_character_stat.json');
 
 const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax
-  .concat(frivberryData);
+  // .concat(frivberryData);
 const heroData = require('../Decrypted/filtered_character_visual.json')
-  .concat(frivHeroData);
+  // .concat(frivHeroData);
 const sbwData = require('../Decrypted/filtered_weapon_sbw.json');
 const skinData = require('../Decrypted/filtered_costume.json');
 const statData = require('../Decrypted/filtered_character_stat.json')
-  .concat(frivStatData);
+  // .concat(frivStatData);
 
 export default class HeroInformation extends Component {
   state = {

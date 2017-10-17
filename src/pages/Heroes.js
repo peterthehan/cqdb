@@ -24,18 +24,18 @@ import { sortBySelection, } from '../util/sortBySelection';
 import { toTitleCase, } from '../util/toTitleCase';
 import { parseURL, updateURL, } from '../util/url';
 
-const frivberryData = require('../Decrypted/frivolous_character_addstatmax.json');
-const frivHeroData = require('../Decrypted/frivolous_character_visual.json');
-const frivStatData = require('../Decrypted/frivolous_character_stat.json');
+// const frivberryData = require('../Decrypted/frivolous_character_addstatmax.json');
+// const frivHeroData = require('../Decrypted/frivolous_character_visual.json');
+// const frivStatData = require('../Decrypted/frivolous_character_stat.json');
 
 const berryData = require('../Decrypted/get_character_addstatmax.json').character_addstatmax
-  .concat(frivberryData);
+  // .concat(frivberryData);
 const heroData = require('../Decrypted/filtered_character_visual.json')
-  .concat(frivHeroData);
+  // .concat(frivHeroData);
 const sbwData = require('../Decrypted/filtered_weapon_sbw.json');
 const skinData = require('../Decrypted/filtered_costume.json');
 const statData = require('../Decrypted/filtered_character_stat.json')
-  .concat(frivStatData);
+  // .concat(frivStatData);
 
 let statLabels = [
   'HP',
@@ -48,7 +48,7 @@ let statLabels = [
   'Evasion',
 ];
 statLabels = statLabels.concat(statLabels.map(i => `Base ${i}`), statLabels.map(i => `Berry ${i}`));
-const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin', 'Archetype', 'Hero',];
+const filterCategories = ['Star', 'Class', 'Rarity', 'Faction', 'Gender', 'Has Sbw', 'Has Skin', 'Has Portrait', 'Archetype', 'Hero',];
 const sortCategories = ['By', 'Order',];
 
 // parse data files
@@ -77,6 +77,7 @@ const data = heroData.map(hero => {
     `TEXT_EXPLORE_TOOLTIP_GENDER_${hero.gender}`,
     hasSbw,
     skinData.some(i => i.wearable_charid.includes(hero.id)) ? 'Yes' : 'No',
+    hero.portrait !== null ? 'Yes' : 'No',
   ].map(resolve);
 
   // filter null entries, resolve and match words, filter no match cases
@@ -196,6 +197,7 @@ const checkboxes = (() => {
       'Unknown',
     ],
     ['Male', 'Female',],
+    ['Yes', 'No',],
     ['Yes', 'No',],
     ['Yes', 'No',],
     ['Physical', 'Magic', 'Neutral', 'Heal', '3-chain', 'Stun', 'Push', 'Reflect', 'Receives all', 'None',],
