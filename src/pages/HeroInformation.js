@@ -150,6 +150,9 @@ export default class HeroInformation extends Component {
         <Col md={6} sm={12} xs={12}>
           {this.renderSkins()}
         </Col>
+        <Col md={6} sm={12} xs={12}>
+          {this.renderPortrait()}
+        </Col>
       </Row>
     );
 
@@ -478,6 +481,18 @@ export default class HeroInformation extends Component {
       <Pager key='pager' style={{display: 'flex', justifyContent: 'center', marginTop: 0,}}>
         {pagers}
       </Pager>
+    );
+  }
+
+  renderPortrait = () => {
+    if (!this.state.hero.portrait) {
+      return;
+    }
+
+    return (
+      <Panel collapsible defaultExpanded header='Portrait' key={`portrait${this.state.hero.portrait}`}>
+        <img alt='' src={imagePath('cq-assets', `portraits/${this.state.hero.portrait}.png`)} width='100%' />
+      </Panel>
     );
   }
 
