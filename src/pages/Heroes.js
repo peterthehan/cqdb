@@ -71,7 +71,7 @@ const data = heroData.map(hero => {
     stat.grade.toString(),
     `TEXT_CLASS_${hero.classid.substring(4)}`,
     `TEXT_CONFIRM_SELL_${hero.rarity === 'LEGENDARY' ? (hero.isgachagolden ? 'IN_GACHA' : 'LAGENDARY') : hero.rarity}_HERO`,
-    !hero.domain || ['CHEN', 'MINO',].includes(hero.domain)
+    !hero.domain || ['CHEN',].includes(hero.domain)
       ? 'Unknown' // remove unreleased domains
       : hero.domain === 'NONEGROUP' ? `TEXT_CHAMP_DOMAIN_${hero.domain}_NAME` : `TEXT_CHAMPION_DOMAIN_${hero.domain}`,
     `TEXT_EXPLORE_TOOLTIP_GENDER_${hero.gender}`,

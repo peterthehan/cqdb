@@ -193,7 +193,7 @@ export default class HeroInformation extends Component {
               <Media.Heading>Faction</Media.Heading>
               <p>
                 {
-                  ['CHEN', 'MINO',].includes(this.state.hero.domain) || !this.state.hero.domain
+                  ['CHEN',].includes(this.state.hero.domain) || !this.state.hero.domain
                   ? 'Unknown' // remove unreleased domains
                   : resolve(this.state.hero.domain === 'NONEGROUP'
                       ? 'TEXT_CHAMP_DOMAIN_' + this.state.hero.domain + '_NAME'
