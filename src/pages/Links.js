@@ -105,12 +105,6 @@ const lists = {
       notes: '',
     },
     {
-      authors: ['/u/Cyloz',],
-      title: 'CQ Hero Illustrations',
-      link: 'https://goo.gl/06hnsT',
-      notes: 'Missing post-KOF illustrations.',
-    },
-    {
       authors: ['Peter',],
       title: 'cq-assets',
       link: 'https://goo.gl/UzKBsq',
