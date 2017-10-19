@@ -65,7 +65,7 @@ const data = interactionData.map(i => {
     dialogues: dialogues,
     name: dialogues.map(j => j.name).join(' '),
   };
-});
+}).reverse(); // show latest interactions at the top by default
 
 // console.log(data);
 
