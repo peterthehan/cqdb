@@ -193,6 +193,7 @@ const checkboxes = (() => {
       'Pumpkin City',
       'Order of the Goddess',
       'Nosgard',
+      'Minor Tribes\' Confederation',
       'Supply all forces',
       'Unknown',
     ],
