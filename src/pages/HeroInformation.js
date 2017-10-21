@@ -132,7 +132,7 @@ export default class HeroInformation extends Component {
   renderInformation = () => {
     const render = (
       <div>
-        <Row key='grid'>
+        <Row>
           <Col md={12} sm={12} xs={12}>
             {this.renderGeneral()}
             {this.renderPagers()}
