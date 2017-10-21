@@ -131,29 +131,23 @@ export default class HeroInformation extends Component {
 
   renderInformation = () => {
     const render = (
-      <Row key='grid'>
-        <Col md={12} sm={12} xs={12}>
-          {this.renderGeneral()}
-        </Col>
-        <Col md={12} sm={12} xs={12}>
-          {this.renderPagers()}
-        </Col>
-        <Col md={12} sm={12} xs={12}>
-          {this.renderStatsTable()}
-        </Col>
-        <Col md={6} sm={12} xs={12}>
+      <div>
+        <Row key='grid'>
+          <Col md={12} sm={12} xs={12}>
+            {this.renderGeneral()}
+            {this.renderPagers()}
+            {this.renderStatsTable()}
+          </Col>
+        </Row>
+        <Row>
           {this.renderBlock()}
-        </Col>
-        <Col md={6} sm={12} xs={12}>
           {this.renderSbws()}
-        </Col>
-        <Col md={6} sm={12} xs={12}>
+        </Row>
+        <Row>
           {this.renderSkins()}
-        </Col>
-        <Col md={6} sm={12} xs={12}>
           {this.renderPortrait()}
-        </Col>
-      </Row>
+        </Row>
+      </div>
     );
 
     this.setState({render});
@@ -212,18 +206,11 @@ export default class HeroInformation extends Component {
     );
   }
 
-  renderStats = (i) => {
-    const key = Object.keys(i);
+  renderStats = (key, row) => {
     return (
       <tr key={key}>
-        <td>{`${!isNaN(key) ? '+' : ''}${key}`}</td>
-        {
-          Object.values(i)[0].map((j, index) => {
-            return (
-              <td key={index}>{j}</td>
-            );
-          })
-        }
+        <td><b>{key}</b></td>
+        {row.map((j, index) => <td key={index}>{j}</td>)}
       </tr>
     );
   }
@@ -264,40 +251,34 @@ export default class HeroInformation extends Component {
         return calculated[0][index] + i;
       });
 
+      calculated.unshift(berryTraining);
       calculated.unshift(berryCalculated);
-      calculated.push(berryTraining);
+      breadTraining.unshift('Berry');
       breadTraining.unshift('Max');
-      breadTraining.push('Berry');
     }
 
     // match game's decimal places
     const rounding = [1, 1, 3, 2, 1, 1, 2, 2,];
 
+    const keys = ['HP', 'Atk. Power', 'Crit.Chance', 'Crit.Damage', 'Armor', 'Resistance', 'Accuracy', 'Evasion',];
+
     // prep for dynamic row creation
     const table = {};
-    breadTraining.forEach((i, _) => {
-      table[_] = {}
-      table[_][i] = calculated[_].map((j, index) => j.toFixed(rounding[index]));
+    keys.forEach((key, _) => {
+      table[key] = calculated.map(i => i[_].toFixed(rounding[_]));
     });
 
     return (
-      <Panel collapsible defaultExpanded header='Stats' key={this.state.stat.grade}>
+      <Panel collapsible defaultExpanded header={`Stats (Lv. ${level})`} key={this.state.stat.grade}>
         <Table condensed hover responsive>
           <thead>
             <tr>
-              <th>{`Lv. ${level}, Training`}</th>
-              <th>HP</th>
-              <th>Atk. Power</th>
-              <th>Crit.Chance</th>
-              <th>Crit.Damage</th>
-              <th>Armor</th>
-              <th>Resistance</th>
-              <th>Accuracy</th>
-              <th>Evasion</th>              
+              <th></th>
+              {breadTraining.map(i => <th key={i}>{`${!isNaN(i) ? '+' : ''}${i}`}</th>)}
             </tr>
           </thead>
           <tbody>
-            {Object.values(table).map(i => this.renderStats(i))}
+            {Object.keys(table).map(i => this.renderStats(i, table[i]))}
           </tbody>
         </Table>
       </Panel>
@@ -329,25 +310,27 @@ export default class HeroInformation extends Component {
 
     const grade = [1, 1, 1, 2, 2, 3][this.state.stat.grade - 1];
     return (
-      <Panel collapsible defaultExpanded header='Block Skill' key={`grade${grade}`}>
-        <Media>
-          <Media.Body>
-            <Media.Heading>
-              {
-                resolve(this.state.stat.skill_name) +
-                ` (Lv. ${grade})`
-              }
-            </Media.Heading>
-            <p>
-              {resolve(this.state.stat.skill_desc).replace(/@|#|\$/g, '')}
-            </p>
-          </Media.Body>
-          <Media.Right>
-            <img alt='' src={imagePath('cq-assets', `blocks/${this.state.stat.skill_icon}.png`)} width={66} />
-          </Media.Right>
-          {passive}
-        </Media>
-      </Panel>
+      <Col md={6} sm={12} xs={12}>
+        <Panel collapsible defaultExpanded header='Block Skill' key={`grade${grade}`}>
+          <Media>
+            <Media.Body>
+              <Media.Heading>
+                {
+                  resolve(this.state.stat.skill_name) +
+                  ` (Lv. ${grade})`
+                }
+              </Media.Heading>
+              <p>
+                {resolve(this.state.stat.skill_desc).replace(/@|#|\$/g, '')}
+              </p>
+            </Media.Body>
+            <Media.Right>
+              <img alt='' src={imagePath('cq-assets', `blocks/${this.state.stat.skill_icon}.png`)} width={66} />
+            </Media.Right>
+            {passive}
+          </Media>
+        </Panel>
+      </Col>
     );
   }
 
@@ -392,11 +375,13 @@ export default class HeroInformation extends Component {
       return;
     }
     return (
-      <Panel collapsible defaultExpanded header='Soulbound Weapon' key={this.state.weapon.length}>
-        <Tabs defaultActiveKey={0} id="soulbound-weapon">
-          {this.state.weapon.map(this.renderSbw)}
-        </Tabs>
-      </Panel>
+      <Col md={6} sm={12} xs={12}>
+        <Panel collapsible defaultExpanded header='Soulbound Weapon' key={this.state.weapon.length}>
+          <Tabs defaultActiveKey={0} id="soulbound-weapon">
+            {this.state.weapon.map(this.renderSbw)}
+          </Tabs>
+        </Panel>
+      </Col>
     );
   }
 
@@ -447,11 +432,13 @@ export default class HeroInformation extends Component {
       return;
     }
     return (
-      <Panel collapsible defaultExpanded header='Skins' key={`skin${this.state.skin.length}`}>
-        <ListGroup fill>
-          {this.state.skin.map(this.renderSkin)}
-        </ListGroup>
-      </Panel>
+      <Col md={6} sm={12} xs={12}>
+        <Panel collapsible defaultExpanded header={`Skins (${this.state.skin.length})`} key={`skin${this.state.skin.length}`}>
+          <ListGroup fill>
+            {this.state.skin.map(this.renderSkin)}
+          </ListGroup>
+        </Panel>
+      </Col>
     );
   }
 
@@ -490,9 +477,11 @@ export default class HeroInformation extends Component {
     }
 
     return (
-      <Panel collapsible defaultExpanded header='Portrait' key={`portrait${this.state.hero.portrait}`}>
-        <img alt='' src={imagePath('cq-assets', `portraits/${this.state.hero.portrait}.png`)} width='100%' />
-      </Panel>
+      <Col md={6} sm={12} xs={12}>
+        <Panel collapsible defaultExpanded header='Portrait' key={`portrait${this.state.hero.portrait}`}>
+          <img alt='' src={imagePath('cq-assets', `portraits/${this.state.hero.portrait}.png`)} width='100%' />
+        </Panel>
+      </Col>
     );
   }
 
