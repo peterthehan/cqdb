@@ -21,6 +21,7 @@ const navPages = [
 
 const databasePages = [
   'Heroes',
+  'Portraits',
   'Soulbound Weapons',
   'Weapons',
   'Skills',

@@ -6,6 +6,7 @@ import Frame from './components/Frame';
 import Home from './pages/Home';
 import Heroes from './pages/Heroes';
 import HeroInformation from './pages/HeroInformation';
+import Portraits from './pages/Portraits';
 import Soulbound from './pages/Soulbound';
 import Weapons from './pages/Weapons';
 import Skills from './pages/Skills';
@@ -34,6 +35,7 @@ export default class App extends Component {
               <Route exact path='/cqdb' component={Home} />
               <Route exact path='/cqdb/heroes' component={Heroes} />
               <Route exact path='/cqdb/heroes/:hero' component={HeroInformation} />
+              <Route exact path='/cqdb/portraits' component={Portraits} />
               <Route exact path='/cqdb/soulbound weapons' component={Soulbound} />
               <Route exact path='/cqdb/weapons' component={Weapons} />
               <Route exact path='/cqdb/skills' component={Skills} />
