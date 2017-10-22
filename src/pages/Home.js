@@ -22,12 +22,12 @@ export default class Home extends Component {
         <Col lg={12} md={12} sm={12} xs={12}>
           <Panel>
             <Media.Heading>Hello!</Media.Heading>
-            <p>Welcome to the Crusaders Quest Database.</p>
+            <p>Welcome to the Crusaders Quest Database. Here you will find all sorts of useful, up-to-date information regarding the game. Enjoy your stay!</p>
           </Panel>
         </Col>
         <Col lg={6} md={6} sm={12} xs={12}>
           <Panel>
-            <Media.Heading>Join the Discussion</Media.Heading>
+            <Media.Heading>Join the Discussion!</Media.Heading>
             <Row>
               <Col
                 style={{display: 'flex', justifyContent: 'center',}}
@@ -51,11 +51,9 @@ export default class Home extends Component {
         </Col>
         <Col lg={6} md={6} sm={12} xs={12}>
           <Panel>
-            <Media.Heading>
-              <a href='https://github.com/Johj/fergus'>Fergus</a>
-            </Media.Heading>
+            <Media.Heading>Fergus</Media.Heading>
             <p>
-              Have all the features of cqdb available inside your Discord server.
+              <a href='https://github.com/Johj/fergus'>Fergus</a> is a Discord bot for Crusaders Quest. Enjoy all the features of cqdb inside your Discord server!
               Bot invitation link can be found <a href='https://goo.gl/nDluCQ'>here</a>.
             </p>
           </Panel>
