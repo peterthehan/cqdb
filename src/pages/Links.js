@@ -40,7 +40,7 @@ const lists = {
       authors: ['Vyrlokar',],
       title: 'Vyrlokar\'s Ultimate Guide to the CQ Champions',
       link: 'https://goo.gl/M37qRm',
-      notes: '',
+      notes: 'Missing Aindel of the Minor Tribes\' Confederation.',
     },
   ],
   'Legend of Primal Flames': [
@@ -108,7 +108,7 @@ const lists = {
       authors: ['Peter',],
       title: 'cq-assets',
       link: 'https://goo.gl/UzKBsq',
-      notes: 'Up-to-date collection of all the sprite assets used in both cqdb and Fergus.',
+      notes: 'Up-to-date collection of all the art assets used in both cqdb and Fergus.',
     },
     {
       authors: ['Peter',],
@@ -188,7 +188,7 @@ export default class Links extends Component {
 
   renderList = (list) => {
     return (
-      <Col key={list} lg={6} md={6} sm={12} xs={12}>
+      <Col key={list} lg={12} md={12} sm={12} xs={12}>
         <Panel collapsible defaultExpanded header={list}>
           <ListGroup fill>
             {lists[list].map(this.renderListItem)}
@@ -203,9 +203,8 @@ export default class Links extends Component {
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
           <Panel>
-            The following list is a selection of hand-curated guides
-            made by members of the Crusaders Quest community that are
-            useful and mostly up-to-date.
+            The following list is a hand-curated selection of guides
+            made by members of the Crusaders Quest community.
           </Panel>
         </Col>
         {Object.keys(lists).map(this.renderList)}
