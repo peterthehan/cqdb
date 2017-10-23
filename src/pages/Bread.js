@@ -86,13 +86,13 @@ export default class Bread extends Component {
             <Row>
               <Col style={{padding: 0,}} lg={3} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('cq-assets', `bread/${bread.image}.png`)} />
+                  <img alt='' src={imagePath(`bread/${bread.image}`)} />
                 </Media.Left>
               </Col>
               <Col style={{padding: 0,}} lg={9} md={9} sm={8} xs={7}>
                 <Media.Body>
                   <Media.Heading>{`${bread.name} (${bread.filterable.Star}★)`}</Media.Heading>
-                  <p>{`${bread.value} | ${bread.filterable.Rate} | Sell: ${bread.sell} gold`}</p>
+                  {`${bread.value} | ${bread.filterable.Rate} | Sell: ${bread.sell} gold`}
                 </Media.Body>
               </Col>
             </Row>

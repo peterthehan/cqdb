@@ -94,7 +94,7 @@ export default class Contracts extends Component {
                         <Row>
                           <Col style={{padding: 0,}} lg={3} md={4} sm={4} xs={5}>
                             <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                              <img alt='' src={imagePath('cq-assets', `heroes/${i[i.length - 1]}.png`)} />
+                              <img alt='' src={imagePath(`heroes/${i[i.length - 1]}`)} />
                             </Media.Left>
                           </Col>
                           <Col style={{padding: 0,}} lg={9} md={8} sm={8} xs={7}>
@@ -102,8 +102,8 @@ export default class Contracts extends Component {
                               <Media.Heading>
                                 {i[1] > 3 ? <b>{`${i[0]} (${i[1]}★)`}</b> : `${i[0]} (${i[1]}★)`}
                               </Media.Heading>
-                              <p>{i.slice(2, i.length - 1).join(' | ')}</p>
-                              {index + 1 === 10 ? <p>Guaranteed</p> : ''}
+                              {i.slice(2, i.length - 1).join(' | ')}
+                              {index + 1 === 10 ? [<p key={index}/>, 'Guaranteed',] : ''}
                             </Media.Body>
                           </Col>
                         </Row>
@@ -131,11 +131,7 @@ export default class Contracts extends Component {
         <p>
           Pull 10: Guaranteed 4★ Contract only Hero.
         </p>
-        <hr />
-        <h4>Ratio</h4>
-        <p>
-          <text>200 jewels = $84.99.</text>
-        </p>
+        200 jewels = $84.99.
       </Popover>
     );
 

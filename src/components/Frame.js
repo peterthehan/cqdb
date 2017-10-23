@@ -64,7 +64,7 @@ export default class Frame extends Component {
         <Navbar.Header>
           <LinkContainer to='/cqdb'>
             <Navbar.Brand>
-              <img alt='' src={imagePath('cqdb', 'public/favicon.png')} />
+              <img alt='' src={imagePath('public/favicon', 'cqdb')} />
               cqdb
             </Navbar.Brand>
           </LinkContainer>

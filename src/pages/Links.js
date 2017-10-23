@@ -180,8 +180,8 @@ export default class Links extends Component {
     return (
       <ListGroupItem href={item.link} key={index}>
         <Media.Heading>{item.title}</Media.Heading>
-        <p>{item.authors.join(', ')}</p>
-        {!item.notes ? '' : <p>{item.notes}</p>}
+        {item.authors.join(', ')}
+        {!item.notes ? '' : [<p key={index} />, item.notes,]}
       </ListGroupItem>
     );
   }
@@ -203,8 +203,8 @@ export default class Links extends Component {
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
           <Panel>
-            The following list is a hand-curated selection of guides
-            made by members of the Crusaders Quest community.
+            The following is a hand-curated selection of guides
+            made by various members of the Crusaders Quest community.
           </Panel>
         </Col>
         {Object.keys(lists).map(this.renderList)}

@@ -83,10 +83,9 @@ export default class HeroInformation extends Component {
     const hero = this.findHero(target);
     if (!hero) {
       this.setState({
-        render: (
-          <Redirect to={`/cqdb/heroes/${target.join('&')}/404`} />
-        ),
+        render: <Redirect to={`/cqdb/heroes/${target.join('&')}/404`} />,
       });
+
       return;
     }
 
@@ -161,7 +160,7 @@ export default class HeroInformation extends Component {
             <p>{resolve(this.state.hero.desc)}</p>
           </Media.Body>
           <Media.Right>
-            <img alt='' src={imagePath('cq-assets', `heroes/${this.state.hero.face_tex}.png`)} />
+            <img alt='' src={imagePath(`heroes/${this.state.hero.face_tex}`)} />
           </Media.Right>
           <Row>
             <Col md={3} sm={6} xs={6}>
@@ -185,20 +184,18 @@ export default class HeroInformation extends Component {
             </Col>
             <Col md={3} sm={6} xs={6}>
               <Media.Heading>Faction</Media.Heading>
-              <p>
-                {
-                  ['CHEN',].includes(this.state.hero.domain) || !this.state.hero.domain
-                  ? 'Unknown' // remove unreleased domains
-                  : resolve(this.state.hero.domain === 'NONEGROUP'
-                      ? 'TEXT_CHAMP_DOMAIN_' + this.state.hero.domain + '_NAME'
-                      : 'TEXT_CHAMPION_DOMAIN_' + this.state.hero.domain
-                    )
-                }
-              </p>
+              {
+                ['CHEN',].includes(this.state.hero.domain) || !this.state.hero.domain
+                ? 'Unknown' // remove unreleased domains
+                : resolve(this.state.hero.domain === 'NONEGROUP'
+                    ? 'TEXT_CHAMP_DOMAIN_' + this.state.hero.domain + '_NAME'
+                    : 'TEXT_CHAMPION_DOMAIN_' + this.state.hero.domain
+                  )
+              }
             </Col>
             <Col md={3} sm={6} xs={6}>
               <Media.Heading>Gender</Media.Heading>
-              <p>{resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + this.state.hero.gender)}</p>
+              {resolve('TEXT_EXPLORE_TOOLTIP_GENDER_' + this.state.hero.gender)}
             </Col>
           </Row>
         </Media>
@@ -302,7 +299,7 @@ export default class HeroInformation extends Component {
                 ) + ')'
               }
             </Media.Heading>
-            <p>{skill_subdesc.replace(/@|#|\$/g, '')}</p>
+            {skill_subdesc.replace(/@|#|\$/g, '')}
           </Col>
         </Row>
       );
@@ -325,7 +322,7 @@ export default class HeroInformation extends Component {
               </p>
             </Media.Body>
             <Media.Right>
-              <img alt='' src={imagePath('cq-assets', `blocks/${this.state.stat.skill_icon}.png`)} width={66} />
+              <img alt='' src={imagePath(`blocks/${this.state.stat.skill_icon}`)} width={66} />
             </Media.Right>
             {passive}
           </Media>
@@ -339,13 +336,11 @@ export default class HeroInformation extends Component {
       <Tab eventKey={index} key={i.grade} title={`${i.grade}★`}>
         <Media style={{paddingTop: 15,}}>
           <Media.Body>
-            <Media.Heading>
-              {resolve(i.name)}
-            </Media.Heading>
+            <Media.Heading>{resolve(i.name)}</Media.Heading>
             <p>{resolve(i.desc)}</p>
           </Media.Body>
           <Media.Right>
-            <img alt='' src={imagePath('cq-assets', `sbws/${i.image}.png`)} />
+            <img alt='' src={imagePath(`sbws/${i.image}`)} />
           </Media.Right>
           <Row>
             <Col md={6} sm={6} xs={6}>
@@ -358,11 +353,11 @@ export default class HeroInformation extends Component {
             </Col>
             <Col md={6} sm={6} xs={6}>
               <Media.Heading>Atk. Power</Media.Heading>
-              <p>{i.attdmg}</p>
+              {i.attdmg}
             </Col>
             <Col md={6} sm={6} xs={6}>
               <Media.Heading>Atk. Speed</Media.Heading>
-              <p>{i.attspd}</p>
+              {i.attspd}
             </Col>
           </Row>
         </Media>
@@ -371,9 +366,8 @@ export default class HeroInformation extends Component {
   }
 
   renderSbws = () => {
-    if (!this.state.weapon.length) {
-      return;
-    }
+    if (!this.state.weapon.length) { return; }
+    
     return (
       <Col md={6} sm={12} xs={12}>
         <Panel collapsible defaultExpanded header='Soulbound Weapon' key={this.state.weapon.length}>
@@ -412,15 +406,11 @@ export default class HeroInformation extends Component {
           <Media.Body>
             <Media.Heading>{`${resolve(i.costume_name)}${rarity}`}</Media.Heading>
             <p>{stats.join(', ')}</p>
-            <Row>
-              <Col md={6} sm={6} xs={6}>
-                <Media.Heading>Sell</Media.Heading>
-                <p>{i.sell_price}</p>
-              </Col>
-            </Row>
+            <Media.Heading>Sell</Media.Heading>
+            {i.sell_price}
           </Media.Body>
           <Media.Right>
-            <img alt='' src={imagePath('cq-assets', `skins/${i.face_tex}.png`)} />
+            <img alt='' src={imagePath(`skins/${i.face_tex}`)} />
           </Media.Right>
         </Media>
       </ListGroupItem>
@@ -428,9 +418,8 @@ export default class HeroInformation extends Component {
   }
 
   renderSkins = () => {
-    if (!this.state.skin.length) {
-      return;
-    }
+    if (!this.state.skin.length) { return; }
+    
     return (
       <Col md={6} sm={12} xs={12}>
         <Panel collapsible defaultExpanded header={`Skins (${this.state.skin.length})`} key={`skin${this.state.skin.length}`}>
@@ -449,7 +438,7 @@ export default class HeroInformation extends Component {
         <Pager.Item>
           <div style={{display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'flex-end',}}>
             <Media>
-              <img alt='' src={imagePath('cq-assets', `heroes/${img}.png`)} />
+              <img alt='' src={imagePath(`heroes/${img}`)} />
             </Media>
             <text>{`${pager[0]} (${pager[1]}★)`}</text>
           </div>
@@ -459,9 +448,8 @@ export default class HeroInformation extends Component {
   }
 
   renderPagers = () => {
-    if (!this.state.pager.length) {
-      return;
-    }
+    if (!this.state.pager.length) { return; }
+    
     const pagers = this.state.pager.map(this.renderPager);
     pagers.splice(1, 0, '\xa0'); // non-breakable space
     return (
@@ -472,14 +460,12 @@ export default class HeroInformation extends Component {
   }
 
   renderPortrait = () => {
-    if (!this.state.hero.portrait) {
-      return;
-    }
+    if (!this.state.hero.portrait) { return; }
 
     return (
       <Col md={6} sm={12} xs={12}>
         <Panel collapsible defaultExpanded header='Portrait' key={`portrait${this.state.hero.portrait}`}>
-          <img alt='' src={imagePath('cq-assets', `portraits/${this.state.hero.portrait}.png`)} width='100%' />
+          <img alt='' src={imagePath(`portraits/${this.state.hero.portrait}`)} width='100%' />
         </Panel>
       </Col>
     );

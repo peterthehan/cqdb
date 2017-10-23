@@ -126,7 +126,7 @@ export default class Portraits extends Component {
       <LinkContainer key={id.join('')} to={`/cqdb/heroes/${id.join('&')}`}>
         <Col lg={6} md={6} sm={12} xs={12}>
           <h5 style={{textAlign: 'center',}}>{`${hero.name} (${hero.filterable.Star}★)`}</h5>
-          <img alt='' src={imagePath('cq-assets', `portraits/${hero.image}.png`)} width='100%' />
+          <img alt='' src={imagePath(`portraits/${hero.image}`)} width='100%' />
         </Col>
       </LinkContainer>
     );

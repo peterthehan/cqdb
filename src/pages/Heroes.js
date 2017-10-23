@@ -283,14 +283,14 @@ export default class Heroes extends Component {
               <Row>
                 <Col style={{padding: 0,}} lg={3} md={3} sm={4} xs={5}>
                   <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                    <img alt='' src={imagePath('cq-assets', `heroes/${hero.image}.png`)} />
+                    <img alt='' src={imagePath(`heroes/${hero.image}`)} />
                   </Media.Left>
                 </Col>
                 <Col style={{padding: 0,}} lg={9} md={9} sm={8} xs={7}>
                   <Media.Body>
                     <Media.Heading>{`${hero.name} (${hero.filterable.Star}★)`}</Media.Heading>
-                    <p>{Object.values(hero.filterable).slice(1, 5).join(' | ')}</p>
-                    {statLabels.includes(sortBy) ? <p>{`${sortBy}: ${hero.sortable[sortBy]}`}</p> : ''}
+                    {Object.values(hero.filterable).slice(1, 5).join(' | ')}
+                    {statLabels.includes(sortBy) ? [<p key={id.join('')} />, `${sortBy}: ${hero.sortable[sortBy]}`] : ''}
                   </Media.Body>
                 </Col>
               </Row>

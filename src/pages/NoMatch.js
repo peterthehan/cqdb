@@ -17,7 +17,7 @@ export default class NoMatch extends Component {
           <Row style={{display: 'flex', alignItems: 'center',}}>
             <Col lg={2} md={2} smHidden xsHidden></Col>
             <Col lg={4} md={4} sm={12} xs={12}>
-              <img alt='' src={imagePath('cqdb', 'public/favicon.png')} />
+              <img alt='' src={imagePath('public/favicon', 'cqdb')} />
               <p />
               <p>
                 <b>404.</b>
@@ -30,7 +30,7 @@ export default class NoMatch extends Component {
               </p>
             </Col>
             <Col lg={4} md={4} smHidden xsHidden>
-              <Image alt='' responsive src={imagePath('cqdb', 'src/assets/fergus_cutout.png')} />
+              <Image alt='' responsive src={imagePath('src/assets/fergus_cutout', 'cqdb')} />
             </Col>
             <Col lg={2} md={2} smHidden xsHidden></Col>
           </Row>

@@ -102,15 +102,13 @@ export default class Forging extends Component {
                         <Row>
                           <Col style={{padding: 0,}} lg={3} md={4} sm={4} xs={5}>
                             <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                              <img alt='' src={imagePath('cq-assets', `sbws/${i[i.length - 1]}.png`)} />
+                              <img alt='' src={imagePath(`sbws/${i[i.length - 1]}`)} />
                             </Media.Left>
                           </Col>
                           <Col style={{padding: 0,}} lg={9} md={8} sm={8} xs={7}>
                             <Media.Body>
-                              <Media.Heading>
-                                {`${i[0]} / ${i[2]}`}
-                              </Media.Heading>
-                              <p>{i[1].join(', ')}</p>
+                              <Media.Heading>{`${i[0]} / ${i[2]}`}</Media.Heading>
+                              {i[1].join(', ')}
                             </Media.Body>
                           </Col>
                         </Row>

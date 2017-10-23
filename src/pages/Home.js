@@ -17,12 +17,12 @@ export default class Home extends Component {
           style={{alignItems: 'center', display: 'flex', justifyContent: 'center',}}
           lg={12} md={12} sm={12} xs={12}
         >
-          <Image alt='' responsive src={imagePath('cqdb', 'src/assets/banner.png')} />
+          <Image alt='' responsive src={imagePath('src/assets/banner', 'cqdb')} />
         </Col>
         <Col lg={12} md={12} sm={12} xs={12}>
           <Panel>
             <Media.Heading>Hello!</Media.Heading>
-            <p>Welcome to the Crusaders Quest Database. Here you will find all sorts of useful, up-to-date information regarding the game. Enjoy your stay!</p>
+            Welcome to the Crusaders Quest Database. Here you will find all kinds of useful and up-to-date information regarding your favorite game. Enjoy your stay!
           </Panel>
         </Col>
         <Col lg={6} md={6} sm={12} xs={12}>
@@ -52,10 +52,8 @@ export default class Home extends Component {
         <Col lg={6} md={6} sm={12} xs={12}>
           <Panel>
             <Media.Heading>Fergus</Media.Heading>
-            <p>
-              <a href='https://github.com/Johj/fergus'>Fergus</a> is a Discord bot for Crusaders Quest. Enjoy all the features of cqdb inside your Discord server!
-              Bot invitation link can be found <a href='https://goo.gl/nDluCQ'>here</a>.
-            </p>
+            <a href='https://github.com/Johj/fergus'>Fergus</a> is a Discord bot for Crusaders Quest. Enjoy all the features of cqdb inside your Discord server!
+            Bot invitation link can be found <a href='https://goo.gl/nDluCQ'>here</a>.
           </Panel>
         </Col>
       </Row>

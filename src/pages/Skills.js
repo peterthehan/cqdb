@@ -128,14 +128,14 @@ export default class Skills extends Component {
             <Row>
               <Col style={{padding: 0,}} lg={3} md={3} sm={4} xs={5}>
                 <Media.Left style={{display: 'flex', justifyContent: 'center',}}>
-                  <img alt='' src={imagePath('cq-assets', `skills/${skill.image}.png`)} />
+                  <img alt='' src={imagePath(`skills/${skill.image}`)} />
                 </Media.Left>
               </Col>
               <Col style={{padding: 0,}} lg={9} md={9} sm={8} xs={7}>
                 <Media.Body>
                   <Media.Heading>{`${skill.name} (Lv. ${skill.level}${!skill.filterable.Level ? '' : ', '}${skill.filterable.Level})`}</Media.Heading>
                   <p>{`${skill.filterable.Class} | ${skill.type} | ${skill.cost} | Rate: ${skill.rate} | ${skill.unlockCondition}`}</p>
-                  <p>{skill.description}</p>
+                  {skill.description}
                 </Media.Body>
               </Col>
             </Row>

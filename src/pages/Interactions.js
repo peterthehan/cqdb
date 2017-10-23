@@ -55,7 +55,7 @@ const data = interactionData.map(i => {
     d = {
       name: resolve(flag ? hero.name : hero.costume_name),
       dialogue: resolve(i.eatereggherotext[j]),
-      image: imagePath('cq-assets', `${flag ? 'heroes' : 'skins'}/${hero.face_tex}${j === 'COS_WA_2_2_RE' ? '_re' : ''}.png`),
+      image: imagePath(`${flag ? 'heroes' : 'skins'}/${hero.face_tex}${j === 'COS_WA_2_2_RE' ? '_re' : ''}`),
     }
 
     dialogues.push(d);
