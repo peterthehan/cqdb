@@ -26,32 +26,40 @@ import createBrowserHistory from 'history/createBrowserHistory';
 const history = createBrowserHistory();
 
 export default class App extends Component {
-  render() {
+  renderRoute = (route, index) => {
+    return (
+      <Route component={route.component} exact key={index} path={`/cqdb${route.path}`} />
+    );
+  }
+
+  render = () => {
+    const routes = [
+      { component: Home, path: '', },
+      { component: Heroes, path: '/heroes', },
+      { component: HeroInformation, path: '/heroes/:hero', },
+      { component: Portraits, path: '/portraits', },
+      { component: Soulbound, path: '/soulbound weapons', },
+      { component: Weapons, path: '/weapons', },
+      { component: Skills, path: '/skills', },
+      { component: Goddesses, path: '/goddesses', },
+      { component: Bread, path: '/bread', },
+      { component: Berries, path: '/berries', },
+      { component: Interactions, path: '/interactions', },
+      { component: Contracts, path: '/contract pulling simulator', },
+      { component: Forging, path: '/sbw forging simulator', },
+      { component: AttackOptimizer, path: '/effective attack optimizer', },
+      { component: Links, path: '/useful links', },
+      { component: About, path: '/about', },
+    ];
+
     return (
       <Router history={history}>
-        <Route path='' component={(props) => (
-          <Frame>
-            <Switch>
-              <Route exact path='/cqdb' component={Home} />
-              <Route exact path='/cqdb/heroes' component={Heroes} />
-              <Route exact path='/cqdb/heroes/:hero' component={HeroInformation} />
-              <Route exact path='/cqdb/portraits' component={Portraits} />
-              <Route exact path='/cqdb/soulbound weapons' component={Soulbound} />
-              <Route exact path='/cqdb/weapons' component={Weapons} />
-              <Route exact path='/cqdb/skills' component={Skills} />
-              <Route exact path='/cqdb/goddesses' component={Goddesses} />
-              <Route exact path='/cqdb/bread' component={Bread} />
-              <Route exact path='/cqdb/berries' component={Berries} />
-              <Route exact path='/cqdb/interactions' component={Interactions} />
-              <Route exact path='/cqdb/contract pulling simulator' component={Contracts} />
-              <Route exact path='/cqdb/sbw forging simulator' component={Forging} />
-              <Route exact path='/cqdb/effective attack optimizer' component={AttackOptimizer} />
-              <Route exact path='/cqdb/useful links' component={Links} />
-              <Route exact path='/cqdb/about' component={About} />
-              <Route component={NoMatch} />
-            </Switch>
-          </Frame>
-        )} />
+        <Frame>
+          <Switch>
+            {routes.map(this.renderRoute)}
+            <Route component={NoMatch} />
+          </Switch>
+        </Frame>
       </Router>
     );
   }
