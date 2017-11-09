@@ -11,31 +11,7 @@ import {
   Row,
 } from 'react-bootstrap';
 import { LinkContainer, } from 'react-router-bootstrap';
-
 import { imagePath, } from '../util/imagePath';
-
-const navPages = [
-  'Useful Links',
-  'About',
-];
-
-const databasePages = [
-  'Heroes',
-  'Portraits',
-  'Soulbound Weapons',
-  'Weapons',
-  'Skills',
-  'Goddesses',
-  'Bread',
-  'Berries',
-  'Interactions',
-];
-
-const toolsPages = [
-  'Contract Pulling Simulator',
-  'Sbw Forging Simulator',
-  'Effective Attack Optimizer',
-];
 
 export default class Frame extends Component {
   renderItem = (i, isNavItem) => {
@@ -54,10 +30,39 @@ export default class Frame extends Component {
     );
   }
 
+  renderButton = (button) => {
+    return (
+      <Button bsStyle='primary' href={button.url} key={button.version}>
+        {button.version}
+      </Button>
+    );
+  }
+
   renderNavbar = () => {
-    const pages = navPages.map(i => this.renderItem(i, true));
-    pages.splice(0, 0, this.renderNavDropdown(toolsPages, 'Tools'));
-    pages.splice(0, 0, this.renderNavDropdown(databasePages, 'Database'));
+    const databasePages = [
+      'Heroes',
+      'Portraits',
+      'Soulbound Weapons',
+      'Weapons',
+      'Skills',
+      'Goddesses',
+      'Bread',
+      'Berries',
+      'Interactions',
+    ];
+    const toolsPages = [
+      'Contract Pulling Simulator',
+      'Sbw Forging Simulator',
+      'Effective Attack Optimizer',
+    ];
+    const navPages = [
+      'Useful Links',
+      'About',
+    ];
+    const buttons = [
+      { url: 'https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST', version: 'Android 3.13.7.KG', },
+      { url: 'https://itunes.apple.com/app/id901858272?mt=8', version: 'iOS 3.14.4', },
+    ];
 
     return (
       <Navbar collapseOnSelect fixedTop inverse>
@@ -71,15 +76,15 @@ export default class Frame extends Component {
           <Navbar.Toggle />
         </Navbar.Header>
         <Navbar.Collapse>
-          <Nav>{pages}</Nav>
+          <Nav>
+            {[
+              this.renderNavDropdown(databasePages, 'Database'),
+              this.renderNavDropdown(toolsPages, 'Tools'),
+              navPages.map(i => this.renderItem(i, true)),
+            ]}
+          </Nav>
           <Navbar.Form pullRight style={{textAlign: 'center',}}>
-            <Button bsStyle='primary' href='https://play.google.com/store/apps/details?id=com.nhnent.SKQUEST'>
-              Android 3.12.5.KG
-            </Button>
-            &nbsp;
-            <Button bsStyle='primary' href='https://itunes.apple.com/app/id901858272?mt=8'>
-              iOS 3.12.3
-            </Button>
+            {buttons.map(i => [this.renderButton(i), '\xa0',])}
           </Navbar.Form>
         </Navbar.Collapse>
       </Navbar>
