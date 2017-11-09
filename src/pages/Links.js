@@ -203,8 +203,7 @@ export default class Links extends Component {
       <Row>
         <Col lg={12} md={12} sm={12} xs={12}>
           <Panel>
-            The following is a hand-curated selection of guides
-            made by various members of the Crusaders Quest community.
+            The following is a curated selection of resources and guides made by various members of the Crusaders Quest community.
           </Panel>
         </Col>
         {Object.keys(lists).map(this.renderList)}
