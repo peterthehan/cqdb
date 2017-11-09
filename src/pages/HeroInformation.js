@@ -440,7 +440,7 @@ export default class HeroInformation extends Component {
             <Media>
               <img alt='' src={imagePath(`heroes/${img}`)} />
             </Media>
-            <text>{`${pager[0]} (${pager[1]}★)`}</text>
+            {`${pager[0]} (${pager[1]}★)`}
           </div>
         </Pager.Item>
       </LinkContainer>

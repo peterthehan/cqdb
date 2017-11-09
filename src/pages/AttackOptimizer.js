@@ -378,14 +378,10 @@ export default class AttackOptimizer extends Component {
           <Row>
             <Col lg={8} md={6} sm={12} xs={12}>
               <Panel header='Loadout'>
-                <text><b>Weapon</b>: {loadout.slice(0, 2).join(', ')}<br /></text>
-                <text><b>Ring Main</b>: {loadout[2]}<br /></text>
-                <text><b>Ring Sub</b>: {loadout.slice(3).join(', ')}<br /></text>
-                {
-                  i.skin
-                    ? <text><b>Skin</b>: {i.skin.name}: {Object.keys(i.skin.stats).map(j => `${j}: ${i.skin.stats[j]}`).join(', ')}</text>
-                    : ''
-                }
+                <div><b>Weapon</b>: {loadout.slice(0, 2).join(', ')}</div>
+                <div><b>Ring Main</b>: {loadout[2]}</div>
+                <div><b>Ring Sub</b>: {loadout.slice(3).join(', ')}</div>
+                <div><b>Skin</b>: {i.skin ? `${i.skin.name}: ${Object.keys(i.skin.stats).map(j => `${j}: ${i.skin.stats[j]}`).join(', ')}` : ''}</div>
               </Panel>
             </Col>
             <Col lg={4} md={6} sm={12} xs={12}>
@@ -394,7 +390,7 @@ export default class AttackOptimizer extends Component {
                   Object
                     .keys(i.sortable)
                     .slice(2)
-                    .map(j => <text key={j}><b>{j}</b>{`: ${i.sortable[j].toFixed(2)}`}<br /></text>)
+                    .map(j => <div key={j}><b>{j}</b>{`: ${i.sortable[j].toFixed(2)}`}<br /></div>)
                 }
               </Panel>
             </Col>
